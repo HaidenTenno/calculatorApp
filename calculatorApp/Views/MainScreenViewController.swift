@@ -7,9 +7,17 @@
 //
 
 import UIKit
+import SnapKit
 
 class MainScreenViewController: UIViewController {
 
+    private var globalStackView: UIStackView!
+    private var resultLabel: UILabel!
+    private var collectionView: UICollectionView!
+    private var calculatorButtons: [CalculatorButton] = []
+    
+    private let calculatorService = CalculatorImplementation.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,10 +46,77 @@ class MainScreenViewController: UIViewController {
         
         //view
         view.backgroundColor = .systemRed
+        
+        //globalStackView
+        globalStackView = UIStackView()
+        globalStackView.axis = .vertical
+        globalStackView.distribution = .fill
+        globalStackView.alignment = .center
+        view.addSubview(globalStackView)
+        
+        //resultLabel
+        resultLabel = UILabel()
+        resultLabel.text = "0"
+        resultLabel.font = .systemFont(ofSize: 50)
+        resultLabel.textAlignment = .right
+        globalStackView.addArrangedSubview(resultLabel)
+        
+        //buttons
+        for buttonValueToAdd in CalculatorButtonValue.allCases {
+            let button = CalculatorButton(calculatorValue: buttonValueToAdd)
+            calculatorButtons.append(button)
+        }
+        
+        //collectionView
+        let collectionViewLayout = UICollectionViewFlowLayout()
+        collectionViewLayout.scrollDirection = .vertical
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+        collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.collectionViewID)
+        collectionView.backgroundColor = .systemRed
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.delaysContentTouches = false
+        globalStackView.addArrangedSubview(collectionView)
     }
     
     private func makeConstraints() {
         
+        //globalStackView
+        globalStackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.left.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.right.equalTo(view.safeAreaLayoutGuide).offset(-10)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
+        }
+        
+        //resultLabel
+        resultLabel.snp.makeConstraints { make in
+            make.left.equalTo(globalStackView)
+            make.right.equalTo(globalStackView)
+            make.height.greaterThanOrEqualTo(100)
+        }
+        
+        //collectionView
+        collectionView.snp.makeConstraints { make in
+            make.left.equalTo(globalStackView)
+            make.right.equalTo(globalStackView)
+        }
     }
 }
 
+extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: Config.CalculatorButtonSize.width, height: Config.CalculatorButtonSize.hight)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return calculatorButtons.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
+        cell.calculatorButton = calculatorButtons[indexPath.row]
+        return cell
+    }
+}

@@ -3,29 +3,36 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		354DFB32234102D60087DE65 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB31234102D60087DE65 /* AppDelegate.swift */; };
 		354DFB34234102D60087DE65 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB33234102D60087DE65 /* SceneDelegate.swift */; };
-		354DFB36234102D60087DE65 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB35234102D60087DE65 /* ViewController.swift */; };
 		354DFB3B234102D60087DE65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354DFB3A234102D60087DE65 /* Assets.xcassets */; };
 		354DFB3E234102D60087DE65 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 354DFB3C234102D60087DE65 /* LaunchScreen.storyboard */; };
 		354DFB4A234103480087DE65 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 354DFB49234103480087DE65 /* .gitignore */; };
 		354DFB4C234103500087DE65 /* MainScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB4B234103500087DE65 /* MainScreenViewController.swift */; };
+		354DFB4F234104540087DE65 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 354DFB4E234104540087DE65 /* SnapKit */; };
+		354DFB512341059B0087DE65 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB502341059B0087DE65 /* Config.swift */; };
+		354DFB532341073D0087DE65 /* CalculatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB522341073D0087DE65 /* CalculatorButton.swift */; };
+		354DFB55234109CD0087DE65 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB54234109CD0087DE65 /* Calculator.swift */; };
+		354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		354DFB2E234102D60087DE65 /* calculatorApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calculatorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354DFB31234102D60087DE65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		354DFB33234102D60087DE65 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		354DFB35234102D60087DE65 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		354DFB3A234102D60087DE65 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		354DFB3D234102D60087DE65 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		354DFB3F234102D60087DE65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		354DFB49234103480087DE65 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		354DFB4B234103500087DE65 /* MainScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenViewController.swift; sourceTree = "<group>"; };
+		354DFB502341059B0087DE65 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		354DFB522341073D0087DE65 /* CalculatorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorButton.swift; sourceTree = "<group>"; };
+		354DFB54234109CD0087DE65 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
+		354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				354DFB4F234104540087DE65 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,7 +88,7 @@
 		354DFB46234102EE0087DE65 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				354DFB35234102D60087DE65 /* ViewController.swift */,
+				354DFB56234122610087DE65 /* ButtonsCollectionVeiw */,
 				354DFB4B234103500087DE65 /* MainScreenViewController.swift */,
 			);
 			path = Views;
@@ -89,6 +97,7 @@
 		354DFB47234102F40087DE65 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				354DFB54234109CD0087DE65 /* Calculator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -98,8 +107,18 @@
 			children = (
 				354DFB31234102D60087DE65 /* AppDelegate.swift */,
 				354DFB33234102D60087DE65 /* SceneDelegate.swift */,
+				354DFB502341059B0087DE65 /* Config.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		354DFB56234122610087DE65 /* ButtonsCollectionVeiw */ = {
+			isa = PBXGroup;
+			children = (
+				354DFB522341073D0087DE65 /* CalculatorButton.swift */,
+				354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */,
+			);
+			path = ButtonsCollectionVeiw;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -118,6 +137,9 @@
 			dependencies = (
 			);
 			name = calculatorApp;
+			packageProductDependencies = (
+				354DFB4E234104540087DE65 /* SnapKit */,
+			);
 			productName = calculatorApp;
 			productReference = 354DFB2E234102D60087DE65 /* calculatorApp.app */;
 			productType = "com.apple.product-type.application";
@@ -146,6 +168,9 @@
 				Base,
 			);
 			mainGroup = 354DFB25234102D60087DE65;
+			packageReferences = (
+				354DFB4D234104540087DE65 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 354DFB2F234102D60087DE65 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -173,10 +198,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				354DFB36234102D60087DE65 /* ViewController.swift in Sources */,
 				354DFB4C234103500087DE65 /* MainScreenViewController.swift in Sources */,
+				354DFB512341059B0087DE65 /* Config.swift in Sources */,
 				354DFB32234102D60087DE65 /* AppDelegate.swift in Sources */,
 				354DFB34234102D60087DE65 /* SceneDelegate.swift in Sources */,
+				354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */,
+				354DFB532341073D0087DE65 /* CalculatorButton.swift in Sources */,
+				354DFB55234109CD0087DE65 /* Calculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,6 +394,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		354DFB4D234104540087DE65 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		354DFB4E234104540087DE65 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 354DFB4D234104540087DE65 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 354DFB26234102D60087DE65 /* Project object */;
 }
