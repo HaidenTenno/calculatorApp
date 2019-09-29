@@ -14,7 +14,7 @@ class MainScreenViewController: UIViewController {
     private var globalStackView: UIStackView!
     private var resultLabel: UILabel!
     private var collectionView: UICollectionView!
-    private var calculatorButtons: [CalculatorButton] = []
+    private var calculatorButtons = CalculatorButtonValue.allCases
     
     private let calculatorService = CalculatorImplementation.shared
     
@@ -45,7 +45,7 @@ class MainScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = .systemRed
+        view.backgroundColor = .systemIndigo
         
         //globalStackView
         globalStackView = UIStackView()
@@ -61,18 +61,12 @@ class MainScreenViewController: UIViewController {
         resultLabel.textAlignment = .right
         globalStackView.addArrangedSubview(resultLabel)
         
-        //buttons
-        for buttonValueToAdd in CalculatorButtonValue.allCases {
-            let button = CalculatorButton(calculatorValue: buttonValueToAdd)
-            calculatorButtons.append(button)
-        }
-        
         //collectionView
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.collectionViewID)
-        collectionView.backgroundColor = .systemRed
+        collectionView.backgroundColor = .systemIndigo
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -102,6 +96,18 @@ class MainScreenViewController: UIViewController {
             make.right.equalTo(globalStackView)
         }
     }
+    
+    private func calculatorButtonTapped(item: CalculatorCollectionViewCell) {
+        
+        switch item.calculatorButtonType {
+        case .number:
+            print("number: \(item.calculatorButtonValue.rawValue)")
+        case .operation:
+            print("oper: \(item.calculatorButtonValue.rawValue)")
+        case .none:
+            fatalError()
+        }
+    }
 }
 
 extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -116,7 +122,14 @@ extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
-        cell.calculatorButton = calculatorButtons[indexPath.row]
+        cell.calculatorButtonValue = calculatorButtons[indexPath.row]
+        cell.calculatorButton = UIButton(type: .system)
+        
+        //Действие по нажатию кнопки
+        cell.tabButtonAction = { [weak self] item in
+            guard let strongSelf = self else { return }
+            strongSelf.calculatorButtonTapped(item: item)
+        }
         return cell
     }
 }
