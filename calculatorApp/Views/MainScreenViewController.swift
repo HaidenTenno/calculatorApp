@@ -10,12 +10,16 @@ import UIKit
 import SnapKit
 
 class MainScreenViewController: UIViewController {
-
+    
+    //UI
     private var globalStackView: UIStackView!
     private var resultLabel: UILabel!
     private var collectionView: UICollectionView!
+    
+    //Model
     private var calculatorButtons = CalculatorButtonValue.allCases
     
+    //Services
     private let calculatorService = CalculatorImplementation.shared
     
     override func viewDidLoad() {
@@ -23,7 +27,7 @@ class MainScreenViewController: UIViewController {
         
         setupView()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -41,7 +45,7 @@ class MainScreenViewController: UIViewController {
         
         makeConstraints()
     }
-
+    
     private func setupView() {
         
         //view
@@ -56,7 +60,7 @@ class MainScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-        resultLabel.text = "0"
+        resultLabel.text = calculatorService.strResult
         resultLabel.font = .systemFont(ofSize: 50)
         resultLabel.textAlignment = .right
         globalStackView.addArrangedSubview(resultLabel)
@@ -99,14 +103,8 @@ class MainScreenViewController: UIViewController {
     
     private func calculatorButtonTapped(item: CalculatorCollectionViewCell) {
         
-        switch item.calculatorButtonType {
-        case .number:
-            print("number: \(item.calculatorButtonValue.rawValue)")
-        case .operation:
-            print("oper: \(item.calculatorButtonValue.rawValue)")
-        case .none:
-            fatalError()
-        }
+        calculatorService.handleAction(of: item)
+        resultLabel.text = calculatorService.strResult
     }
 }
 

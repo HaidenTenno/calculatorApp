@@ -26,6 +26,7 @@ enum CalculatorButtonValue: String, CaseIterable {
     case zero = "0"
     case comma = ","
     
+    case clear = "AC"
     case plus = "+"
     case minus = "-"
     case multiplication = "*"
@@ -35,6 +36,7 @@ enum CalculatorButtonValue: String, CaseIterable {
     case cos = "cos"
     case tan = "tan"
     case log = "log"
+    case execute = "="
 }
 
 class CalculatorCollectionViewCell: UICollectionViewCell {
@@ -60,7 +62,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .comma:
             calculatorButtonType = .number
 
-        case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
+        case .clear, .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log, .execute:
             calculatorButtonType = .operation
 
         }
