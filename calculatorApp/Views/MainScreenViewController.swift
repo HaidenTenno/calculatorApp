@@ -20,7 +20,7 @@ class MainScreenViewController: UIViewController {
     private var calculatorButtons = CalculatorButtonValue.allCases
     
     //Services
-    private let calculatorService = CalculatorImplementation.shared
+    private let calculatorService: Calculator = CalculatorImplementation.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +66,10 @@ class MainScreenViewController: UIViewController {
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
         resultLabel.numberOfLines = 0
+        resultLabel.isUserInteractionEnabled = true
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
+        resultLabel.addGestureRecognizer(swipeLeft)
         globalStackView.addArrangedSubview(resultLabel)
         
         //collectionView
@@ -107,10 +111,12 @@ class MainScreenViewController: UIViewController {
     private func calculatorButtonTapped(item: CalculatorCollectionViewCell) {
         
         calculatorService.handleAction(of: item)
+        resultLabel.text = calculatorService.strResult
+    }
+    
+    @objc private func resultSwipedToLeft() {
         
-//        print("Double: \(calculatorService.userResult)")
-//        print("String: \(calculatorService.strResult)")
-        
+        calculatorService.removeLast()
         resultLabel.text = calculatorService.strResult
     }
 }

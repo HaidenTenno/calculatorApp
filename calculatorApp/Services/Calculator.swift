@@ -9,12 +9,18 @@
 import Foundation
 
 protocol Calculator {
+    
+    var strResult: String { get }
+    var userResult: Double { get }
+    
+    func handleAction(of item: CalculatorCollectionViewCell)
     func plus(value: Double) -> Double
     func minus(value: Double) -> Double
     func multiply(value: Double) -> Double
     func divide(value: Double) -> Double
     func doAgain() -> Double
     func clear()
+    func removeLast()
 }
 
 class CalculatorImplementation: Calculator {
@@ -26,8 +32,11 @@ class CalculatorImplementation: Calculator {
     
     var strResult: String = "0" {
         didSet {
-            guard let newResult = Double(strResult) else { fatalError() }//formatter.number(from: strResult)?.doubleValue else { fatalError() }
+            guard let newResult = Double(strResult) else { fatalError() }
             userResult = newResult
+            
+//            print("Double: \(userResult)")
+//            print("String: \(strResult)")
         }
     }
     
@@ -37,6 +46,7 @@ class CalculatorImplementation: Calculator {
     
     private init() {}
     
+    // MARK: Calculator protocol
     func handleAction(of item: CalculatorCollectionViewCell) {
         
         switch item.calculatorButtonValue {
@@ -110,7 +120,6 @@ class CalculatorImplementation: Calculator {
         }
     }
     
-    // MARK: Calculator protocol
     @discardableResult func plus(value: Double) -> Double {
         
         history.append(plus(value:))
@@ -168,5 +177,21 @@ class CalculatorImplementation: Calculator {
         history.removeAll()
         strResult = "0"
         appendingDecimalPartMode = false
+    }
+    
+    func removeLast() {
+        
+        if strResult.last == CalculatorButtonValue.dot.rawValue.first {
+            strResult = String(strResult.dropLast())
+            appendingDecimalPartMode = false
+            return
+        }
+        
+        if strResult.count == 1 {
+            strResult = "0"
+            return
+        }
+        
+        strResult = String(strResult.dropLast())
     }
 }
