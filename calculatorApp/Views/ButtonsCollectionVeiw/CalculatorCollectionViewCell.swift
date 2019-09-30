@@ -69,9 +69,9 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
                 
         switch calculatorButtonType {
         case .number:
-            calculatorButton.backgroundColor = .systemOrange
+            calculatorButton.backgroundColor = Config.Colors.numberButton
         case .operation:
-            calculatorButton.backgroundColor = .systemYellow
+            calculatorButton.backgroundColor = Config.Colors.functionButton
         case .none:
             fatalError()
         }
@@ -79,7 +79,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         calculatorButton.layer.cornerRadius = CGFloat(Config.CalculatorButtonSize.width/2)
         calculatorButton.setTitle(calculatorButtonValue.rawValue, for: .normal)
         calculatorButton.titleLabel?.font = UIFont(name: Config.fontName, size: 30)
-        calculatorButton.setTitleColor(.label, for: .normal)
+        calculatorButton.setTitleColor(Config.Colors.buttonText, for: .normal)
         
         calculatorButton.snp.makeConstraints { make in
             make.height.equalTo(Config.CalculatorButtonSize.hight)

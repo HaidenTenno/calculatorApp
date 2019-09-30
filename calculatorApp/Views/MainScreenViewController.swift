@@ -49,7 +49,7 @@ class MainScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = .systemIndigo
+        view.backgroundColor = Config.Colors.backgroud
         
         //globalStackView
         globalStackView = UIStackView()
@@ -62,6 +62,7 @@ class MainScreenViewController: UIViewController {
         resultLabel = UILabel()
         resultLabel.text = calculatorService.strResult
         resultLabel.font = UIFont(name: Config.fontName, size: 100)
+        resultLabel.textColor = Config.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
@@ -77,7 +78,7 @@ class MainScreenViewController: UIViewController {
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.collectionViewID)
-        collectionView.backgroundColor = .systemIndigo
+        collectionView.backgroundColor = Config.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
