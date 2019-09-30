@@ -8,84 +8,46 @@
 
 import UIKit
 
-enum CalculatorButtonType: CaseIterable {
-    case number
-    case operation
-    case mode
-}
-
-enum CalculatorButtonValue: String, CaseIterable {
-    case one = "1"
-    case two = "2"
-    case three = "3"
-    case four = "4"
-    case five = "5"
-    case six = "6"
-    case seven = "7"
-    case eight = "8"
-    case nine = "9"
-    case zero = "0"
-    case dot = "."
-    
-    case clear = "AC"
-    case plus = "+"
-    case minus = "-"
-    case multiplication = "*"
-    case division = "÷"
-    case exp = "^"
-    case sin = "sin"
-    case cos = "cos"
-    case tan = "tan"
-    case log = "log"
-    case execute = "="
-    
-    case deg = "Deg"
-    case rad = "Rad"
-}
-
 class CalculatorCollectionViewCell: UICollectionViewCell {
     
-    var calculatorButtonType: CalculatorButtonType!
-    var calculatorButtonValue: CalculatorButtonValue!
-    
-    var tabButtonAction: ((CalculatorCollectionViewCell)->())!
+    var item: CalculatorButtonItem!
+    var tapButtonAction: ((CalculatorButtonItem)->())!
     
     var calculatorButton: UIButton! {
         didSet {
             addSubview(calculatorButton)
-            
             configureButton()
         }
     }
     
     private func configureButton() {
         
-        guard let calculatorButtonValue = calculatorButtonValue else { return }
-        
-        switch calculatorButtonValue {
-        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .dot:
-            calculatorButtonType = .number
-
-        case .clear, .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log, .execute:
-            calculatorButtonType = .operation
-
-        case .deg, .rad:
-            calculatorButtonType = .mode
-        }
-                
-        switch calculatorButtonType {
+        switch item.type {
         case .number:
+            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
             calculatorButton.backgroundColor = Config.Colors.numberButton
+            calculatorButton.setTitle(numberItem.value.rawValue, for: .normal)
+            
         case .operation:
-            calculatorButton.backgroundColor = Config.Colors.functionButton
+            guard let operationItem = item as? CalculatorButtonOperationItem else { return }
+            if operationItem.selected {
+                calculatorButton.backgroundColor = Config.Colors.functionButtonSelected
+            } else {
+                calculatorButton.backgroundColor = Config.Colors.functionButton
+            }
+            calculatorButton.setTitle(operationItem.value.rawValue, for: .normal)
+            
         case .mode:
-            calculatorButton.backgroundColor = Config.Colors.functionButton
-        case .none:
-            fatalError()
+            guard let  modeItem = item as? CalculatorButtonModeItem else { return }
+            if modeItem.selected {
+                calculatorButton.backgroundColor = Config.Colors.functionButtonSelected
+            } else {
+                calculatorButton.backgroundColor = Config.Colors.functionButton
+            }
+            calculatorButton.setTitle(modeItem.value.rawValue, for: .normal)
         }
-
+        
         calculatorButton.layer.cornerRadius = CGFloat(Config.CalculatorButtonSize.width/2)
-        calculatorButton.setTitle(calculatorButtonValue.rawValue, for: .normal)
         calculatorButton.titleLabel?.font = UIFont(name: Config.fontName, size: 30)
         calculatorButton.setTitleColor(Config.Colors.buttonText, for: .normal)
         
@@ -102,6 +64,6 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func buttonTapped(sender: UIButton) {
-        tabButtonAction(self)
+        tapButtonAction(item)
     }
 }

@@ -8,23 +8,24 @@
 
 import Foundation
 
-enum CalculatorMode: String {
-    case deg = "Deg"
-    case rad = "Rad"
+protocol CalculatorDelegate: class {
+    func calculatorSelectedNewOperation(_ calculator: Calculator)
+    func calculatorSelectedNewMode(_ calculator: Calculator)
 }
 
 protocol Calculator {
     
     var strResult: String { get }
     var currentValue: Double { get }
-    var mode: CalculatorMode { get set }
+    var mode: CalculatorButtonModeValue { get }
+    var delegate: CalculatorDelegate? { get set }
     
-    func handleAction(of item: CalculatorCollectionViewCell)
+    func handleAction(of item: CalculatorButtonItem)
     func plus(left: Double, right: Double) -> Double
     func minus(left: Double, right: Double) -> Double
     func multiply(left: Double, right: Double) -> Double
     func divide(left: Double, right: Double) -> Double
-    func doAgain(operation: CalculatorButtonValue) -> Double
+    func doAgain(operation: CalculatorButtonOperationItem) -> Double
     func clear()
     func removeLast()
 }
@@ -34,105 +35,124 @@ class CalculatorImplementation: Calculator {
     static let shared = CalculatorImplementation()
     
     private var appendingDecimalPartMode: Bool = false
-    private var currentOperation: CalculatorButtonValue? = nil
+    private var currentOperation: CalculatorButtonOperationItem? = nil
     private var rememberedValue: Double?
     private var readyToInsertNewNumber: Bool = true
     
-    var strResult: String = "0" {
+    var strResult: String = Config.strResultDefault {
         didSet {
             guard let newResult = Double(strResult) else { fatalError() }
             currentValue = newResult
-            
-//            print("Current: \(currentValue)")
-//            print("Remembered: \(rememberedValue)")
-//            print("String: \(strResult)")
         }
     }
     
     var currentValue: Double = 0.0
-    var mode: CalculatorMode = .deg
+    var mode: CalculatorButtonModeValue = .deg
     var rememberedNumber: Double?
+    
+    weak var delegate: CalculatorDelegate?
     
     private init() {}
     
-    func handleAction(of item: CalculatorCollectionViewCell) {
+    func handleAction(of item: CalculatorButtonItem) {
         
-        switch item.calculatorButtonValue {
-        //Ввод числа
-        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
+        switch item.type {
+        case .number:
+            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
             
-            if readyToInsertNewNumber {
-                strResult = "0"
-                readyToInsertNewNumber = false
-            }
-            
-            if !appendingDecimalPartMode { //Если вводится целая часть
-                if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
-                    strResult = item.calculatorButtonValue.rawValue
+            switch numberItem.value {
+            case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
+                if readyToInsertNewNumber {
+                    strResult = "0"
+                    readyToInsertNewNumber = false
+                }
+                
+                if !appendingDecimalPartMode { //Если вводится целая часть
+                    if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
+                        strResult = numberItem.value.rawValue
+                        
+                    } else { //Если начальное число не 0
+                        if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
+                            strResult.append(numberItem.value.rawValue)
+                        }
+                    }
                     
-                } else { //Если начальное число не 0
-                    if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
-                        strResult.append(item.calculatorButtonValue.rawValue)
+                } else { // Если вводится дробная часть
+                    guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
+                    let fractionPart = strResult.suffix(from: indexOfDot)
+                    if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
+                        strResult.append(numberItem.value.rawValue)
                     }
                 }
                 
-            } else { // Если вводится дробная часть
-                guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonValue.dot.rawValue.first!) else { return }
-                let fractionPart = strResult.suffix(from: indexOfDot)
-                if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
-                    strResult.append(item.calculatorButtonValue.rawValue)
+            case .dot:
+                if !appendingDecimalPartMode {
+                    appendingDecimalPartMode = true
+                    strResult.append(numberItem.value.rawValue)
                 }
             }
             
-        //Ввод точки (начало ввода дробной части)
-        case .dot:
-            if !appendingDecimalPartMode {
-                appendingDecimalPartMode = true
-                strResult.append(item.calculatorButtonValue.rawValue)
-            }
+        case .operation:
+            guard let operationItem = item as? CalculatorButtonOperationItem else { return }
             
-        case .clear:
-            clear()
-            
-        case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
-            
-            print(item.calculatorButtonValue.rawValue)
-            
-            rememberedValue = currentValue
-            currentOperation = item.calculatorButtonValue
-            readyToInsertNewNumber = true
-            
-        case .execute:
-            
-            if readyToInsertNewNumber {
-                let newResult = doAgain(operation: currentOperation!)
-                strResult = String(newResult)
-            } else {
-                guard let currentOperation = currentOperation else { return }
-                let newResult = executeCurrentOperation(operation: currentOperation)
+            switch operationItem.value {
+            case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
+                
+                if let delegate = delegate {
+                    delegate.calculatorSelectedNewOperation(self)
+                }
+                
                 rememberedValue = currentValue
+                currentOperation = operationItem
+                operationItem.selected = true
                 readyToInsertNewNumber = true
                 
-                strResult = String(newResult)
+            case .execute:
+                
+                guard let currentOperation = currentOperation else { return }
+                
+                if let delegate = delegate {
+                    delegate.calculatorSelectedNewOperation(self)
+                }
+                
+                if readyToInsertNewNumber {
+                    let newResult = doAgain(operation: currentOperation)
+                    strResult = String(newResult)
+                } else {
+                    let newResult = executeCurrentOperation(operation: currentOperation)
+                    rememberedValue = currentValue
+                    readyToInsertNewNumber = true
+                    strResult = String(newResult)
+                }
+                
+            case .clear:
+                clear()
             }
             
-        case .deg:
-            mode = .deg
+        case .mode:
+            guard let modeItem = item as? CalculatorButtonModeItem else { return }
             
-        case .rad:
-            mode = .rad
+            if let delegate = delegate {
+                delegate.calculatorSelectedNewMode(self)
+            }
             
-        case .none:
-            fatalError()
+            switch modeItem.value {
+            case .deg:
+                mode = .deg
+            case .rad:
+                mode = .rad
+            }
+            
+            modeItem.selected = true
         }
     }
     
-    private func executeCurrentOperation(operation: CalculatorButtonValue) -> Double {
+    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) -> Double {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Double = 0.0
         
-        switch operation {
+        switch operation.value {
         case .plus:
             result = plus(left: rememberedValue, right: currentValue)
             
@@ -187,11 +207,11 @@ class CalculatorImplementation: Calculator {
         return left / right
     }
     
-    func doAgain(operation: CalculatorButtonValue) -> Double {
+    func doAgain(operation: CalculatorButtonOperationItem) -> Double {
         
         var result: Double = 0.0
         
-        switch operation {
+        switch operation.value {
         case .plus:
             result = plus(left: currentValue, right: rememberedValue!)
             
@@ -220,7 +240,7 @@ class CalculatorImplementation: Calculator {
             print("Not implemented")
             
         default:
-            print("Not implemented")
+            return result
         }
         
         return result
@@ -228,23 +248,26 @@ class CalculatorImplementation: Calculator {
     
     func clear() {
         
+        if let delegate = delegate {
+            delegate.calculatorSelectedNewOperation(self)
+        }
+        
         rememberedValue = nil
         currentOperation = nil
-        strResult = "0"
+        strResult = Config.strResultDefault
         appendingDecimalPartMode = false
         readyToInsertNewNumber = true
     }
     
     func removeLast() {
-        
-        if strResult.last == CalculatorButtonValue.dot.rawValue.first {
+        if strResult.last == CalculatorButtonNumericValue.dot.rawValue.first {
             strResult = String(strResult.dropLast())
             appendingDecimalPartMode = false
             return
         }
         
         if strResult.count == 1 {
-            strResult = "0"
+            strResult = Config.strResultDefault
             return
         }
         

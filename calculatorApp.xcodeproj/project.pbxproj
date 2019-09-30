@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		350E5C9A2342929500264112 /* CalculatorButtonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350E5C992342929500264112 /* CalculatorButtonModel.swift */; };
 		354DFB32234102D60087DE65 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB31234102D60087DE65 /* AppDelegate.swift */; };
 		354DFB34234102D60087DE65 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB33234102D60087DE65 /* SceneDelegate.swift */; };
 		354DFB3B234102D60087DE65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 354DFB3A234102D60087DE65 /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		350E5C992342929500264112 /* CalculatorButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorButtonModel.swift; sourceTree = "<group>"; };
 		354DFB2E234102D60087DE65 /* calculatorApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calculatorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354DFB31234102D60087DE65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		354DFB33234102D60087DE65 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -47,6 +49,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		350E5C982342927D00264112 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				350E5C992342929500264112 /* CalculatorButtonModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		354DFB25234102D60087DE65 = {
 			isa = PBXGroup;
 			children = (
@@ -68,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				354DFB48234102FA0087DE65 /* App */,
+				350E5C982342927D00264112 /* Model */,
 				354DFB47234102F40087DE65 /* Services */,
 				354DFB46234102EE0087DE65 /* Views */,
 				354DFB45234102E50087DE65 /* Supporting files */,
@@ -208,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				354DFB4C234103500087DE65 /* MainScreenViewController.swift in Sources */,
+				350E5C9A2342929500264112 /* CalculatorButtonModel.swift in Sources */,
 				354DFB512341059B0087DE65 /* Config.swift in Sources */,
 				354DFB32234102D60087DE65 /* AppDelegate.swift in Sources */,
 				354DFB34234102D60087DE65 /* SceneDelegate.swift in Sources */,

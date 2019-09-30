@@ -18,15 +18,16 @@ class MainScreenViewController: UIViewController {
     private var collectionView: UICollectionView!
     
     //Model
-    private var calculatorButtons = CalculatorButtonValue.allCases
+    private let model = CalculatorButtonModel()
     
     //Services
-    private let calculatorService: Calculator = CalculatorImplementation.shared
+    private var calculatorService: Calculator = CalculatorImplementation.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupView()
+        calculatorService.delegate = model
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -126,11 +127,13 @@ class MainScreenViewController: UIViewController {
         }
     }
     
-    private func calculatorButtonTapped(item: CalculatorCollectionViewCell) {
-        
+    private func calculatorButtonTapped(item: CalculatorButtonItem) {
+    
         calculatorService.handleAction(of: item)
         resultLabel.text = calculatorService.strResult
         modeLabel.text = calculatorService.mode.rawValue
+        
+        collectionView.reloadData()
     }
     
     @objc private func resultSwipedToLeft() {
@@ -147,16 +150,16 @@ extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return calculatorButtons.count
+        return model.items.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
-        cell.calculatorButtonValue = calculatorButtons[indexPath.row]
+        cell.item = model.items[indexPath.row]
         cell.calculatorButton = UIButton(type: .system)
         
         //Действие по нажатию кнопки
-        cell.tabButtonAction = { [weak self] item in
+        cell.tapButtonAction = { [weak self] item in
             guard let strongSelf = self else { return }
             strongSelf.calculatorButtonTapped(item: item)
         }

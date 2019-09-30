@@ -13,6 +13,7 @@ enum Config {
     static let dafaultResultText = "0"
     static let collectionViewID = "collectionViewID"
     static let fontName = "ALS SPb"
+    static let strResultDefault = "0"
     
     enum CalculatorButtonSize {
         static let width = 70
@@ -29,6 +30,7 @@ enum Config {
         static let label = UIColor.label
         static let numberButton = UIColor(red: 248.0/255.0, green: 188.0/255.0, blue: 78.0/255.0, alpha: 1.0)
         static let functionButton = UIColor(red: 76.0/255.0, green: 169.0/255.0, blue: 203.0/255.0, alpha: 1.0)
+        static let functionButtonSelected = UIColor(red: 100.0/255.0, green: 130.0/255.0, blue: 150.0/255.0, alpha: 1.0)
         static let buttonText = UIColor.label
     }
 }
