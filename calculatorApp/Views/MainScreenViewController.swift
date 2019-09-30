@@ -61,7 +61,7 @@ class MainScreenViewController: UIViewController {
         //resultLabel
         resultLabel = UILabel()
         resultLabel.text = calculatorService.strResult
-        resultLabel.font = .systemFont(ofSize: 100)
+        resultLabel.font = UIFont(name: Config.fontName, size: 100)
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0

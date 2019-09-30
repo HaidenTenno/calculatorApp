@@ -78,7 +78,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
 
         calculatorButton.layer.cornerRadius = CGFloat(Config.CalculatorButtonSize.width/2)
         calculatorButton.setTitle(calculatorButtonValue.rawValue, for: .normal)
-        calculatorButton.titleLabel?.font = .systemFont(ofSize: 30)
+        calculatorButton.titleLabel?.font = UIFont(name: Config.fontName, size: 30)
         calculatorButton.setTitleColor(.label, for: .normal)
         
         calculatorButton.snp.makeConstraints { make in

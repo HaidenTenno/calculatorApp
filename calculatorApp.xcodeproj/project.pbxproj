@@ -17,6 +17,7 @@
 		354DFB512341059B0087DE65 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB502341059B0087DE65 /* Config.swift */; };
 		354DFB55234109CD0087DE65 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB54234109CD0087DE65 /* Calculator.swift */; };
 		354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */; };
+		35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35CBF76C23420A530035CB23 /* ALS_SPb.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		354DFB502341059B0087DE65 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		354DFB54234109CD0087DE65 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
 		354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorCollectionViewCell.swift; sourceTree = "<group>"; };
+		35CBF76C23420A530035CB23 /* ALS_SPb.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ALS_SPb.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		35CBF76B234209B80035CB23 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				35CBF76C23420A530035CB23 /* ALS_SPb.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 			files = (
 				354DFB3E234102D60087DE65 /* LaunchScreen.storyboard in Resources */,
 				354DFB4A234103480087DE65 /* .gitignore in Resources */,
+				35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */,
 				354DFB3B234102D60087DE65 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

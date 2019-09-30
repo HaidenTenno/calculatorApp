@@ -12,6 +12,7 @@ enum Config {
     
     static let dafaultResultText = "0"
     static let collectionViewID = "collectionViewID"
+    static let fontName = "ALS SPb"
     
     enum CalculatorButtonSize {
         static let width = 70
