@@ -78,6 +78,7 @@
 		354DFB45234102E50087DE65 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				35CBF76B234209B80035CB23 /* Fonts */,
 				354DFB3F234102D60087DE65 /* Info.plist */,
 			);
 			path = "Supporting files";
@@ -116,6 +117,13 @@
 				354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */,
 			);
 			path = ButtonsCollectionVeiw;
+			sourceTree = "<group>";
+		};
+		35CBF76B234209B80035CB23 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -17,4 +17,9 @@ enum Config {
         static let width = 70
         static let hight = 70
     }
+    
+    enum MaximumDigits {
+        static let integer = 10
+        static let fraction = 10
+    }
 }

@@ -24,22 +24,14 @@ class CalculatorImplementation: Calculator {
     private var appendingDecimalPartMode: Bool = false
     private var currentOperation: CalculatorButtonValue? = nil
     
-    private var formatter: NumberFormatter {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.usesGroupingSeparator = false
-        numberFormatter.decimalSeparator = ","
-        numberFormatter.alwaysShowsDecimalSeparator = false
-        numberFormatter.numberStyle = .decimal
-        return numberFormatter
-    }
-    
-    var userResult: Double = 0.0
     var strResult: String = "0" {
         didSet {
-            guard let newResult = formatter.number(from: strResult) as? Double else { fatalError() }
+            guard let newResult = Double(strResult) else { fatalError() }//formatter.number(from: strResult)?.doubleValue else { fatalError() }
             userResult = newResult
         }
     }
+    
+    var userResult: Double = 0.0
     var rememberedNumber: Double?
     var history: [(Double) -> Double] = []
     
@@ -48,20 +40,33 @@ class CalculatorImplementation: Calculator {
     func handleAction(of item: CalculatorCollectionViewCell) {
         
         switch item.calculatorButtonValue {
+        //Ввод числа
         case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
-            if currentOperation == nil {
-                if !appendingDecimalPartMode {
-                    if userResult == 0.0 {
+            if currentOperation == nil { //Если не выбрана ни одна операция
+                if !appendingDecimalPartMode { //Если вводится целая часть
+                    if userResult == 0.0 { //Если начальное число 0, то использовать новое число как первое
                         strResult = item.calculatorButtonValue.rawValue
-                    } else {
+                        
+                    } else { //Если начальное число не 0
+                        if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
+                            strResult.append(item.calculatorButtonValue.rawValue)
+                        }
+                    }
+                    
+                } else { // Если вводится дробная часть
+                    guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonValue.dot.rawValue.first!) else { return }
+                    let fractionPart = strResult.suffix(from: indexOfDot)
+                    if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
                         strResult.append(item.calculatorButtonValue.rawValue)
                     }
-                } else {
-                    strResult.append(item.calculatorButtonValue.rawValue)
                 }
+                
+            } else { //Если была выбрана операция
+                print("Not implemented")
             }
             
-        case .comma:
+        //Ввод точки (начало ввода дробной части)
+        case .dot:
             if !appendingDecimalPartMode {
                 appendingDecimalPartMode = true
                 strResult.append(item.calculatorButtonValue.rawValue)
@@ -161,7 +166,6 @@ class CalculatorImplementation: Calculator {
     func clear() {
         
         history.removeAll()
-        userResult = 0.0
         strResult = "0"
         appendingDecimalPartMode = false
     }

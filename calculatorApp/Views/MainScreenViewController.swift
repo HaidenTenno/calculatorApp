@@ -61,8 +61,11 @@ class MainScreenViewController: UIViewController {
         //resultLabel
         resultLabel = UILabel()
         resultLabel.text = calculatorService.strResult
-        resultLabel.font = .systemFont(ofSize: 50)
+        resultLabel.font = .systemFont(ofSize: 100)
         resultLabel.textAlignment = .right
+        resultLabel.adjustsFontSizeToFitWidth = true
+        resultLabel.minimumScaleFactor = 0
+        resultLabel.numberOfLines = 0
         globalStackView.addArrangedSubview(resultLabel)
         
         //collectionView
@@ -91,7 +94,7 @@ class MainScreenViewController: UIViewController {
         resultLabel.snp.makeConstraints { make in
             make.left.equalTo(globalStackView)
             make.right.equalTo(globalStackView)
-            make.height.greaterThanOrEqualTo(100)
+            make.height.lessThanOrEqualTo(100)
         }
         
         //collectionView
@@ -104,6 +107,10 @@ class MainScreenViewController: UIViewController {
     private func calculatorButtonTapped(item: CalculatorCollectionViewCell) {
         
         calculatorService.handleAction(of: item)
+        
+//        print("Double: \(calculatorService.userResult)")
+//        print("String: \(calculatorService.strResult)")
+        
         resultLabel.text = calculatorService.strResult
     }
 }

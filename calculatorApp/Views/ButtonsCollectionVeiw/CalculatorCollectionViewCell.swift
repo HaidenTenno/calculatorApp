@@ -24,7 +24,7 @@ enum CalculatorButtonValue: String, CaseIterable {
     case eight = "8"
     case nine = "9"
     case zero = "0"
-    case comma = ","
+    case dot = "."
     
     case clear = "AC"
     case plus = "+"
@@ -59,7 +59,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         guard let calculatorButtonValue = calculatorButtonValue else { return }
         
         switch calculatorButtonValue {
-        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .comma:
+        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .dot:
             calculatorButtonType = .number
 
         case .clear, .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log, .execute:
