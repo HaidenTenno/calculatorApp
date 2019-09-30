@@ -30,14 +30,21 @@ protocol Calculator {
     func removeLast()
 }
 
-class CalculatorImplementation: Calculator {
+final class CalculatorImplementation: Calculator {
     
     static let shared = CalculatorImplementation()
     
     private var appendingDecimalPartMode: Bool = false
     private var currentOperation: CalculatorButtonOperationItem? = nil
     private var rememberedValue: Double?
-    private var readyToInsertNewNumber: Bool = true
+    private var afterExecute: Bool = false
+    private var readyToInsertNewNumber: Bool = true {
+        didSet {
+            if readyToInsertNewNumber { //Если перешли в режим ввода нового числа, то выйти из режима ввода дробной части
+                appendingDecimalPartMode = false
+            }
+        }
+    }
     
     var strResult: String = Config.strResultDefault {
         didSet {
@@ -60,10 +67,16 @@ class CalculatorImplementation: Calculator {
         case .number:
             guard let numberItem = item as? CalculatorButtonNumberItem else { return }
             
+            if afterExecute { //Если начинаем вводить новое число после =, то очистить выбранную операцию
+                currentOperation = nil
+                afterExecute = false
+            }
+            
             switch numberItem.value {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
-                if readyToInsertNewNumber {
-                    strResult = "0"
+                
+                if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
+                    strResult = Config.strResultDefault
                     readyToInsertNewNumber = false
                 }
                 
@@ -86,8 +99,19 @@ class CalculatorImplementation: Calculator {
                 }
                 
             case .dot:
-                if !appendingDecimalPartMode {
+                
+                if afterExecute { //Если начинаем вводить новое число после =, то очистить выбранную операцию
+                    currentOperation = nil
+                    afterExecute = false
+                }
+                
+                if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
+                    strResult = Config.strResultDefault
+                }
+                
+                if !appendingDecimalPartMode { //Если точка для нового числа нажимается в первый раз, то перейти в режим ввода дробной части
                     appendingDecimalPartMode = true
+                    readyToInsertNewNumber = false
                     strResult.append(numberItem.value.rawValue)
                 }
             }
@@ -98,32 +122,47 @@ class CalculatorImplementation: Calculator {
             switch operationItem.value {
             case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
                 
-                if let delegate = delegate {
+                if let delegate = delegate { //Для сброса выбранной операции
                     delegate.calculatorSelectedNewOperation(self)
                 }
                 
-                rememberedValue = currentValue
-                currentOperation = operationItem
-                operationItem.selected = true
-                readyToInsertNewNumber = true
+                rememberedValue = currentValue //Запомнить текущее значение
+                currentOperation = operationItem //Запомнить новую операцию
+                afterExecute = false
+                operationItem.selected = true //Для выделения кнопки
+                readyToInsertNewNumber = true //Режим ввода нового числа
                 
             case .execute:
                 
                 guard let currentOperation = currentOperation else { return }
                 
-                if let delegate = delegate {
+                if let delegate = delegate { //Для сброса выбранной операции
                     delegate.calculatorSelectedNewOperation(self)
                 }
                 
-                if readyToInsertNewNumber {
-                    let newResult = doAgain(operation: currentOperation)
-                    strResult = String(newResult)
+                let newResult: Double
+                
+                if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
+                    newResult = doAgain(operation: currentOperation)
                 } else {
-                    let newResult = executeCurrentOperation(operation: currentOperation)
+                    newResult = executeCurrentOperation(operation: currentOperation)
                     rememberedValue = currentValue
                     readyToInsertNewNumber = true
-                    strResult = String(newResult)
                 }
+                let formatter = NumberFormatter()
+                formatter.usesGroupingSeparator = false
+                formatter.decimalSeparator = "."
+                formatter.numberStyle = .decimal
+                
+                if floor(newResult) == newResult {
+                    formatter.alwaysShowsDecimalSeparator = false
+                }
+                
+                guard let newStrResult = formatter.string(from: newResult as NSNumber) else { fatalError() }
+                                
+                afterExecute = true
+                
+                strResult = newStrResult
                 
             case .clear:
                 clear()
@@ -132,7 +171,7 @@ class CalculatorImplementation: Calculator {
         case .mode:
             guard let modeItem = item as? CalculatorButtonModeItem else { return }
             
-            if let delegate = delegate {
+            if let delegate = delegate { //Для сброса выбранного режима
                 delegate.calculatorSelectedNewMode(self)
             }
             
@@ -246,7 +285,7 @@ class CalculatorImplementation: Calculator {
         return result
     }
     
-    func clear() {
+    func clear() { //Сброс
         
         if let delegate = delegate {
             delegate.calculatorSelectedNewOperation(self)
@@ -259,7 +298,7 @@ class CalculatorImplementation: Calculator {
         readyToInsertNewNumber = true
     }
     
-    func removeLast() {
+    func removeLast() { //Назад
         if strResult.last == CalculatorButtonNumericValue.dot.rawValue.first {
             strResult = String(strResult.dropLast())
             appendingDecimalPartMode = false
