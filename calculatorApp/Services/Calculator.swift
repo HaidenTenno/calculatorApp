@@ -8,17 +8,23 @@
 
 import Foundation
 
+enum CalculatorMode: String {
+    case deg = "Deg"
+    case rad = "Rad"
+}
+
 protocol Calculator {
     
     var strResult: String { get }
-    var userResult: Double { get }
+    var currentValue: Double { get }
+    var mode: CalculatorMode { get set }
     
     func handleAction(of item: CalculatorCollectionViewCell)
-    func plus(value: Double) -> Double
-    func minus(value: Double) -> Double
-    func multiply(value: Double) -> Double
-    func divide(value: Double) -> Double
-    func doAgain() -> Double
+    func plus(left: Double, right: Double) -> Double
+    func minus(left: Double, right: Double) -> Double
+    func multiply(left: Double, right: Double) -> Double
+    func divide(left: Double, right: Double) -> Double
+    func doAgain(operation: CalculatorButtonValue) -> Double
     func clear()
     func removeLast()
 }
@@ -29,50 +35,53 @@ class CalculatorImplementation: Calculator {
     
     private var appendingDecimalPartMode: Bool = false
     private var currentOperation: CalculatorButtonValue? = nil
+    private var rememberedValue: Double?
+    private var readyToInsertNewNumber: Bool = true
     
     var strResult: String = "0" {
         didSet {
             guard let newResult = Double(strResult) else { fatalError() }
-            userResult = newResult
+            currentValue = newResult
             
-//            print("Double: \(userResult)")
+//            print("Current: \(currentValue)")
+//            print("Remembered: \(rememberedValue)")
 //            print("String: \(strResult)")
         }
     }
     
-    var userResult: Double = 0.0
+    var currentValue: Double = 0.0
+    var mode: CalculatorMode = .deg
     var rememberedNumber: Double?
-    var history: [(Double) -> Double] = []
     
     private init() {}
     
-    // MARK: Calculator protocol
     func handleAction(of item: CalculatorCollectionViewCell) {
         
         switch item.calculatorButtonValue {
         //Ввод числа
         case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
-            if currentOperation == nil { //Если не выбрана ни одна операция
-                if !appendingDecimalPartMode { //Если вводится целая часть
-                    if userResult == 0.0 { //Если начальное число 0, то использовать новое число как первое
-                        strResult = item.calculatorButtonValue.rawValue
-                        
-                    } else { //Если начальное число не 0
-                        if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
-                            strResult.append(item.calculatorButtonValue.rawValue)
-                        }
-                    }
+            
+            if readyToInsertNewNumber {
+                strResult = "0"
+                readyToInsertNewNumber = false
+            }
+            
+            if !appendingDecimalPartMode { //Если вводится целая часть
+                if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
+                    strResult = item.calculatorButtonValue.rawValue
                     
-                } else { // Если вводится дробная часть
-                    guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonValue.dot.rawValue.first!) else { return }
-                    let fractionPart = strResult.suffix(from: indexOfDot)
-                    if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
+                } else { //Если начальное число не 0
+                    if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
                         strResult.append(item.calculatorButtonValue.rawValue)
                     }
                 }
                 
-            } else { //Если была выбрана операция
-                print("Not implemented")
+            } else { // Если вводится дробная часть
+                guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonValue.dot.rawValue.first!) else { return }
+                let fractionPart = strResult.suffix(from: indexOfDot)
+                if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
+                    strResult.append(item.calculatorButtonValue.rawValue)
+                }
             }
             
         //Ввод точки (начало ввода дробной части)
@@ -85,17 +94,56 @@ class CalculatorImplementation: Calculator {
         case .clear:
             clear()
             
+        case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
+            
+            print(item.calculatorButtonValue.rawValue)
+            
+            rememberedValue = currentValue
+            currentOperation = item.calculatorButtonValue
+            readyToInsertNewNumber = true
+            
+        case .execute:
+            
+            if readyToInsertNewNumber {
+                let newResult = doAgain(operation: currentOperation!)
+                strResult = String(newResult)
+            } else {
+                guard let currentOperation = currentOperation else { return }
+                let newResult = executeCurrentOperation(operation: currentOperation)
+                rememberedValue = currentValue
+                readyToInsertNewNumber = true
+                
+                strResult = String(newResult)
+            }
+            
+        case .deg:
+            mode = .deg
+            
+        case .rad:
+            mode = .rad
+            
+        case .none:
+            fatalError()
+        }
+    }
+    
+    private func executeCurrentOperation(operation: CalculatorButtonValue) -> Double {
+        
+        guard let rememberedValue = rememberedValue else { return 0.0 }
+        var result: Double = 0.0
+        
+        switch operation {
         case .plus:
-            print("Not implemented")
+            result = plus(left: rememberedValue, right: currentValue)
             
         case .minus:
-            print("Not implemented")
+            result = minus(left: rememberedValue, right: currentValue)
             
         case .multiplication:
-            print("Not implemented")
+            result = multiply(left: rememberedValue, right: currentValue)
             
         case .division:
-            print("Not implemented")
+            result = divide(left: rememberedValue, right: currentValue)
             
         case .exp:
             print("Not implemented")
@@ -112,71 +160,79 @@ class CalculatorImplementation: Calculator {
         case .log:
             print("Not implemented")
             
-        case .execute:
+        default:
+            print("Not implemented")
+        }
+        
+        return result
+    }
+    
+    func plus(left: Double, right: Double) -> Double {
+        
+        return left + right
+    }
+    
+    func minus(left: Double, right: Double) -> Double {
+        
+        return left - right
+    }
+    
+    func multiply(left: Double, right: Double) -> Double {
+        
+        return left * right
+    }
+    
+    func divide(left: Double, right: Double) -> Double {
+        
+        return left / right
+    }
+    
+    func doAgain(operation: CalculatorButtonValue) -> Double {
+        
+        var result: Double = 0.0
+        
+        switch operation {
+        case .plus:
+            result = plus(left: currentValue, right: rememberedValue!)
+            
+        case .minus:
+            result = minus(left: currentValue, right: rememberedValue!)
+            
+        case .multiplication:
+            result = multiply(left: currentValue, right: rememberedValue!)
+            
+        case .division:
+            result = divide(left: currentValue, right: rememberedValue!)
+            
+        case .exp:
             print("Not implemented")
             
-        case .none:
-            fatalError()
+        case .sin:
+            print("Not implemented")
+            
+        case .cos:
+            print("Not implemented")
+            
+        case .tan:
+            print("Not implemented")
+            
+        case .log:
+            print("Not implemented")
+            
+        default:
+            print("Not implemented")
         }
-    }
-    
-    @discardableResult func plus(value: Double) -> Double {
         
-        history.append(plus(value:))
-        rememberedNumber = value
-        
-        userResult += value
-        
-        return userResult
-    }
-    
-    @discardableResult func minus(value: Double) -> Double {
-        
-        history.append(minus(value:))
-        rememberedNumber = value
-        
-        userResult -= value
-        
-        return userResult
-    }
-    
-    @discardableResult func multiply(value: Double) -> Double {
-        
-        history.append(multiply(value:))
-        rememberedNumber = value
-        
-        userResult *= value
-        
-        return userResult
-    }
-    
-    @discardableResult func divide(value: Double) -> Double {
-        
-        guard value != 0.0 else { return userResult }
-        
-        history.append(divide(value:))
-        rememberedNumber = value
-        
-        userResult /= value
-        
-        return userResult
-    }
-    
-    @discardableResult func doAgain() -> Double {
-        
-        guard let lastFunc = history.last else { return userResult }
-        guard let rememberedNumber = rememberedNumber else { return userResult }
-        
-        userResult = lastFunc(rememberedNumber)
-        
-        return userResult
+        return result
     }
     
     func clear() {
         
-        history.removeAll()
+        rememberedValue = nil
+        currentOperation = nil
         strResult = "0"
         appendingDecimalPartMode = false
+        readyToInsertNewNumber = true
     }
     
     func removeLast() {

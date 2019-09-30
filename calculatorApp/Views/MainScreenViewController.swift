@@ -14,6 +14,7 @@ class MainScreenViewController: UIViewController {
     //UI
     private var globalStackView: UIStackView!
     private var resultLabel: UILabel!
+    private var modeLabel: UILabel!
     private var collectionView: UICollectionView!
     
     //Model
@@ -58,6 +59,16 @@ class MainScreenViewController: UIViewController {
         globalStackView.alignment = .center
         view.addSubview(globalStackView)
         
+        //modeLabel
+        modeLabel = UILabel()
+        modeLabel.text = calculatorService.mode.rawValue
+        modeLabel.font = UIFont(name: Config.fontName, size: 20)
+        modeLabel.textColor = Config.Colors.label
+        modeLabel.textAlignment = .left
+        modeLabel.numberOfLines = 0
+        modeLabel.isUserInteractionEnabled = false
+        globalStackView.addArrangedSubview(modeLabel)
+        
         //resultLabel
         resultLabel = UILabel()
         resultLabel.text = calculatorService.strResult
@@ -95,11 +106,17 @@ class MainScreenViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
         }
         
+        //modeLabel
+        modeLabel.snp.makeConstraints { make in
+            make.left.equalTo(globalStackView)
+            make.right.equalTo(globalStackView)
+        }
+        
         //resultLabel
         resultLabel.snp.makeConstraints { make in
             make.left.equalTo(globalStackView)
             make.right.equalTo(globalStackView)
-            make.height.lessThanOrEqualTo(100)
+            make.height.equalTo(100)
         }
         
         //collectionView
@@ -113,6 +130,7 @@ class MainScreenViewController: UIViewController {
         
         calculatorService.handleAction(of: item)
         resultLabel.text = calculatorService.strResult
+        modeLabel.text = calculatorService.mode.rawValue
     }
     
     @objc private func resultSwipedToLeft() {

@@ -11,6 +11,7 @@ import UIKit
 enum CalculatorButtonType: CaseIterable {
     case number
     case operation
+    case mode
 }
 
 enum CalculatorButtonValue: String, CaseIterable {
@@ -37,6 +38,9 @@ enum CalculatorButtonValue: String, CaseIterable {
     case tan = "tan"
     case log = "log"
     case execute = "="
+    
+    case deg = "Deg"
+    case rad = "Rad"
 }
 
 class CalculatorCollectionViewCell: UICollectionViewCell {
@@ -65,12 +69,16 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         case .clear, .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log, .execute:
             calculatorButtonType = .operation
 
+        case .deg, .rad:
+            calculatorButtonType = .mode
         }
                 
         switch calculatorButtonType {
         case .number:
             calculatorButton.backgroundColor = Config.Colors.numberButton
         case .operation:
+            calculatorButton.backgroundColor = Config.Colors.functionButton
+        case .mode:
             calculatorButton.backgroundColor = Config.Colors.functionButton
         case .none:
             fatalError()
