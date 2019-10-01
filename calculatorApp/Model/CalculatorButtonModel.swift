@@ -62,6 +62,7 @@ enum CalculatorButtonNumericValue: String, CaseIterable {
     case nine = "9"
     case zero = "0"
     case dot = "."
+    case pi = "𝛑"
 }
 
 enum CalculatorButtonOperationValue: String, CaseIterable {
@@ -73,10 +74,10 @@ enum CalculatorButtonOperationValue: String, CaseIterable {
     case division = "÷"
     case power = "^"
     case sqrt = "√"
+    case log = "log"
     case sin = "sin"
     case cos = "cos"
     case tan = "tan"
-    case log = "log"
     case execute = "="
 }
 

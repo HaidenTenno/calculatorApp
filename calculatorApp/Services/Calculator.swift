@@ -43,7 +43,7 @@ final class CalculatorImplementation: Calculator {
         didSet {
             if calculatorError {
                 strValue = "Ошибка"
-
+                
                 if let delegate = delegate {
                     delegate.calculatorSelectedNewOperation(self)
                 }
@@ -69,8 +69,8 @@ final class CalculatorImplementation: Calculator {
             currentValue = newResult
             
             #if DEBUG
-//            print("Dicemal: \(currentValue)")
-//            print("String: \(strValue)")
+            //print("Dicemal: \(currentValue)")
+            //print("String: \(strValue)")
             #endif
         }
     }
@@ -134,11 +134,16 @@ final class CalculatorImplementation: Calculator {
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
                     strValue = Config.strResultDefault
                 }
-
+                
                 if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) {
                     readyToInsertNewNumber = false
                     strValue.append(numberItem.value.rawValue)
                 }
+                
+            case .pi:
+                let piNum = Double.pi
+                strValue = String(piNum)
+                
             }
             
         case .operation:
@@ -218,7 +223,7 @@ final class CalculatorImplementation: Calculator {
                 afterExecute = true
                 
                 strValue = newStrResult
-            
+                
             case .changeSign:
                 
                 if strValue == Config.strResultDefault {
@@ -279,6 +284,9 @@ final class CalculatorImplementation: Calculator {
             case .sqrt:
                 result = try squareTongue(value: rememberedValue)
                 
+            case .log:
+                result = try logarithm(value: rememberedValue)
+                
             case .sin:
                 print("Not implemented")
                 
@@ -286,9 +294,6 @@ final class CalculatorImplementation: Calculator {
                 print("Not implemented")
                 
             case .tan:
-                print("Not implemented")
-                
-            case .log:
                 print("Not implemented")
                 
             case .clear, .changeSign, .execute:
@@ -327,7 +332,7 @@ final class CalculatorImplementation: Calculator {
     
     //Умножение
     private func multiply(left: Decimal, right: Decimal) throws -> Decimal {
-                
+        
         let result = left * right
         
         if result >= pow(10, Config.MaximumDigits.showingInteger) {
@@ -355,7 +360,7 @@ final class CalculatorImplementation: Calculator {
     
     //Возведение в степерь
     private func power(left: Decimal, right: Decimal) throws -> Decimal {
-
+        
         //Если doubleResult = 1.8446744073709552e+19
         //То Decimal(floatLiteral: doubleResult) Error WTF?
         if right.rounded(0, .up) == right { //Костыль
@@ -368,13 +373,13 @@ final class CalculatorImplementation: Calculator {
         if !doubleResult.isFinite {
             throw CalculatorError.nanValue
         }
-                
+        
         if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
             throw CalculatorError.greaterThenMax
         }
         
         let result: Decimal = Decimal(floatLiteral: doubleResult)
-                
+        
         return result
     }
     
@@ -388,6 +393,30 @@ final class CalculatorImplementation: Calculator {
             throw error
         }
     }
+    
+    //Логарифм
+    private func logarithm(value: Decimal) throws -> Decimal {
+        
+        let doubleResult = log(Double(truncating: value as NSNumber))
+        
+        if !doubleResult.isFinite {
+            throw CalculatorError.nanValue
+        }
+        
+        if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
+            throw CalculatorError.greaterThenMax
+        }
+        
+        let result: Decimal = Decimal(floatLiteral: doubleResult)
+        
+        return result
+    }
+    
+    //Синус
+    
+    //Косинус
+    
+    //Тангенс
     
     //Повтор предыдущей операции
     private func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
@@ -415,6 +444,9 @@ final class CalculatorImplementation: Calculator {
             case .sqrt:
                 result = try squareTongue(value: currentValue)
                 
+            case .log:
+                result = try logarithm(value: currentValue)
+                
             case .sin:
                 print("Not implemented")
                 
@@ -422,9 +454,6 @@ final class CalculatorImplementation: Calculator {
                 print("Not implemented")
                 
             case .tan:
-                print("Not implemented")
-                
-            case .log:
                 print("Not implemented")
                 
             case .clear, .changeSign, .execute:
