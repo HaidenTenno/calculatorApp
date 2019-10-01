@@ -8,6 +8,12 @@
 
 import Foundation
 
+enum CalculatorError: Error {
+    case greaterThenMax
+    case divideByZero
+    case nanValue
+}
+
 protocol CalculatorDelegate: class {
     func calculatorSelectedNewOperation(_ calculator: Calculator)
     func calculatorSelectedNewMode(_ calculator: Calculator)
@@ -15,10 +21,9 @@ protocol CalculatorDelegate: class {
 
 protocol Calculator {
     
-    var strResult: String { get }
+    var strValue: String { get }
     var currentValue: Decimal { get }
     var mode: CalculatorButtonModeValue { get }
-    var appendingDecimalPartMode: Bool { get }
     var delegate: CalculatorDelegate? { get set }
     
     func handleAction(of item: CalculatorButtonItem)
@@ -32,33 +37,60 @@ final class CalculatorImplementation: Calculator {
     private var currentOperation: CalculatorButtonOperationItem? = nil
     private var rememberedValue: Decimal?
     private var afterExecute: Bool = false
+    private var appendingDecimalPartMode: Bool = false
+    
+    private var calculatorError: Bool = false {
+        didSet {
+            if calculatorError {
+                strValue = "Ошибка"
+
+                if let delegate = delegate {
+                    delegate.calculatorSelectedNewOperation(self)
+                }
+                rememberedValue = nil
+                currentOperation = nil
+                readyToInsertNewNumber = true
+            }
+        }
+    }
     
     private var readyToInsertNewNumber: Bool = true {
         didSet {
+                        
             if readyToInsertNewNumber { //Если перешли в режим ввода нового числа, то выйти из режима ввода дробной части
                 appendingDecimalPartMode = false
             }
         }
     }
     
-    var strResult: String = Config.strResultDefault {
+    var strValue: String = Config.strResultDefault {
         didSet {
-            guard let newResult = Decimal(string: strResult) else { fatalError() }
+            
+            if calculatorError {
+                return
+            }
+            
+            guard let newResult = Decimal(string: strValue) else { fatalError() }
             currentValue = newResult
+            
+//            print("Dicemal: \(currentValue)")
+//            print("String: \(strValue)")
         }
     }
     
     var currentValue: Decimal = Decimal(string: Config.strResultDefault)!
     var mode: CalculatorButtonModeValue = .deg
     var rememberedNumber: Decimal?
-    var appendingDecimalPartMode: Bool = false
-
     
     weak var delegate: CalculatorDelegate?
     
     private init() {}
     
     func handleAction(of item: CalculatorButtonItem) {
+        
+        if calculatorError {
+            clear()
+        }
         
         switch item.type {
         case .number:
@@ -73,25 +105,25 @@ final class CalculatorImplementation: Calculator {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strResult = Config.strResultDefault
+                    strValue = Config.strResultDefault
                     readyToInsertNewNumber = false
                 }
                 
                 if !appendingDecimalPartMode { //Если вводится целая часть
                     if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
-                        strResult = numberItem.value.rawValue
+                        strValue = numberItem.value.rawValue
                         
                     } else { //Если начальное число не 0
-                        if strResult.count < Config.MaximumDigits.integer { //Если количество разрядов не превышено
-                            strResult.append(numberItem.value.rawValue)
+                        if strValue.count < Config.MaximumDigits.defaultInteger { //Если количество разрядов не превышено
+                            strValue.append(numberItem.value.rawValue)
                         }
                     }
                     
                 } else { // Если вводится дробная часть
-                    guard let indexOfDot = strResult.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
-                    let fractionPart = strResult.suffix(from: indexOfDot)
-                    if fractionPart.count - 1 < Config.MaximumDigits.fraction { //Если количество дробных разрядов не превышено
-                        strResult.append(numberItem.value.rawValue)
+                    guard let indexOfDot = strValue.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
+                    let fractionPart = strValue.suffix(from: indexOfDot)
+                    if fractionPart.count - 1 < Config.MaximumDigits.defaultFraction { //Если количество дробных разрядов не превышено
+                        strValue.append(numberItem.value.rawValue)
                     }
                 }
                 
@@ -103,13 +135,13 @@ final class CalculatorImplementation: Calculator {
                 }
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strResult = Config.strResultDefault
+                    strValue = Config.strResultDefault
                 }
                 
                 if !appendingDecimalPartMode { //Если точка для нового числа нажимается в первый раз, то перейти в режим ввода дробной части
                     appendingDecimalPartMode = true
                     readyToInsertNewNumber = false
-                    strResult.append(numberItem.value.rawValue)
+                    strValue.append(numberItem.value.rawValue)
                 }
             }
             
@@ -117,7 +149,7 @@ final class CalculatorImplementation: Calculator {
             guard let operationItem = item as? CalculatorButtonOperationItem else { return }
             
             switch operationItem.value {
-            case .plus, .minus, .multiplication, .division, .exp, .sin, .cos, .tan, .log:
+            case .plus, .minus, .multiplication, .division, .power, .sin, .cos, .tan, .log:
                 
                 if let delegate = delegate { //Для сброса выбранной операции
                     delegate.calculatorSelectedNewOperation(self)
@@ -139,23 +171,38 @@ final class CalculatorImplementation: Calculator {
                 
                 let newResult: Decimal
                 
-                if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
-                    newResult = doAgain(operation: currentOperation)
-                } else {
-                    newResult = executeCurrentOperation(operation: currentOperation)
-                    rememberedValue = currentValue
-                    readyToInsertNewNumber = true
+                do {
+                    if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
+                        newResult = try doAgain(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                    } else {
+                        newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                        rememberedValue = currentValue
+                        readyToInsertNewNumber = true
+                    }
+                    
+                } catch {
+                    calculatorError = true
+                    return
                 }
-
+                
                 let newStrResult = String(describing: newResult)
                 
                 afterExecute = true
                 
-                strResult = newStrResult
+                strValue = newStrResult
             
             case .changeSign:
-                print("Not implemented")
-            
+                
+                if strValue == Config.strResultDefault {
+                    return
+                }
+                
+                if strValue.first! == "-" {
+                    strValue.remove(at: strValue.startIndex)
+                } else {
+                    strValue = "-" + strValue
+                }
+                
             case .clear:
                 clear()
             }
@@ -178,100 +225,154 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) -> Decimal {
+    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) throws -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Decimal = 0.0
         
-        switch operation.value {
-        case .plus:
-            result = plus(left: rememberedValue, right: currentValue)
-            
-        case .minus:
-            result = minus(left: rememberedValue, right: currentValue)
-            
-        case .multiplication:
-            result = multiply(left: rememberedValue, right: currentValue)
-            
-        case .division:
-            result = divide(left: rememberedValue, right: currentValue)
-            
-        case .exp:
-            print("Not implemented")
-            
-        case .sin:
-            print("Not implemented")
-            
-        case .cos:
-            print("Not implemented")
-            
-        case .tan:
-            print("Not implemented")
-            
-        case .log:
-            print("Not implemented")
-            
-        default:
-            print("Not implemented")
+        do {
+            switch operation.value {
+            case .plus:
+                result = try plus(left: rememberedValue, right: currentValue)
+                
+            case .minus:
+                result = try minus(left: rememberedValue, right: currentValue)
+                
+            case .multiplication:
+                result = try multiply(left: rememberedValue, right: currentValue)
+                
+            case .division:
+                result = try divide(left: rememberedValue, right: currentValue)
+                
+            case .power:
+                result = try power(left: rememberedValue, right: currentValue)
+                
+            case .sin:
+                print("Not implemented")
+                
+            case .cos:
+                print("Not implemented")
+                
+            case .tan:
+                print("Not implemented")
+                
+            case .log:
+                print("Not implemented")
+                
+            default:
+                print("Not implemented")
+            }
+        } catch {
+            throw error
         }
         
         return result
     }
     
-    func plus(left: Decimal, right: Decimal) -> Decimal {
+    func plus(left: Decimal, right: Decimal) throws -> Decimal {
         
-        return left + right
+        let result = left + right
+        
+        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+            throw CalculatorError.greaterThenMax
+        }
+        
+        return result
     }
     
-    func minus(left: Decimal, right: Decimal) -> Decimal {
+    func minus(left: Decimal, right: Decimal) throws -> Decimal {
         
-        return left - right
+        let result = left - right
+        
+        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+            throw CalculatorError.greaterThenMax
+        }
+        
+        return result
     }
     
-    func multiply(left: Decimal, right: Decimal) -> Decimal {
+    func multiply(left: Decimal, right: Decimal) throws -> Decimal {
                 
-        return left * right
+        let result = left * right
+        
+        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+            throw CalculatorError.greaterThenMax
+        }
+        
+        return result
     }
     
-    func divide(left: Decimal, right: Decimal) -> Decimal {
+    func divide(left: Decimal, right: Decimal) throws -> Decimal {
         
-        return left / right
+        if right == 0 {
+            throw CalculatorError.divideByZero
+        }
+        
+        let result = left / right
+        
+        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+            throw CalculatorError.greaterThenMax
+        }
+        
+        return result
     }
     
-    func doAgain(operation: CalculatorButtonOperationItem) -> Decimal {
+    func power(left: Decimal, right: Decimal) throws -> Decimal {
+
+        let doubleResult = pow(Double(truncating: left as NSNumber), Double(truncating: right as NSNumber))
         
+        if !doubleResult.isFinite {
+            throw CalculatorError.nanValue
+        }
+        
+        let result = Decimal(floatLiteral: doubleResult)
+        
+        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+            throw CalculatorError.greaterThenMax
+        }
+                
+        return result
+    }
+    
+    func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
+        
+        guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Decimal = 0.0
         
-        switch operation.value {
-        case .plus:
-            result = plus(left: currentValue, right: rememberedValue!)
-            
-        case .minus:
-            result = minus(left: currentValue, right: rememberedValue!)
-            
-        case .multiplication:
-            result = multiply(left: currentValue, right: rememberedValue!)
-            
-        case .division:
-            result = divide(left: currentValue, right: rememberedValue!)
-            
-        case .exp:
-            print("Not implemented")
-            
-        case .sin:
-            print("Not implemented")
-            
-        case .cos:
-            print("Not implemented")
-            
-        case .tan:
-            print("Not implemented")
-            
-        case .log:
-            print("Not implemented")
-            
-        default:
-            return result
+        do {
+            switch operation.value {
+            case .plus:
+                result = try plus(left: currentValue, right: rememberedValue)
+                
+            case .minus:
+                result = try minus(left: currentValue, right: rememberedValue)
+                
+            case .multiplication:
+                result = try multiply(left: currentValue, right: rememberedValue)
+                
+            case .division:
+                result = try divide(left: currentValue, right: rememberedValue)
+                
+            case .power:
+                result = try power(left: currentValue, right: rememberedValue)
+                
+            case .sin:
+                print("Not implemented")
+                
+            case .cos:
+                print("Not implemented")
+                
+            case .tan:
+                print("Not implemented")
+                
+            case .log:
+                print("Not implemented")
+                
+            default:
+                return result
+            }
+        } catch {
+            throw error
         }
         
         return result
@@ -283,25 +384,33 @@ final class CalculatorImplementation: Calculator {
             delegate.calculatorSelectedNewOperation(self)
         }
         
+        strValue = Config.strResultDefault
+        
         rememberedValue = nil
         currentOperation = nil
-        strResult = Config.strResultDefault
-        appendingDecimalPartMode = false
         readyToInsertNewNumber = true
+        calculatorError = false
     }
     
     func removeLast() { //Назад
-        if strResult.last == CalculatorButtonNumericValue.dot.rawValue.first {
-            strResult = String(strResult.dropLast())
+        
+        if calculatorError {
+            calculatorError = false
+            strValue = Config.strResultDefault
+            return
+        }
+        
+        if strValue.last == CalculatorButtonNumericValue.dot.rawValue.first {
+            strValue = String(strValue.dropLast())
             appendingDecimalPartMode = false
             return
         }
         
-        if strResult.count == 1 {
-            strResult = Config.strResultDefault
+        if strValue.count == 1 || (strValue.count == 2 && currentValue < 0) {
+            strValue = Config.strResultDefault
             return
         }
         
-        strResult = String(strResult.dropLast())
+        strValue = String(strValue.dropLast())
     }
 }

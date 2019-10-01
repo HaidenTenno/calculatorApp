@@ -71,7 +71,7 @@ enum CalculatorButtonOperationValue: String, CaseIterable {
     case minus = "-"
     case multiplication = "×"
     case division = "÷"
-    case exp = "^"
+    case power = "^"
     case sin = "sin"
     case cos = "cos"
     case tan = "tan"

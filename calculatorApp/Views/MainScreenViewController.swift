@@ -23,13 +23,10 @@ class MainScreenViewController: UIViewController {
     //Services
     private var calculatorService: Calculator = CalculatorImplementation.shared
     
-//    private var formatter: NumberFormatter!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupView()
-//        setupFormatter()
         calculatorService.delegate = model
     }
     
@@ -75,7 +72,7 @@ class MainScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-        resultLabel.text = calculatorService.strResult
+        resultLabel.text = calculatorService.strValue
         resultLabel.font = UIFont(name: Config.fontName, size: 100)
         resultLabel.textColor = Config.Colors.label
         resultLabel.textAlignment = .right
@@ -99,16 +96,6 @@ class MainScreenViewController: UIViewController {
         collectionView.delaysContentTouches = false
         globalStackView.addArrangedSubview(collectionView)
     }
-    
-//    private func setupFormatter() {
-//        formatter = NumberFormatter()
-//        formatter.groupingSize = 3
-//        formatter.groupingSeparator = " "
-//        formatter.usesGroupingSeparator = false
-//        formatter.decimalSeparator = "."
-//        formatter.numberStyle = .decimal
-//        formatter.alwaysShowsDecimalSeparator = false
-//    }
     
     private func makeConstraints() {
         
@@ -143,7 +130,7 @@ class MainScreenViewController: UIViewController {
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
                 
         calculatorService.handleAction(of: item)
-        resultLabel.text = calculatorService.strResult
+        resultLabel.text = calculatorService.strValue
         modeLabel.text = calculatorService.mode.rawValue
         
         collectionView.reloadData()
@@ -152,7 +139,7 @@ class MainScreenViewController: UIViewController {
     @objc private func resultSwipedToLeft() {
         
         calculatorService.removeLast()
-        resultLabel.text = calculatorService.strResult
+        resultLabel.text = calculatorService.strValue
     }
 }
 

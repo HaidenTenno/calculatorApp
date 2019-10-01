@@ -10,7 +10,6 @@ import UIKit
 
 enum Config {
     
-    static let dafaultResultText = "0"
     static let collectionViewID = "collectionViewID"
     static let fontName = "ALS SPb"
     static let strResultDefault = "0"
@@ -21,8 +20,10 @@ enum Config {
     }
     
     enum MaximumDigits {
-        static let integer = 10
-        static let fraction = 10
+        static let defaultInteger = 10
+        static let defaultFraction = 10
+        static let showingInteger = 100
+        static let showingFraction = 20
     }
     
     enum Colors {
