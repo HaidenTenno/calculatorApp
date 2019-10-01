@@ -35,9 +35,9 @@ final class CalculatorImplementation: Calculator {
     static let shared = CalculatorImplementation()
     
     private var currentOperation: CalculatorButtonOperationItem? = nil
-    private var rememberedValue: Decimal?
+    private var rememberedValue: Decimal? = nil
     private var afterExecute: Bool = false
-    private var appendingDecimalPartMode: Bool = false
+    private var readyToInsertNewNumber: Bool = true
     
     private var calculatorError: Bool = false {
         didSet {
@@ -56,38 +56,33 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    private var readyToInsertNewNumber: Bool = true {
-        didSet {
-                        
-            if readyToInsertNewNumber { //Если перешли в режим ввода нового числа, то выйти из режима ввода дробной части
-                appendingDecimalPartMode = false
-            }
-        }
-    }
-    
     var strValue: String = Config.strResultDefault {
         didSet {
-            
             if calculatorError {
                 return
             }
             
-            guard let newResult = Decimal(string: strValue) else { fatalError() }
+            guard let newResult = Decimal(string: strValue) else {
+                calculatorError = true
+                return
+            }
             currentValue = newResult
             
-//            print("Dicemal: \(currentValue)")
-//            print("String: \(strValue)")
+            #if DEBUG
+            print("Dicemal: \(currentValue)")
+            print("String: \(strValue)")
+            #endif
         }
     }
     
     var currentValue: Decimal = Decimal(string: Config.strResultDefault)!
     var mode: CalculatorButtonModeValue = .deg
-    var rememberedNumber: Decimal?
     
     weak var delegate: CalculatorDelegate?
     
     private init() {}
     
+    //Обработка нажатия кнопки
     func handleAction(of item: CalculatorButtonItem) {
         
         if calculatorError {
@@ -111,7 +106,7 @@ final class CalculatorImplementation: Calculator {
                     readyToInsertNewNumber = false
                 }
                 
-                if !appendingDecimalPartMode { //Если вводится целая часть
+                if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) { //Если вводится целая часть
                     if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
                         strValue = numberItem.value.rawValue
                         
@@ -139,9 +134,8 @@ final class CalculatorImplementation: Calculator {
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
                     strValue = Config.strResultDefault
                 }
-                
-                if !appendingDecimalPartMode { //Если точка для нового числа нажимается в первый раз, то перейти в режим ввода дробной части
-                    appendingDecimalPartMode = true
+
+                if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) {
                     readyToInsertNewNumber = false
                     strValue.append(numberItem.value.rawValue)
                 }
@@ -227,6 +221,7 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
+    //Выполнить выбранную операцию
     private func executeCurrentOperation(operation: CalculatorButtonOperationItem) throws -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
@@ -271,7 +266,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func plus(left: Decimal, right: Decimal) throws -> Decimal {
+    //Сложение
+    private func plus(left: Decimal, right: Decimal) throws -> Decimal {
         
         let result = left + right
         
@@ -282,7 +278,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func minus(left: Decimal, right: Decimal) throws -> Decimal {
+    //Вычитание
+    private func minus(left: Decimal, right: Decimal) throws -> Decimal {
         
         let result = left - right
         
@@ -293,7 +290,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func multiply(left: Decimal, right: Decimal) throws -> Decimal {
+    //Умножение
+    private func multiply(left: Decimal, right: Decimal) throws -> Decimal {
                 
         let result = left * right
         
@@ -304,7 +302,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func divide(left: Decimal, right: Decimal) throws -> Decimal {
+    //Деление
+    private func divide(left: Decimal, right: Decimal) throws -> Decimal {
         
         if right == 0 {
             throw CalculatorError.divideByZero
@@ -319,7 +318,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func power(left: Decimal, right: Decimal) throws -> Decimal {
+    //Возведение в степерь
+    private func power(left: Decimal, right: Decimal) throws -> Decimal {
 
         let doubleResult = pow(Double(truncating: left as NSNumber), Double(truncating: right as NSNumber))
         
@@ -336,7 +336,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
+    //Повтор предыдущей операции
+    private func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Decimal = 0.0
@@ -380,7 +381,8 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func clear() { //Сброс
+    //Сброс
+    private func clear() {
         
         if let delegate = delegate {
             delegate.calculatorSelectedNewOperation(self)
@@ -394,17 +396,12 @@ final class CalculatorImplementation: Calculator {
         calculatorError = false
     }
     
-    func removeLast() { //Назад
+    //Назад
+    func removeLast() {
         
         if calculatorError {
             calculatorError = false
             strValue = Config.strResultDefault
-            return
-        }
-        
-        if strValue.last == CalculatorButtonNumericValue.dot.rawValue.first {
-            strValue = String(strValue.dropLast())
-            appendingDecimalPartMode = false
             return
         }
         
