@@ -18,6 +18,7 @@
 		354DFB512341059B0087DE65 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB502341059B0087DE65 /* Config.swift */; };
 		354DFB55234109CD0087DE65 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB54234109CD0087DE65 /* Calculator.swift */; };
 		354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */; };
+		355A637A2343709D00CFB9E5 /* DecimalExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355A63792343709D00CFB9E5 /* DecimalExtension.swift */; };
 		35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35CBF76C23420A530035CB23 /* ALS_SPb.otf */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		354DFB502341059B0087DE65 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		354DFB54234109CD0087DE65 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
 		354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorCollectionViewCell.swift; sourceTree = "<group>"; };
+		355A63792343709D00CFB9E5 /* DecimalExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalExtension.swift; sourceTree = "<group>"; };
 		35CBF76C23420A530035CB23 /* ALS_SPb.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ALS_SPb.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 		354DFB30234102D60087DE65 /* calculatorApp */ = {
 			isa = PBXGroup;
 			children = (
+				355A63782343708300CFB9E5 /* Extensions */,
 				354DFB48234102FA0087DE65 /* App */,
 				350E5C982342927D00264112 /* Model */,
 				354DFB47234102F40087DE65 /* Services */,
@@ -130,6 +133,14 @@
 				354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */,
 			);
 			path = ButtonsCollectionVeiw;
+			sourceTree = "<group>";
+		};
+		355A63782343708300CFB9E5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				355A63792343709D00CFB9E5 /* DecimalExtension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		35CBF76B234209B80035CB23 /* Fonts */ = {
@@ -223,6 +234,7 @@
 				354DFB512341059B0087DE65 /* Config.swift in Sources */,
 				354DFB32234102D60087DE65 /* AppDelegate.swift in Sources */,
 				354DFB34234102D60087DE65 /* SceneDelegate.swift in Sources */,
+				355A637A2343709D00CFB9E5 /* DecimalExtension.swift in Sources */,
 				354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */,
 				354DFB55234109CD0087DE65 /* Calculator.swift in Sources */,
 			);

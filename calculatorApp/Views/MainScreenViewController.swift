@@ -23,10 +23,13 @@ class MainScreenViewController: UIViewController {
     //Services
     private var calculatorService: Calculator = CalculatorImplementation.shared
     
+//    private var formatter: NumberFormatter!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupView()
+//        setupFormatter()
         calculatorService.delegate = model
     }
     
@@ -97,6 +100,16 @@ class MainScreenViewController: UIViewController {
         globalStackView.addArrangedSubview(collectionView)
     }
     
+//    private func setupFormatter() {
+//        formatter = NumberFormatter()
+//        formatter.groupingSize = 3
+//        formatter.groupingSeparator = " "
+//        formatter.usesGroupingSeparator = false
+//        formatter.decimalSeparator = "."
+//        formatter.numberStyle = .decimal
+//        formatter.alwaysShowsDecimalSeparator = false
+//    }
+    
     private func makeConstraints() {
         
         //globalStackView
@@ -128,7 +141,7 @@ class MainScreenViewController: UIViewController {
     }
     
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
-    
+                
         calculatorService.handleAction(of: item)
         resultLabel.text = calculatorService.strResult
         modeLabel.text = calculatorService.mode.rawValue

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AudioToolbox
 
 class CalculatorCollectionViewCell: UICollectionViewCell {
     
@@ -64,6 +65,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func buttonTapped(sender: UIButton) {
+        AudioServicesPlaySystemSound(0x450)
         tapButtonAction(item)
     }
 }

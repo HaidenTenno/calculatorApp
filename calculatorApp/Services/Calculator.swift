@@ -16,17 +16,12 @@ protocol CalculatorDelegate: class {
 protocol Calculator {
     
     var strResult: String { get }
-    var currentValue: Double { get }
+    var currentValue: Decimal { get }
     var mode: CalculatorButtonModeValue { get }
+    var appendingDecimalPartMode: Bool { get }
     var delegate: CalculatorDelegate? { get set }
     
     func handleAction(of item: CalculatorButtonItem)
-    func plus(left: Double, right: Double) -> Double
-    func minus(left: Double, right: Double) -> Double
-    func multiply(left: Double, right: Double) -> Double
-    func divide(left: Double, right: Double) -> Double
-    func doAgain(operation: CalculatorButtonOperationItem) -> Double
-    func clear()
     func removeLast()
 }
 
@@ -34,10 +29,10 @@ final class CalculatorImplementation: Calculator {
     
     static let shared = CalculatorImplementation()
     
-    private var appendingDecimalPartMode: Bool = false
     private var currentOperation: CalculatorButtonOperationItem? = nil
-    private var rememberedValue: Double?
+    private var rememberedValue: Decimal?
     private var afterExecute: Bool = false
+    
     private var readyToInsertNewNumber: Bool = true {
         didSet {
             if readyToInsertNewNumber { //Если перешли в режим ввода нового числа, то выйти из режима ввода дробной части
@@ -48,14 +43,16 @@ final class CalculatorImplementation: Calculator {
     
     var strResult: String = Config.strResultDefault {
         didSet {
-            guard let newResult = Double(strResult) else { fatalError() }
+            guard let newResult = Decimal(string: strResult) else { fatalError() }
             currentValue = newResult
         }
     }
     
-    var currentValue: Double = 0.0
+    var currentValue: Decimal = Decimal(string: Config.strResultDefault)!
     var mode: CalculatorButtonModeValue = .deg
-    var rememberedNumber: Double?
+    var rememberedNumber: Decimal?
+    var appendingDecimalPartMode: Bool = false
+
     
     weak var delegate: CalculatorDelegate?
     
@@ -140,7 +137,7 @@ final class CalculatorImplementation: Calculator {
                     delegate.calculatorSelectedNewOperation(self)
                 }
                 
-                let newResult: Double
+                let newResult: Decimal
                 
                 if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
                     newResult = doAgain(operation: currentOperation)
@@ -149,21 +146,16 @@ final class CalculatorImplementation: Calculator {
                     rememberedValue = currentValue
                     readyToInsertNewNumber = true
                 }
-                let formatter = NumberFormatter()
-                formatter.usesGroupingSeparator = false
-                formatter.decimalSeparator = "."
-                formatter.numberStyle = .decimal
+
+                let newStrResult = String(describing: newResult)
                 
-                if floor(newResult) == newResult {
-                    formatter.alwaysShowsDecimalSeparator = false
-                }
-                
-                guard let newStrResult = formatter.string(from: newResult as NSNumber) else { fatalError() }
-                                
                 afterExecute = true
                 
                 strResult = newStrResult
-                
+            
+            case .changeSign:
+                print("Not implemented")
+            
             case .clear:
                 clear()
             }
@@ -186,10 +178,10 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) -> Double {
+    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
-        var result: Double = 0.0
+        var result: Decimal = 0.0
         
         switch operation.value {
         case .plus:
@@ -226,29 +218,29 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
-    func plus(left: Double, right: Double) -> Double {
+    func plus(left: Decimal, right: Decimal) -> Decimal {
         
         return left + right
     }
     
-    func minus(left: Double, right: Double) -> Double {
+    func minus(left: Decimal, right: Decimal) -> Decimal {
         
         return left - right
     }
     
-    func multiply(left: Double, right: Double) -> Double {
-        
+    func multiply(left: Decimal, right: Decimal) -> Decimal {
+                
         return left * right
     }
     
-    func divide(left: Double, right: Double) -> Double {
+    func divide(left: Decimal, right: Decimal) -> Decimal {
         
         return left / right
     }
     
-    func doAgain(operation: CalculatorButtonOperationItem) -> Double {
+    func doAgain(operation: CalculatorButtonOperationItem) -> Decimal {
         
-        var result: Double = 0.0
+        var result: Decimal = 0.0
         
         switch operation.value {
         case .plus:
