@@ -47,6 +47,8 @@ final class CalculatorImplementation: Calculator {
                 if let delegate = delegate {
                     delegate.calculatorSelectedNewOperation(self)
                 }
+                
+                currentValue = Decimal(string: Config.strResultDefault)!
                 rememberedValue = nil
                 currentOperation = nil
                 readyToInsertNewNumber = true
