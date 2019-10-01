@@ -145,7 +145,8 @@ final class CalculatorImplementation: Calculator {
             guard let operationItem = item as? CalculatorButtonOperationItem else { return }
             
             switch operationItem.value {
-            case .plus, .minus, .multiplication, .division, .power, .sin, .cos, .tan, .log:
+            //Операции, требующие два операнда
+            case .plus, .minus, .multiplication, .division, .power:
                 
                 if let delegate = delegate { //Для сброса выбранной операции
                     delegate.calculatorSelectedNewOperation(self)
@@ -156,6 +157,37 @@ final class CalculatorImplementation: Calculator {
                 afterExecute = false
                 operationItem.selected = true //Для выделения кнопки
                 readyToInsertNewNumber = true //Режим ввода нового числа
+                
+            //Операции, требующие один операнд
+            case .sqrt, .sin, .cos, .tan, .log:
+                
+                if let delegate = delegate { //Для сброса выбранной операции
+                    delegate.calculatorSelectedNewOperation(self)
+                }
+                
+                rememberedValue = currentValue
+                currentOperation = operationItem
+                
+                afterExecute = true
+                
+                guard let currentOperation = currentOperation else { return }
+                
+                let newResult: Decimal
+                
+                do {
+                    newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                    
+                    let newStrResult = String(describing: newResult)
+                    
+                    afterExecute = true
+                    readyToInsertNewNumber = true
+                    
+                    strValue = newStrResult
+                    
+                } catch {
+                    calculatorError = true
+                    return
+                }
                 
             case .execute:
                 
@@ -244,6 +276,9 @@ final class CalculatorImplementation: Calculator {
             case .power:
                 result = try power(left: rememberedValue, right: currentValue)
                 
+            case .sqrt:
+                result = try squareTongue(value: rememberedValue)
+                
             case .sin:
                 print("Not implemented")
                 
@@ -256,8 +291,8 @@ final class CalculatorImplementation: Calculator {
             case .log:
                 print("Not implemented")
                 
-            default:
-                print("Not implemented")
+            case .clear, .changeSign, .execute:
+                return result
             }
         } catch {
             throw error
@@ -343,6 +378,17 @@ final class CalculatorImplementation: Calculator {
         return result
     }
     
+    //Квадратный корень
+    private func squareTongue(value: Decimal) throws -> Decimal {
+        do {
+            let result = try power(left: value, right: 0.5)
+            return result
+            
+        } catch {
+            throw error
+        }
+    }
+    
     //Повтор предыдущей операции
     private func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
         
@@ -366,6 +412,9 @@ final class CalculatorImplementation: Calculator {
             case .power:
                 result = try power(left: currentValue, right: rememberedValue)
                 
+            case .sqrt:
+                result = try squareTongue(value: currentValue)
+                
             case .sin:
                 print("Not implemented")
                 
@@ -378,7 +427,7 @@ final class CalculatorImplementation: Calculator {
             case .log:
                 print("Not implemented")
                 
-            default:
+            case .clear, .changeSign, .execute:
                 return result
             }
         } catch {
