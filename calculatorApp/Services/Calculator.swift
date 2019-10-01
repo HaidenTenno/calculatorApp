@@ -69,8 +69,8 @@ final class CalculatorImplementation: Calculator {
             currentValue = newResult
             
             #if DEBUG
-            print("Dicemal: \(currentValue)")
-            print("String: \(strValue)")
+//            print("Dicemal: \(currentValue)")
+//            print("String: \(strValue)")
             #endif
         }
     }
@@ -321,17 +321,24 @@ final class CalculatorImplementation: Calculator {
     //Возведение в степерь
     private func power(left: Decimal, right: Decimal) throws -> Decimal {
 
+        //Если doubleResult = 1.8446744073709552e+19
+        //То Decimal(floatLiteral: doubleResult) Error WTF?
+        if right.rounded(0, .up) == right { //Костыль
+            let result = NSDecimalNumber(decimal: right)
+            return pow(left, Int(truncating: result))
+        }
+        
         let doubleResult = pow(Double(truncating: left as NSNumber), Double(truncating: right as NSNumber))
         
         if !doubleResult.isFinite {
             throw CalculatorError.nanValue
         }
-        
-        let result = Decimal(floatLiteral: doubleResult)
-        
-        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+                
+        if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
             throw CalculatorError.greaterThenMax
         }
+        
+        let result: Decimal = Decimal(floatLiteral: doubleResult)
                 
         return result
     }
