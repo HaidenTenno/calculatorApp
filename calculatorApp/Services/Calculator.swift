@@ -288,13 +288,13 @@ final class CalculatorImplementation: Calculator {
                 result = try logarithm(value: rememberedValue)
                 
             case .sin:
-                print("Not implemented")
+                result = try sinus(value: rememberedValue)
                 
             case .cos:
-                print("Not implemented")
+                result = try cosinus(value: rememberedValue)
                 
             case .tan:
-                print("Not implemented")
+                result = try tangent(value: rememberedValue)
                 
             case .clear, .changeSign, .execute:
                 return result
@@ -413,10 +413,73 @@ final class CalculatorImplementation: Calculator {
     }
     
     //Синус
+    private func sinus(value: Decimal) throws -> Decimal {
+        do {
+            let result = try trigonometric(value: value, function: sin)
+            return result
+        } catch {
+            throw error
+        }
+    }
     
     //Косинус
+    private func cosinus(value: Decimal) throws -> Decimal {
+        do {
+            let result = try trigonometric(value: value, function: cos)
+            return result
+        } catch {
+            throw error
+        }
+    }
     
     //Тангенс
+    private func tangent(value: Decimal) throws -> Decimal {
+        
+        do {
+            let sin = try sinus(value: value)
+            let cos = try cosinus(value: value)
+
+            let result = try divide(left: sin, right: cos)
+            
+            return result
+            
+        } catch {
+            throw error
+        }
+        
+    }
+    
+    //Тригонометрическая
+    private func trigonometric(value: Decimal, function: (Double) -> Double) throws -> Decimal {
+        
+        do {
+            var doubleResult: Double
+            
+            switch mode {
+            case .deg:
+                doubleResult = function((Double(truncating: value as NSNumber)*Double.pi)/180)
+                
+            case .rad:
+                doubleResult = function(Double(truncating: value as NSNumber))
+            }
+            
+            if !doubleResult.isFinite {
+                throw CalculatorError.nanValue
+            }
+            
+            if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
+                throw CalculatorError.greaterThenMax
+            }
+            
+            let result: Decimal = Decimal(floatLiteral: doubleResult)
+            
+            return result.rounded(10, .plain)
+        }
+        
+        catch {
+            throw error
+        }
+    }
     
     //Повтор предыдущей операции
     private func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
@@ -448,13 +511,13 @@ final class CalculatorImplementation: Calculator {
                 result = try logarithm(value: currentValue)
                 
             case .sin:
-                print("Not implemented")
+                result = try sinus(value: currentValue)
                 
             case .cos:
-                print("Not implemented")
+                result = try cosinus(value: currentValue)
                 
             case .tan:
-                print("Not implemented")
+                result = try tangent(value: currentValue)
                 
             case .clear, .changeSign, .execute:
                 return result
