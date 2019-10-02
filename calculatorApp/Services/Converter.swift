@@ -10,8 +10,16 @@ import Foundation
 
 protocol Converter {
     
+    func handleAction(of item: CalculatorButtonNumberItem)
 }
 
 final class ConverterImplementation: Converter {
     
+    static let shared = ConverterImplementation()
+    
+    private init() {}
+    
+    func handleAction(of item: CalculatorButtonNumberItem) {
+        print("Not implemented")
+    }
 }

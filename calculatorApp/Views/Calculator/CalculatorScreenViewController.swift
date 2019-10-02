@@ -1,5 +1,5 @@
 //
-//  MainScreenViewController.swift
+//  CalculatorScreenViewController.swift
 //  calculatorApp
 //
 //  Created by Петр Тартынских  on 29/09/2019.
@@ -8,8 +8,9 @@
 
 import UIKit
 import SnapKit
+import SideMenu
 
-class MainScreenViewController: UIViewController {
+class CalculatorScreenViewController: UIViewController {
     
     //UI
     private var globalStackView: UIStackView!
@@ -53,6 +54,16 @@ class MainScreenViewController: UIViewController {
         //view
         view.backgroundColor = Config.Colors.backgroud
         
+        //navigationController
+        navigationItem.rightBarButtonItems = []
+        let image = UIImage(systemName: "line.horizontal.3")?
+            .withTintColor(Config.Colors.buttonText)
+            .withRenderingMode(.alwaysOriginal)
+        let showMenuButton = UIButton(type: .system)
+        showMenuButton.setImage(image, for: .normal)
+        showMenuButton.addTarget(self, action: #selector(showMenuButtonTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: showMenuButton))
+        
         //globalStackView
         globalStackView = UIStackView()
         globalStackView.axis = .vertical
@@ -67,7 +78,7 @@ class MainScreenViewController: UIViewController {
         modeLabel.textColor = Config.Colors.label
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
-        modeLabel.isUserInteractionEnabled = false
+        modeLabel.isUserInteractionEnabled = true
         globalStackView.addArrangedSubview(modeLabel)
         
         //resultLabel
@@ -80,9 +91,17 @@ class MainScreenViewController: UIViewController {
         resultLabel.minimumScaleFactor = 0
         resultLabel.numberOfLines = 0
         resultLabel.isUserInteractionEnabled = true
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
-        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-        resultLabel.addGestureRecognizer(swipeLeft)
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
+        swipeLeftGesture.direction = UISwipeGestureRecognizer.Direction.left
+        resultLabel.addGestureRecognizer(swipeLeftGesture)
+        //Hide/Show NavBar
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
+        let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
+        swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
+        swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
+        resultLabel.addGestureRecognizer(swipeDownGesture)
+        resultLabel.addGestureRecognizer(swipeUpGesture)
+        
         globalStackView.addArrangedSubview(resultLabel)
         
         //collectionView
@@ -141,9 +160,23 @@ class MainScreenViewController: UIViewController {
         calculatorService.removeLast()
         resultLabel.text = calculatorService.strValue
     }
+    
+    @objc private func swipeDown() {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
+    @objc private func swipeUp() {
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    @objc private func showMenuButtonTapped() {
+        // TODO: Исправить
+        let converterViewController = ConverterScreenViewController()
+        navigationController?.pushViewController(converterViewController, animated: true)
+    }
 }
 
-extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: Config.CalculatorButtonSize.width, height: Config.CalculatorButtonSize.hight)
