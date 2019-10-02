@@ -446,7 +446,6 @@ final class CalculatorImplementation: Calculator {
         } catch {
             throw error
         }
-        
     }
     
     //Тригонометрическая
