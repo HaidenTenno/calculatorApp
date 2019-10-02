@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SideMenu
 
 class ConverterScreenViewController: UIViewController {
 
@@ -73,6 +74,13 @@ class ConverterScreenViewController: UIViewController {
         editableStackView = ConverterResultStackView()
         globalStackView.addArrangedSubview(editableStackView)
         editableStackView.configure(editable: true)
+        //Hide/Show NavBar
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
+        let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
+        swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
+        swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
+        editableStackView.addGestureRecognizer(swipeDownGesture)
+        editableStackView.addGestureRecognizer(swipeUpGesture)
         
         //swapButton
         swapButton = UIButton(type: .system)
@@ -151,14 +159,21 @@ class ConverterScreenViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    @objc private func showMenuButtonTapped() {
-        print("Not implemented")
-    }
-    
     @objc private func swapButtonTapped() {
         print("Not implemented")
     }
     
+    @objc private func showMenuButtonTapped() {
+        
+        let sideMenuTableViewController = SideMenuTableViewController()
+        sideMenuTableViewController.delegate = self
+        
+        let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
+        menu.statusBarEndAlpha = 0
+        menu.presentationStyle = .viewSlideOut
+        
+        present(menu, animated: true, completion: nil)
+    }
 }
 
 extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -183,5 +198,23 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
             strongSelf.converterButtonTapped(item: numberItem)
         }
         return cell
+    }
+}
+
+extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
+    
+    func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {
+        
+        guard var viewControllers = navigationController?.viewControllers else { return }
+        _ = viewControllers.popLast()
+                
+        switch mode {
+        case .calculator:
+            viewControllers.append(CalculatorScreenViewController())
+        case .converter:
+            viewControllers.append(ConverterScreenViewController())
+        }
+        
+        navigationController?.setViewControllers(viewControllers, animated: true)
     }
 }

@@ -31,17 +31,17 @@ class CalculatorScreenViewController: UIViewController {
         calculatorService.delegate = model
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        
+//        navigationController?.setNavigationBarHidden(true, animated: animated)
+//    }
+//    
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        
+//        navigationController?.setNavigationBarHidden(false, animated: animated)
+//    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -170,9 +170,15 @@ class CalculatorScreenViewController: UIViewController {
     }
     
     @objc private func showMenuButtonTapped() {
-        // TODO: Исправить
-        let converterViewController = ConverterScreenViewController()
-        navigationController?.pushViewController(converterViewController, animated: true)
+        
+        let sideMenuTableViewController = SideMenuTableViewController()
+        sideMenuTableViewController.delegate = self
+        
+        let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
+        menu.statusBarEndAlpha = 0
+        menu.presentationStyle = .viewSlideOut
+        
+        present(menu, animated: true, completion: nil)
     }
 }
 
@@ -197,5 +203,23 @@ extension CalculatorScreenViewController: UICollectionViewDelegate, UICollection
             strongSelf.calculatorButtonTapped(item: item)
         }
         return cell
+    }
+}
+
+extension CalculatorScreenViewController: SideMenuTableViewControllerDelegate {
+    
+    func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {
+        
+        guard var viewControllers = navigationController?.viewControllers else { return }
+        _ = viewControllers.popLast()
+                
+        switch mode {
+        case .calculator:
+            viewControllers.append(CalculatorScreenViewController())
+        case .converter:
+            viewControllers.append(ConverterScreenViewController())
+        }
+        
+        navigationController?.setViewControllers(viewControllers, animated: true)
     }
 }

@@ -11,6 +11,7 @@ import UIKit
 enum Config {
     
     static let collectionViewID = "collectionViewID"
+    static let sideMenuTableViewID = "tableViewID"
     static let fontName = "ALS SPb"
     static let strResultDefault = "0"
     

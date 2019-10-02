@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ConverterButtonModel {
+final class ConverterButtonModel {
     
     var items: [CalculatorButtonNumberItem] = []
     

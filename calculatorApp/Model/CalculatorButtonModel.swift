@@ -86,7 +86,7 @@ enum CalculatorButtonModeValue: String, CaseIterable {
     case rad = "Rad"
 }
 
-class CalculatorButtonModel {
+final class CalculatorButtonModel {
     
     var items: [CalculatorButtonItem] = []
     
