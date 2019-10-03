@@ -14,6 +14,7 @@ enum Config {
     static let sideMenuTableViewID = "tableViewID"
     static let fontName = "ALS SPb"
     static let strResultDefault = "0"
+    static let apiURL = "https://www.cbr-xml-daily.ru/daily_json.js"
     
     enum CalculatorButtonSize {
         static let width = 70
@@ -28,8 +29,6 @@ enum Config {
         
         static let defaultIntegerConv = 10
         static let defaultFractionConv = 6
-        static let showingIntegerConv = 50
-        static let showingFractionConv = 6
     }
     
     enum Colors {

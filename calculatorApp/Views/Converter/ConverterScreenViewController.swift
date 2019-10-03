@@ -23,14 +23,20 @@ class ConverterScreenViewController: UIViewController {
     
     //Model
     private let model = ConverterButtonModel()
-    
+
+    private var apiAnswer: ConverterApiAnswer?
+
     //Services
     private var converterService: Converter = ConverterImplementation.shared
+    private var networkService: NetworkService = NetworkServiceImplementation.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupView()
+        
+        networkService.delegate = self
+        networkService.getApiAnwer()
     }
 
 //    override func viewWillAppear(_ animated: Bool) {
@@ -267,4 +273,8 @@ extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView) {
         resultSwipedToLeft()
     }    
+}
+
+extension ConverterScreenViewController: NetworkServiceDelegate {
+    
 }
