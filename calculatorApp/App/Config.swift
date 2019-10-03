@@ -25,6 +25,11 @@ enum Config {
         static let defaultFraction = 10
         static let showingInteger = 100
         static let showingFraction = 20
+        
+        static let defaultIntegerConv = 10
+        static let defaultFractionConv = 6
+        static let showingIntegerConv = 50
+        static let showingFractionConv = 6
     }
     
     enum Colors {

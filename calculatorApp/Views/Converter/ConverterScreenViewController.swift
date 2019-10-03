@@ -13,8 +13,11 @@ class ConverterScreenViewController: UIViewController {
 
     //UI
     private var globalStackView: UIStackView!
+    private var swipableStackView: UIStackView!
     private var editableStackView: ConverterResultStackView!
+    private var swapButtonStackView: UIStackView!
     private var swapButton: UIButton!
+    private var blankView: UIView!
     private var notEditableStackView: ConverterResultStackView!
     private var collectionView: UICollectionView!
     
@@ -70,17 +73,32 @@ class ConverterScreenViewController: UIViewController {
         globalStackView.alignment = .center
         view.addSubview(globalStackView)
         
-        //editableStackView
-        editableStackView = ConverterResultStackView()
-        globalStackView.addArrangedSubview(editableStackView)
-        editableStackView.configure(editable: true)
+        //swipableStackView
+        swipableStackView = UIStackView()
+        swipableStackView.axis = .vertical
+        swipableStackView.distribution = .fill
+        swipableStackView.alignment = .center
         //Hide/Show NavBar
         let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
         let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
         swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
         swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
-        editableStackView.addGestureRecognizer(swipeDownGesture)
-        editableStackView.addGestureRecognizer(swipeUpGesture)
+        swipableStackView.addGestureRecognizer(swipeDownGesture)
+        swipableStackView.addGestureRecognizer(swipeUpGesture)
+        globalStackView.addArrangedSubview(swipableStackView)
+        
+        //editableStackView
+        editableStackView = ConverterResultStackView()
+        swipableStackView.addArrangedSubview(editableStackView)
+        editableStackView.delegate = self
+        editableStackView.configure(editable: true)
+        
+        //swapButtonStackView
+        swapButtonStackView = UIStackView()
+        swapButtonStackView.axis = .horizontal
+        swapButtonStackView.distribution = .fill
+        swapButtonStackView.alignment = .leading
+        swipableStackView.addArrangedSubview(swapButtonStackView)
         
         //swapButton
         swapButton = UIButton(type: .system)
@@ -90,11 +108,15 @@ class ConverterScreenViewController: UIViewController {
         swapButton.setImage(swapImage, for: .normal)
         swapButton.contentHorizontalAlignment = .left
         swapButton.addTarget(self, action: #selector(swapButtonTapped), for: .touchUpInside)
-        globalStackView.addArrangedSubview(swapButton)
+        swapButtonStackView.addArrangedSubview(swapButton)
+        
+        //blankView
+        blankView = UIView()
+        swapButtonStackView.addArrangedSubview(blankView)
         
         //notEditableStackView
         notEditableStackView = ConverterResultStackView()
-        globalStackView.addArrangedSubview(notEditableStackView)
+        swipableStackView.addArrangedSubview(notEditableStackView)
         notEditableStackView.configure(editable: false)
         
         //collectionView
@@ -119,23 +141,33 @@ class ConverterScreenViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
         }
         
-        //editableStackView
-        editableStackView.snp.makeConstraints { make in
+        //swipableStackView
+        swipableStackView.snp.makeConstraints { make in
             make.left.equalTo(globalStackView)
             make.right.equalTo(globalStackView)
         }
         
-        //swapButtton
-        swapButton.snp.makeConstraints { make in
-            make.left.equalTo(globalStackView).offset(5)
-            make.right.equalTo(globalStackView).offset(-5)
+        //editableStackView
+        editableStackView.snp.makeConstraints { make in
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
+            make.height.equalTo(70)
+        }
+        editableStackView.makeConstraints()
+        
+        //swapButtonStackView
+        swapButtonStackView.snp.makeConstraints { make in
+            make.left.equalTo(swipableStackView).offset(5)
+            make.right.equalTo(swipableStackView).offset(-5)
         }
         
         //notEditableStackView
         notEditableStackView.snp.makeConstraints { make in
-            make.left.equalTo(globalStackView)
-            make.right.equalTo(globalStackView)
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
+            make.height.equalTo(70)
         }
+        notEditableStackView.makeConstraints()
         
         //collectionView
         collectionView.snp.makeConstraints { make in
@@ -144,11 +176,16 @@ class ConverterScreenViewController: UIViewController {
         }
     }
     
-    private func converterButtonTapped(item: CalculatorButtonNumberItem) {
-                
+    private func converterButtonTapped(item: CalculatorButtonItem) {
         converterService.handleAction(of: item)
-        
-        collectionView.reloadData()
+        fillData()
+    }
+    
+    private func fillData() {
+        editableStackView.resultLabel.text = converterService.firstStrResult
+        editableStackView.selectedCurrencyTextField.text = "DEF" // TODO: Исправить
+        notEditableStackView.resultLabel.text = converterService.secondStrResult
+        notEditableStackView.resultLabel.text = "DEF" // TODO: Исправить
     }
     
     @objc private func swipeDown() {
@@ -160,7 +197,8 @@ class ConverterScreenViewController: UIViewController {
     }
     
     @objc private func swapButtonTapped() {
-        print("Not implemented")
+        converterService.swapCurrency()
+        fillData()
     }
     
     @objc private func showMenuButtonTapped() {
@@ -174,6 +212,11 @@ class ConverterScreenViewController: UIViewController {
         menu.presentationStyle = .viewSlideOut
         
         present(menu, animated: true, completion: nil)
+    }
+    
+    @objc private func resultSwipedToLeft() {
+        converterService.removeLast()
+        fillData()
     }
 }
 
@@ -195,8 +238,7 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
         //Действие по нажатию кнопки
         cell.tapButtonAction = { [weak self] item in
             guard let strongSelf = self else { return }
-            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
-            strongSelf.converterButtonTapped(item: numberItem)
+            strongSelf.converterButtonTapped(item: item)
         }
         return cell
     }
@@ -218,4 +260,11 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
         
         navigationController?.setViewControllers(viewControllers, animated: true)
     }
+}
+
+extension ConverterScreenViewController: ConverterResultStackViewDelegate {
+    
+    func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView) {
+        resultSwipedToLeft()
+    }    
 }

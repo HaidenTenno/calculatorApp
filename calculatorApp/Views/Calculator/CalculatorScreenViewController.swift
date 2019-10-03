@@ -14,6 +14,7 @@ class CalculatorScreenViewController: UIViewController {
     
     //UI
     private var globalStackView: UIStackView!
+    private var swipableStackView: UIStackView!
     private var resultLabel: UILabel!
     private var modeLabel: UILabel!
     private var collectionView: UICollectionView!
@@ -71,6 +72,20 @@ class CalculatorScreenViewController: UIViewController {
         globalStackView.alignment = .center
         view.addSubview(globalStackView)
         
+        //swipableStackView
+        swipableStackView = UIStackView()
+        swipableStackView.axis = .vertical
+        swipableStackView.distribution = .fill
+        swipableStackView.alignment = .center
+        //Hide/Show NavBar
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
+        let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
+        swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
+        swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
+        swipableStackView.addGestureRecognizer(swipeDownGesture)
+        swipableStackView.addGestureRecognizer(swipeUpGesture)
+        globalStackView.addArrangedSubview(swipableStackView)
+        
         //modeLabel
         modeLabel = UILabel()
         modeLabel.text = calculatorService.mode.rawValue
@@ -79,7 +94,7 @@ class CalculatorScreenViewController: UIViewController {
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
         modeLabel.isUserInteractionEnabled = true
-        globalStackView.addArrangedSubview(modeLabel)
+        swipableStackView.addArrangedSubview(modeLabel)
         
         //resultLabel
         resultLabel = UILabel()
@@ -91,18 +106,11 @@ class CalculatorScreenViewController: UIViewController {
         resultLabel.minimumScaleFactor = 0
         resultLabel.numberOfLines = 0
         resultLabel.isUserInteractionEnabled = true
+        //Remove last gesture
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
         swipeLeftGesture.direction = UISwipeGestureRecognizer.Direction.left
         resultLabel.addGestureRecognizer(swipeLeftGesture)
-        //Hide/Show NavBar
-        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
-        let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
-        swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
-        swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
-        resultLabel.addGestureRecognizer(swipeDownGesture)
-        resultLabel.addGestureRecognizer(swipeUpGesture)
-        
-        globalStackView.addArrangedSubview(resultLabel)
+        swipableStackView.addArrangedSubview(resultLabel)
         
         //collectionView
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -126,16 +134,22 @@ class CalculatorScreenViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
         }
         
-        //modeLabel
-        modeLabel.snp.makeConstraints { make in
+        //swipableStackView
+        swipableStackView.snp.makeConstraints { make in
             make.left.equalTo(globalStackView)
             make.right.equalTo(globalStackView)
         }
         
+        //modeLabel
+        modeLabel.snp.makeConstraints { make in
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
+        }
+        
         //resultLabel
         resultLabel.snp.makeConstraints { make in
-            make.left.equalTo(globalStackView)
-            make.right.equalTo(globalStackView)
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
             make.height.equalTo(100)
         }
         

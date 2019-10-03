@@ -552,7 +552,7 @@ final class CalculatorImplementation: Calculator {
             return
         }
         
-        if strValue.count == 1 || (strValue.count == 2 && currentValue < 0) {
+        if strValue.count == 1 || (strValue.count == 2 && currentValue == 0) {
             strValue = Config.strResultDefault
             return
         }

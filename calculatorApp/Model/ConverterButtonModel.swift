@@ -10,7 +10,7 @@ import Foundation
 
 final class ConverterButtonModel {
     
-    var items: [CalculatorButtonNumberItem] = []
+    var items: [CalculatorButtonItem] = []
     
     init() {
         
@@ -19,5 +19,8 @@ final class ConverterButtonModel {
             if item.value == .pi { continue }
             items.append(item)
         }
+        
+        let clearItem = CalculatorButtonOperationItem(value: .clear)
+        items.append(clearItem)
     }
 }

@@ -8,14 +8,20 @@
 
 import UIKit
 
-class ConverterResultStackView: UIStackView {
+protocol ConverterResultStackViewDelegate: class {
+    func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView)
+}
 
-    private var selectedCurrencyTextField: UITextField!
-    private var resultLabel: UILabel!
+class ConverterResultStackView: UIStackView {
+    
     private var pickerView: UIPickerView!
     
+    var selectedCurrencyTextField: UITextField!
+    var resultLabel: UILabel!
+    
+    weak var delegate: ConverterResultStackViewDelegate?
+    
     override init(frame: CGRect) {
-        
         super.init(frame: .zero)
     }
     
@@ -36,8 +42,8 @@ class ConverterResultStackView: UIStackView {
         selectedCurrencyTextField.textColor = Config.Colors.label
         selectedCurrencyTextField.borderStyle = .none
         selectedCurrencyTextField.text = "DEF"
-        addArrangedSubview(selectedCurrencyTextField)
-        
+        self.addArrangedSubview(selectedCurrencyTextField)
+                
         //resultLabel
         resultLabel = UILabel()
         resultLabel.text = "0"
@@ -46,9 +52,13 @@ class ConverterResultStackView: UIStackView {
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
-        resultLabel.numberOfLines = 1
+        resultLabel.numberOfLines = 0
         resultLabel.isUserInteractionEnabled = editable
-        addArrangedSubview(resultLabel)
+        //Remove last gesture
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
+        swipeLeftGesture.direction = UISwipeGestureRecognizer.Direction.left
+        resultLabel.addGestureRecognizer(swipeLeftGesture)
+        self.addArrangedSubview(resultLabel)
         
         //pickerView
         
@@ -56,4 +66,14 @@ class ConverterResultStackView: UIStackView {
         
     }
     
+    func makeConstraints() {
+        
+        selectedCurrencyTextField.snp.makeConstraints { make in
+            make.width.equalTo(60)
+        }
+    }
+    
+    @objc private func resultSwipedToLeft() {
+        delegate?.converterResultStackViewSwipedLeft(self)
+    }
 }
