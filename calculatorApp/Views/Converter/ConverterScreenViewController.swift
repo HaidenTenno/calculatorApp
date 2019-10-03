@@ -35,6 +35,7 @@ class ConverterScreenViewController: UIViewController {
 
         setupView()
         
+        LoadingIndicatorView.show()
         networkService.delegate = self
         networkService.getApiAnwer()
     }
@@ -277,4 +278,19 @@ extension ConverterScreenViewController: ConverterResultStackViewDelegate {
 
 extension ConverterScreenViewController: NetworkServiceDelegate {
     
+    func networkService(_ networkService: NetworkService, didReceive answer: ConverterApiAnswer) {
+        
+        LoadingIndicatorView.hide()
+        #if DEBUG
+        print("GOT ANSWER: \(answer)")
+        #endif
+    }
+    
+    func networkService(_ networkService: NetworkService, didReceive error: NetworkServiceError) {
+        
+        LoadingIndicatorView.hide()
+        #if DEBUG
+        print("NETWORK ERROR: \(error)")
+        #endif
+    }
 }

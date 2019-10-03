@@ -30,8 +30,8 @@ struct Currency: Codable {
     let charCode: String
     let nominal: Int
     let name: String
-    let value: Double
-    let previous: Double
+    let value: Decimal
+    let previous: Decimal
     
     enum CodingKeys: String, CodingKey {
         case id = "ID"
