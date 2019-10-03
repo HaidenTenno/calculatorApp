@@ -16,6 +16,7 @@ enum SideMenuTableViewModelItemType: String, CaseIterable {
 class SideMenuTableViewModelItem {
     
     var type: SideMenuTableViewModelItemType
+    var active: Bool = true
     
     init(type: SideMenuTableViewModelItemType) {
         self.type = type
@@ -26,12 +27,12 @@ final class SideMenuTableViewModel {
     
     var items: [SideMenuTableViewModelItem] = []
     
-    init() {
+    init(activeType: SideMenuTableViewModelItemType) {
         
         for item in SideMenuTableViewModelItemType.allCases {
             let item = SideMenuTableViewModelItem(type: item)
+            item.active = item.type == activeType ? false : true
             items.append(item)
-        }
+        }        
     }
-    
 }

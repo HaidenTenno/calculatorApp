@@ -167,6 +167,7 @@ class ConverterScreenViewController: UIViewController {
         
         let sideMenuTableViewController = SideMenuTableViewController()
         sideMenuTableViewController.delegate = self
+        sideMenuTableViewController.model = SideMenuTableViewModel(activeType: .converter)
         
         let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
         menu.statusBarEndAlpha = 0

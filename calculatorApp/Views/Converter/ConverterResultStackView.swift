@@ -54,14 +54,6 @@ class ConverterResultStackView: UIStackView {
         
 //        selectedCurrencyTextField.inputView = selectedCurrencyTextField
         
-        makeConstraints()
-    }
-
-    private func makeConstraints() {
-        
-        selectedCurrencyTextField.snp.makeConstraints { make in
-            make.width.equalTo(100)
-        }
     }
     
 }

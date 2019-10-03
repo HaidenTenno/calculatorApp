@@ -173,6 +173,7 @@ class CalculatorScreenViewController: UIViewController {
         
         let sideMenuTableViewController = SideMenuTableViewController()
         sideMenuTableViewController.delegate = self
+        sideMenuTableViewController.model = SideMenuTableViewModel(activeType: .calculator)
         
         let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
         menu.statusBarEndAlpha = 0

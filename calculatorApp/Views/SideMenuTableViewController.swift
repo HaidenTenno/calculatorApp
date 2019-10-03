@@ -14,7 +14,11 @@ protocol SideMenuTableViewControllerDelegate: class {
 
 class SideMenuTableViewController: UITableViewController {
 
-    private let model = SideMenuTableViewModel()
+    var model: SideMenuTableViewModel? {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     weak var delegate: SideMenuTableViewControllerDelegate?
     
@@ -27,28 +31,37 @@ class SideMenuTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+        guard let model = model else { return 0 }
         return model.items.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let model = model else { return UITableViewCell() }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: Config.sideMenuTableViewID, for: indexPath)
 
+        cell.textLabel?.font = UIFont(name: Config.fontName, size: 25)
+        cell.textLabel?.textColor = Config.Colors.label
         cell.textLabel?.text = model.items[indexPath.row].type.rawValue
 
+        cell.isUserInteractionEnabled = model.items[indexPath.row].active
+        cell.textLabel?.isEnabled = model.items[indexPath.row].active
+        cell.detailTextLabel?.isEnabled = model.items[indexPath.row].active
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+                
         dismiss(animated: true) { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.delegate?.sideMenuTableViewController(strongSelf, didSelect: strongSelf.model.items[indexPath.row].type)
+            guard let strongModel = strongSelf.model else { return }
+            
+            strongSelf.delegate?.sideMenuTableViewController(strongSelf, didSelect: strongModel.items[indexPath.row].type)
         }
     }
 
