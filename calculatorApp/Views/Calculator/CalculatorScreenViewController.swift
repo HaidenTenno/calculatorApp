@@ -23,7 +23,7 @@ class CalculatorScreenViewController: UIViewController {
     private let model = CalculatorModel()
     
     //Services
-    private var calculatorService: Calculator = CalculatorImplementation.shared
+    private var calculatorService: Calculator = CalculatorImplementation()
     
     override func viewDidLoad() {
         super.viewDidLoad()

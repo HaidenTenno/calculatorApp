@@ -22,20 +22,18 @@ protocol Converter {
 }
 
 final class ConverterImplementation: Converter {
-    
-    static let shared = ConverterImplementation()
-    
+        
     private var readyToInsertNewNumber: Bool = true
         
     var firstCurrency: Currency? {
         didSet {
-            print("First currency didSet \(firstCurrency!.charCode)")
+            calculateSecondNumericResult()
         }
     }
     
     var secondCurrency: Currency? {
         didSet {
-            print("Second currency didSet \(secondCurrency!.charCode)")
+            calculateSecondNumericResult()
         }
     }
     
@@ -45,12 +43,21 @@ final class ConverterImplementation: Converter {
             firstNumericResult = newResult
         }
     }
+    
+    var firstNumericResult: Decimal = Decimal(string: Config.strResultDefault)! {
+        didSet {
+            calculateSecondNumericResult()
+        }
+    }
+    
+    var secondNumericResult: Decimal = Decimal(string: Config.strResultDefault)! {
+        didSet {
+            secondStrResult = String(describing: secondNumericResult)
+        }
+    }
+    
     var secondStrResult: String = Config.strResultDefault
-    var firstNumericResult: Decimal = Decimal(string: Config.strResultDefault)!
-    var secondNumericResult: Decimal = Decimal(string: Config.strResultDefault)!
-    
-    private init() {}
-    
+        
     func handleAction(of item: CalculatorButtonItem) {
         
         switch item.type {
@@ -121,5 +128,18 @@ final class ConverterImplementation: Converter {
         }
         
         firstStrResult = String(firstStrResult.dropLast())
+    }
+    
+    func calculateSecondNumericResult() {
+        
+        guard let firstCurrency = firstCurrency else { return }
+        guard let secondCurrency = secondCurrency else { return }
+        
+        let firstValueInRubles = firstNumericResult * firstCurrency.value
+        let secondValue = firstValueInRubles / secondCurrency.value
+        
+        secondNumericResult = secondValue.rounded(Config.MaximumDigits.defaultFractionConv, .up)
+        
+        return
     }
 }

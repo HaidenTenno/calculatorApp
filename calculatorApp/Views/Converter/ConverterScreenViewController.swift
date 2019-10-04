@@ -27,7 +27,7 @@ class ConverterScreenViewController: UIViewController {
     private var apiAnswer: ConverterApiAnswer?
 
     //Services
-    var converterService: Converter = ConverterImplementation.shared
+    var converterService: Converter = ConverterImplementation()
     private var networkService: NetworkService = NetworkServiceImplementation.shared
     
     override func viewDidLoad() {
