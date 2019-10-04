@@ -128,9 +128,9 @@ class ConverterResultStackView: UIStackView {
         //selectedCurrencyTextField
         let valueForTextField: String?
         if editable {
-            valueForTextField = converterVC?.model.firstSelectedCurrency?.charCode
+            valueForTextField = converterVC?.model.firstSelectedCurrency?.charCode ?? "ER1"
         } else {
-            valueForTextField = converterVC?.model.secondSelectedCurrency?.charCode
+            valueForTextField = converterVC?.model.secondSelectedCurrency?.charCode ?? "ER2"
         }
         
         selectedCurrencyTextField.text = valueForTextField

@@ -285,9 +285,7 @@ extension ConverterScreenViewController: NetworkServiceDelegate {
         
         converterService.firstCurrency = model.firstSelectedCurrency
         converterService.secondCurrency = model.secondSelectedCurrency
-        
-        setupView()
-        
+                
         fillData()
     }
     
