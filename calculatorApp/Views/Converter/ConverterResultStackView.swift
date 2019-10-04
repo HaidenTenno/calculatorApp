@@ -10,6 +10,8 @@ import UIKit
 
 protocol ConverterResultStackViewDelegate: class {
     func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView)
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: Currency)
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: Currency)
 }
 
 class ConverterResultStackView: UIStackView {
@@ -103,18 +105,20 @@ class ConverterResultStackView: UIStackView {
     
     @objc private func donePressed() {
         
-//        guard let viewModel = viewModel else {
-//            cancelPressed()
-//            return
-//        }
-//
-//        guard let pickerView = pickerView else {
-//            cancelPressed()
-//            return
-//        }
+        guard let model = converterVC?.model else {
+            cancelPressed()
+            return
+        }
         
-//        textField.text = viewModel.options[pickerView.selectedRow(inComponent: 0)]
-//        viewModel.value = textField.text
+        let selectedCurrency = Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
+        
+        if editable {
+            model.firstSelectedCurrency = selectedCurrency
+            delegate?.converterResultStackView(self, didSelectNewFirstCurrency: selectedCurrency)
+        } else {
+            model.secondSelectedCurrency = selectedCurrency
+            delegate?.converterResultStackView(self, didSelectNewSecondCurrency: selectedCurrency)
+        }
         
         selectedCurrencyTextField.resignFirstResponder()
     }
@@ -172,6 +176,6 @@ extension ConverterResultStackView: UIPickerViewDelegate, UIPickerViewDataSource
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         guard let model = converterVC?.model.valute else { return nil }
         let element = Array(model)[row].value
-        return element.charCode + "-" + element.name
+        return element.charCode + " - " + element.name
     }
 }

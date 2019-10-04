@@ -39,18 +39,6 @@ class ConverterScreenViewController: UIViewController {
         networkService.delegate = self
         networkService.getApiAnwer()
     }
-
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        navigationController?.setNavigationBarHidden(true, animated: animated)
-//    }
-//
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//
-//        navigationController?.setNavigationBarHidden(false, animated: animated)
-//    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -125,6 +113,7 @@ class ConverterScreenViewController: UIViewController {
         //notEditableStackView
         notEditableStackView = ConverterResultStackView()
         swipableStackView.addArrangedSubview(notEditableStackView)
+        notEditableStackView.delegate = self
         notEditableStackView.converterVC = self
         notEditableStackView.configure(editable: false)
         
@@ -204,7 +193,17 @@ class ConverterScreenViewController: UIViewController {
     }
     
     @objc private func swapButtonTapped() {
-        converterService.swapCurrency()
+        let rememberedCurrency = model.firstSelectedCurrency
+        let rememberedValue = converterService.firstStrResult
+        
+        model.firstSelectedCurrency = model.secondSelectedCurrency
+        model.secondSelectedCurrency = rememberedCurrency
+        
+        converterService.firstCurrency = model.firstSelectedCurrency
+        converterService.secondCurrency = model.secondSelectedCurrency
+        
+        converterService.firstStrResult = rememberedValue
+        
         fillData()
     }
     
@@ -270,6 +269,16 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
 }
 
 extension ConverterScreenViewController: ConverterResultStackViewDelegate {
+    
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: Currency) {
+        converterService.firstCurrency = model.firstSelectedCurrency
+        fillData()
+    }
+    
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: Currency) {
+        converterService.secondCurrency = model.secondSelectedCurrency
+        fillData()
+    }
     
     func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView) {
         resultSwipedToLeft()

@@ -12,13 +12,12 @@ protocol Converter {
     
     var firstCurrency: Currency? { get set }
     var secondCurrency: Currency? { get set }
-    var firstStrResult: String { get }
+    var firstStrResult: String { get set }
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
     var secondNumericResult: Decimal { get }
     
     func handleAction(of item: CalculatorButtonItem)
-    func swapCurrency()
     func removeLast()
 }
 
@@ -30,13 +29,13 @@ final class ConverterImplementation: Converter {
         
     var firstCurrency: Currency? {
         didSet {
-            
+            print("First currency didSet \(firstCurrency!.charCode)")
         }
     }
     
     var secondCurrency: Currency? {
         didSet {
-        
+            print("Second currency didSet \(secondCurrency!.charCode)")
         }
     }
     
@@ -106,10 +105,6 @@ final class ConverterImplementation: Converter {
         default:
             return
         }
-    }
-    
-    func swapCurrency() {
-        print("Not implemented")
     }
     
     private func clear() {
