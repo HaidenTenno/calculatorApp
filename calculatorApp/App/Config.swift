@@ -11,8 +11,10 @@ import UIKit
 enum Config {
     
     static let collectionViewID = "collectionViewID"
+    static let sideMenuTableViewID = "tableViewID"
     static let fontName = "ALS SPb"
     static let strResultDefault = "0"
+    static let apiURL = "https://www.cbr-xml-daily.ru/daily_json.js"
     
     enum CalculatorButtonSize {
         static let width = 70
@@ -24,6 +26,9 @@ enum Config {
         static let defaultFraction = 10
         static let showingInteger = 100
         static let showingFraction = 20
+        
+        static let defaultIntegerConv = 10
+        static let defaultFractionConv = 6
     }
     
     enum Colors {

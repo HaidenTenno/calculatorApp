@@ -31,9 +31,7 @@ protocol Calculator {
 }
 
 final class CalculatorImplementation: Calculator {
-    
-    static let shared = CalculatorImplementation()
-    
+        
     private var currentOperation: CalculatorButtonOperationItem? = nil
     private var rememberedValue: Decimal? = nil
     private var afterExecute: Bool = false
@@ -79,9 +77,7 @@ final class CalculatorImplementation: Calculator {
     var mode: CalculatorButtonModeValue = .deg
     
     weak var delegate: CalculatorDelegate?
-    
-    private init() {}
-    
+        
     //Обработка нажатия кнопки
     func handleAction(of item: CalculatorButtonItem) {
         
@@ -552,7 +548,7 @@ final class CalculatorImplementation: Calculator {
             return
         }
         
-        if strValue.count == 1 || (strValue.count == 2 && currentValue < 0) {
+        if strValue.count == 1 || (strValue.count == 2 && currentValue == 0) {
             strValue = Config.strResultDefault
             return
         }

@@ -1,5 +1,5 @@
 //
-//  MainScreenViewController.swift
+//  CalculatorScreenViewController.swift
 //  calculatorApp
 //
 //  Created by Петр Тартынских  on 29/09/2019.
@@ -8,38 +8,28 @@
 
 import UIKit
 import SnapKit
+import SideMenu
 
-class MainScreenViewController: UIViewController {
+class CalculatorScreenViewController: UIViewController {
     
     //UI
     private var globalStackView: UIStackView!
+    private var swipableStackView: UIStackView!
     private var resultLabel: UILabel!
     private var modeLabel: UILabel!
     private var collectionView: UICollectionView!
     
     //Model
-    private let model = CalculatorButtonModel()
+    private let model = CalculatorModel()
     
     //Services
-    private var calculatorService: Calculator = CalculatorImplementation.shared
+    private var calculatorService: Calculator = CalculatorImplementation()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupView()
         calculatorService.delegate = model
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewWillLayoutSubviews() {
@@ -53,12 +43,36 @@ class MainScreenViewController: UIViewController {
         //view
         view.backgroundColor = Config.Colors.backgroud
         
+        //navigationController
+        navigationItem.rightBarButtonItems = []
+        let image = UIImage(systemName: "line.horizontal.3")?
+            .withTintColor(Config.Colors.buttonText)
+            .withRenderingMode(.alwaysOriginal)
+        let showMenuButton = UIButton(type: .system)
+        showMenuButton.setImage(image, for: .normal)
+        showMenuButton.addTarget(self, action: #selector(showMenuButtonTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: showMenuButton))
+        
         //globalStackView
         globalStackView = UIStackView()
         globalStackView.axis = .vertical
         globalStackView.distribution = .fill
         globalStackView.alignment = .center
         view.addSubview(globalStackView)
+        
+        //swipableStackView
+        swipableStackView = UIStackView()
+        swipableStackView.axis = .vertical
+        swipableStackView.distribution = .fill
+        swipableStackView.alignment = .center
+        //Hide/Show NavBar
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeDown))
+        let swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp))
+        swipeDownGesture.direction = UISwipeGestureRecognizer.Direction.down
+        swipeUpGesture.direction = UISwipeGestureRecognizer.Direction.up
+        swipableStackView.addGestureRecognizer(swipeDownGesture)
+        swipableStackView.addGestureRecognizer(swipeUpGesture)
+        globalStackView.addArrangedSubview(swipableStackView)
         
         //modeLabel
         modeLabel = UILabel()
@@ -67,8 +81,8 @@ class MainScreenViewController: UIViewController {
         modeLabel.textColor = Config.Colors.label
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
-        modeLabel.isUserInteractionEnabled = false
-        globalStackView.addArrangedSubview(modeLabel)
+        modeLabel.isUserInteractionEnabled = true
+        swipableStackView.addArrangedSubview(modeLabel)
         
         //resultLabel
         resultLabel = UILabel()
@@ -80,10 +94,11 @@ class MainScreenViewController: UIViewController {
         resultLabel.minimumScaleFactor = 0
         resultLabel.numberOfLines = 0
         resultLabel.isUserInteractionEnabled = true
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
-        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-        resultLabel.addGestureRecognizer(swipeLeft)
-        globalStackView.addArrangedSubview(resultLabel)
+        //Remove last gesture
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
+        swipeLeftGesture.direction = UISwipeGestureRecognizer.Direction.left
+        resultLabel.addGestureRecognizer(swipeLeftGesture)
+        swipableStackView.addArrangedSubview(resultLabel)
         
         //collectionView
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -107,16 +122,22 @@ class MainScreenViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
         }
         
-        //modeLabel
-        modeLabel.snp.makeConstraints { make in
+        //swipableStackView
+        swipableStackView.snp.makeConstraints { make in
             make.left.equalTo(globalStackView)
             make.right.equalTo(globalStackView)
         }
         
+        //modeLabel
+        modeLabel.snp.makeConstraints { make in
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
+        }
+        
         //resultLabel
         resultLabel.snp.makeConstraints { make in
-            make.left.equalTo(globalStackView)
-            make.right.equalTo(globalStackView)
+            make.left.equalTo(swipableStackView)
+            make.right.equalTo(swipableStackView)
             make.height.equalTo(100)
         }
         
@@ -141,9 +162,30 @@ class MainScreenViewController: UIViewController {
         calculatorService.removeLast()
         resultLabel.text = calculatorService.strValue
     }
+    
+    @objc private func swipeDown() {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
+    @objc private func swipeUp() {
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    @objc private func showMenuButtonTapped() {
+        
+        let sideMenuTableViewController = SideMenuTableViewController()
+        sideMenuTableViewController.delegate = self
+        sideMenuTableViewController.model = SideMenuTableViewModel(activeType: .calculator)
+        
+        let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
+        menu.statusBarEndAlpha = 0
+        menu.presentationStyle = .viewSlideOut
+        
+        present(menu, animated: true, completion: nil)
+    }
 }
 
-extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: Config.CalculatorButtonSize.width, height: Config.CalculatorButtonSize.hight)
@@ -164,5 +206,23 @@ extension MainScreenViewController: UICollectionViewDelegate, UICollectionViewDa
             strongSelf.calculatorButtonTapped(item: item)
         }
         return cell
+    }
+}
+
+extension CalculatorScreenViewController: SideMenuTableViewControllerDelegate {
+    
+    func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {
+        
+        guard var viewControllers = navigationController?.viewControllers else { return }
+        _ = viewControllers.popLast()
+                
+        switch mode {
+        case .calculator:
+            viewControllers.append(CalculatorScreenViewController())
+        case .converter:
+            viewControllers.append(ConverterScreenViewController())
+        }
+        
+        navigationController?.setViewControllers(viewControllers, animated: true)
     }
 }
