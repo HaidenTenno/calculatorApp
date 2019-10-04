@@ -22,17 +22,17 @@ class ConverterScreenViewController: UIViewController {
     private var collectionView: UICollectionView!
     
     //Model
-    private let model = ConverterButtonModel()
+    let model = ConverterModel()
 
     private var apiAnswer: ConverterApiAnswer?
 
     //Services
-    private var converterService: Converter = ConverterImplementation.shared
+    var converterService: Converter = ConverterImplementation.shared
     private var networkService: NetworkService = NetworkServiceImplementation.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupView()
         
         LoadingIndicatorView.show()
@@ -98,6 +98,7 @@ class ConverterScreenViewController: UIViewController {
         editableStackView = ConverterResultStackView()
         swipableStackView.addArrangedSubview(editableStackView)
         editableStackView.delegate = self
+        editableStackView.converterVC = self
         editableStackView.configure(editable: true)
         
         //swapButtonStackView
@@ -124,6 +125,7 @@ class ConverterScreenViewController: UIViewController {
         //notEditableStackView
         notEditableStackView = ConverterResultStackView()
         swipableStackView.addArrangedSubview(notEditableStackView)
+        notEditableStackView.converterVC = self
         notEditableStackView.configure(editable: false)
         
         //collectionView
@@ -189,10 +191,8 @@ class ConverterScreenViewController: UIViewController {
     }
     
     private func fillData() {
-        editableStackView.resultLabel.text = converterService.firstStrResult
-        editableStackView.selectedCurrencyTextField.text = "DEF" // TODO: Исправить
-        notEditableStackView.resultLabel.text = converterService.secondStrResult
-        notEditableStackView.resultLabel.text = "DEF" // TODO: Исправить
+        editableStackView.reloadData()
+        notEditableStackView.reloadData()
     }
     
     @objc private func swipeDown() {
@@ -281,9 +281,14 @@ extension ConverterScreenViewController: NetworkServiceDelegate {
     func networkService(_ networkService: NetworkService, didReceive answer: ConverterApiAnswer) {
         
         LoadingIndicatorView.hide()
-        #if DEBUG
-        print("GOT ANSWER: \(answer)")
-        #endif
+        model.setValute(answer.valute)
+        
+        converterService.firstCurrency = model.firstSelectedCurrency
+        converterService.secondCurrency = model.secondSelectedCurrency
+        
+        setupView()
+        
+        fillData()
     }
     
     func networkService(_ networkService: NetworkService, didReceive error: NetworkServiceError) {

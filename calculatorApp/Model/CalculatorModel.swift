@@ -86,7 +86,7 @@ enum CalculatorButtonModeValue: String, CaseIterable {
     case rad = "Rad"
 }
 
-final class CalculatorButtonModel {
+final class CalculatorModel {
     
     var items: [CalculatorButtonItem] = []
     
@@ -126,7 +126,7 @@ final class CalculatorButtonModel {
     }
 }
 
-extension CalculatorButtonModel: CalculatorDelegate {
+extension CalculatorModel: CalculatorDelegate {
     
     func calculatorSelectedNewOperation(_ calculator: Calculator) {
         deselectAllOperations()

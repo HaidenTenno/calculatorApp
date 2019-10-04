@@ -20,7 +20,7 @@ class CalculatorScreenViewController: UIViewController {
     private var collectionView: UICollectionView!
     
     //Model
-    private let model = CalculatorButtonModel()
+    private let model = CalculatorModel()
     
     //Services
     private var calculatorService: Calculator = CalculatorImplementation.shared

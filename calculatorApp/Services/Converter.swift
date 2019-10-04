@@ -10,6 +10,8 @@ import Foundation
 
 protocol Converter {
     
+    var firstCurrency: Currency? { get set }
+    var secondCurrency: Currency? { get set }
     var firstStrResult: String { get }
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
@@ -25,6 +27,18 @@ final class ConverterImplementation: Converter {
     static let shared = ConverterImplementation()
     
     private var readyToInsertNewNumber: Bool = true
+        
+    var firstCurrency: Currency? {
+        didSet {
+            
+        }
+    }
+    
+    var secondCurrency: Currency? {
+        didSet {
+        
+        }
+    }
     
     var firstStrResult: String = Config.strResultDefault {
         didSet {
