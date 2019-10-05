@@ -43,6 +43,12 @@
 		350E5C992342929500264112 /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
 		352892072344126500B0F31D /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		35289209234413AA00B0F31D /* Converter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converter.swift; sourceTree = "<group>"; };
+		353C2AC323494BF2001FE82C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		353C2AC5234951A3001FE82C /* Screenshot1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot1.png; sourceTree = "<group>"; };
+		353C2AC6234951A3001FE82C /* Screenshot2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot2.png; sourceTree = "<group>"; };
+		353C2AC7234951A4001FE82C /* Screenshot5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot5.png; sourceTree = "<group>"; };
+		353C2AC8234951A4001FE82C /* Screenshot3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot3.png; sourceTree = "<group>"; };
+		353C2AC9234951A4001FE82C /* Screenshot4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot4.png; sourceTree = "<group>"; };
 		354DFB2E234102D60087DE65 /* MDC calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MDC calculator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		354DFB31234102D60087DE65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		354DFB33234102D60087DE65 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,9 +105,23 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		353C2AC4234950F1001FE82C /* etc */ = {
+			isa = PBXGroup;
+			children = (
+				353C2AC5234951A3001FE82C /* Screenshot1.png */,
+				353C2AC6234951A3001FE82C /* Screenshot2.png */,
+				353C2AC8234951A4001FE82C /* Screenshot3.png */,
+				353C2AC9234951A4001FE82C /* Screenshot4.png */,
+				353C2AC7234951A4001FE82C /* Screenshot5.png */,
+			);
+			path = etc;
+			sourceTree = "<group>";
+		};
 		354DFB25234102D60087DE65 = {
 			isa = PBXGroup;
 			children = (
+				353C2AC4234950F1001FE82C /* etc */,
+				353C2AC323494BF2001FE82C /* README.md */,
 				354DFB49234103480087DE65 /* .gitignore */,
 				354DFB30234102D60087DE65 /* calculatorApp */,
 				354DFB2F234102D60087DE65 /* Products */,
