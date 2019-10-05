@@ -135,8 +135,8 @@ final class ConverterImplementation: Converter {
         guard let firstCurrency = firstCurrency else { return }
         guard let secondCurrency = secondCurrency else { return }
         
-        let firstValueInRubles = firstNumericResult * firstCurrency.value
-        let secondValue = firstValueInRubles / secondCurrency.value
+        let firstValueInRubles: Decimal = (firstNumericResult * firstCurrency.value) / Decimal(firstCurrency.nominal)
+        let secondValue: Decimal = (firstValueInRubles / secondCurrency.value) * Decimal(secondCurrency.nominal)
         
         secondNumericResult = secondValue.rounded(Config.MaximumDigits.defaultFractionConv, .up)
         
