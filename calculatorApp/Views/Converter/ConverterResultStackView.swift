@@ -18,7 +18,7 @@ class ConverterResultStackView: UIStackView {
     
     private var resultLabel: UILabel!
     private var pickerView: UIPickerView!
-    private var selectedCurrencyTextField: UITextField!
+    private var selectedCurrencyTextField: NoMenuTextField!
     
     private var editable: Bool!
     
@@ -43,7 +43,7 @@ class ConverterResultStackView: UIStackView {
         self.alignment = .center
         
         //selectedCurrencyTextField
-        selectedCurrencyTextField = UITextField()
+        selectedCurrencyTextField = NoMenuTextField()
         selectedCurrencyTextField.font = UIFont(name: Config.fontName, size: 20)
         selectedCurrencyTextField.textColor = Config.Colors.label
         selectedCurrencyTextField.borderStyle = .none
