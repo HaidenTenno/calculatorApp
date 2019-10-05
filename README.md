@@ -15,4 +15,8 @@ Features:
     * Swipe up at the top area to hide NavBar
 
 ## Screenshots:
-<img src="/etc/Screenshot1.png" width="50%" height="50%">
+<img src="/etc/Screenshot1.png" width="40%" height="40%">
+<img src="/etc/Screenshot2.png" width="40%" height="40%">
+<img src="/etc/Screenshot3.png" width="40%" height="40%">
+<img src="/etc/Screenshot4.png" width="40%" height="40%">
+<img src="/etc/Screenshot5.png" width="40%" height="40%">
