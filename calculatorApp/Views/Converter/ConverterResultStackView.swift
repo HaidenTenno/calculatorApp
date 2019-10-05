@@ -48,6 +48,7 @@ class ConverterResultStackView: UIStackView {
         selectedCurrencyTextField.textColor = Config.Colors.label
         selectedCurrencyTextField.borderStyle = .none
         selectedCurrencyTextField.tintColor = .clear
+        selectedCurrencyTextField.delegate = self
         self.addArrangedSubview(selectedCurrencyTextField)
 
         //resultLabel
@@ -147,6 +148,11 @@ class ConverterResultStackView: UIStackView {
         }
         
         //pickerView
+        selectProperRow()
+    }
+    
+    private func selectProperRow() {
+        
         guard let converterVC = converterVC else { return }
         
         var rowToSelect: Int
@@ -177,5 +183,19 @@ extension ConverterResultStackView: UIPickerViewDelegate, UIPickerViewDataSource
         guard let model = converterVC?.model.valute else { return nil }
         let element = Array(model)[row].value
         return element.charCode + " - " + element.name
+    }
+}
+
+extension ConverterResultStackView: UITextFieldDelegate {
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        guard let model = converterVC?.model else { return }
+        
+        let selectedCurrency = Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
+        
+        if textField.text != selectedCurrency.charCode {
+            selectProperRow()
+        }
     }
 }
