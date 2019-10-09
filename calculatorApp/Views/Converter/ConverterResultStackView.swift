@@ -10,8 +10,8 @@ import UIKit
 
 protocol ConverterResultStackViewDelegate: class {
     func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView)
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: Currency)
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: Currency)
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency)
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency)
 }
 
 class ConverterResultStackView: UIStackView {
@@ -50,7 +50,7 @@ class ConverterResultStackView: UIStackView {
         selectedCurrencyTextField.tintColor = .clear
         selectedCurrencyTextField.delegate = self
         self.addArrangedSubview(selectedCurrencyTextField)
-
+        
         //resultLabel
         resultLabel = UILabel()
         resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 50)
@@ -95,7 +95,7 @@ class ConverterResultStackView: UIStackView {
         let cancelButton = UIBarButtonItem(title: "Отмена", style: .plain, target: self, action: #selector(cancelPressed))
         let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(donePressed))
-
+        
         let items = [cancelButton, spaceButton, doneButton]
         toolbar.items = items
         toolbar.sizeToFit()
@@ -111,7 +111,7 @@ class ConverterResultStackView: UIStackView {
             return
         }
         
-        let selectedCurrency = Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
+        let selectedCurrency = model.valute[pickerView.selectedRow(inComponent: 0)]//Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
         
         if editable {
             model.firstSelectedCurrency = selectedCurrency
@@ -139,7 +139,7 @@ class ConverterResultStackView: UIStackView {
         }
         
         selectedCurrencyTextField.text = valueForTextField
-                
+        
         //resultLabel
         if editable {
             resultLabel.text = converterVC?.converterService.firstStrResult ?? "none"
@@ -155,15 +155,16 @@ class ConverterResultStackView: UIStackView {
         
         guard let converterVC = converterVC else { return }
         
-        var rowToSelect: Int
+        let selectedCurrency: XMLCurrency
+        
         if editable {
-            guard let selectedStrCode = converterVC.model.firstSelectedCurrency?.charCode else { return }
-            rowToSelect = Array(converterVC.model.valute.keys).firstIndex(of: selectedStrCode) ?? 0
+            guard converterVC.model.firstSelectedCurrency != nil else { return }
+            selectedCurrency = converterVC.model.firstSelectedCurrency!
         } else {
-            guard let selectedStrCode = converterVC.model.secondSelectedCurrency?.charCode else { return }
-            rowToSelect = Array(converterVC.model.valute.keys).firstIndex(of: selectedStrCode) ?? 0
+            guard converterVC.model.secondSelectedCurrency != nil else { return }
+            selectedCurrency = converterVC.model.secondSelectedCurrency!
         }
-                
+        guard let rowToSelect = converterVC.model.valute.firstIndex(where: { $0.charCode == selectedCurrency.charCode }) else { return }
         pickerView.selectRow(rowToSelect, inComponent: 0, animated: false)
     }
 }
@@ -178,10 +179,10 @@ extension ConverterResultStackView: UIPickerViewDelegate, UIPickerViewDataSource
         guard let model = converterVC?.model.valute else { return 0 }
         return model.count
     }
-        
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         guard let model = converterVC?.model.valute else { return nil }
-        let element = Array(model)[row].value
+        let element = model[row]
         return element.charCode + " - " + element.name
     }
 }
@@ -192,9 +193,9 @@ extension ConverterResultStackView: UITextFieldDelegate {
         
         guard let model = converterVC?.model else { return }
         
-        let selectedCurrency = Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
+        let selectedCurrencyByPicker = model.valute[pickerView.selectedRow(inComponent: 0)]
         
-        if textField.text != selectedCurrency.charCode {
+        if textField.text != selectedCurrencyByPicker.charCode {
             selectProperRow()
         }
     }

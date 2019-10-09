@@ -9,9 +9,8 @@
 import Foundation
 
 protocol Converter {
-    
-    var firstCurrency: Currency? { get set }
-    var secondCurrency: Currency? { get set }
+    var firstCurrency: XMLCurrency? { get set }
+    var secondCurrency: XMLCurrency? { get set }
     var firstStrResult: String { get set }
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
@@ -22,16 +21,16 @@ protocol Converter {
 }
 
 final class ConverterImplementation: Converter {
-        
+    
     private var readyToInsertNewNumber: Bool = true
-        
-    var firstCurrency: Currency? {
+    
+    var firstCurrency: XMLCurrency? {
         didSet {
             calculateSecondNumericResult()
         }
     }
     
-    var secondCurrency: Currency? {
+    var secondCurrency: XMLCurrency? {
         didSet {
             calculateSecondNumericResult()
         }
@@ -57,7 +56,7 @@ final class ConverterImplementation: Converter {
     }
     
     var secondStrResult: String = Config.StringConsts.strResultDefault
-        
+    
     func handleAction(of item: CalculatorButtonItem) {
         
         switch item.type {
@@ -66,7 +65,7 @@ final class ConverterImplementation: Converter {
             
             switch numberItem.value {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
-
+                
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
                     firstStrResult = Config.StringConsts.strResultDefault
                     readyToInsertNewNumber = false
@@ -75,7 +74,7 @@ final class ConverterImplementation: Converter {
                 if !firstStrResult.contains(CalculatorButtonNumericValue.dot.rawValue) {
                     if firstNumericResult == 0.0 {
                         firstStrResult = numberItem.value.rawValue
-
+                        
                     } else {
                         if firstStrResult.count < Config.NumberPresentation.MaximumDigits.defaultIntegerConv {
                             firstStrResult.append(numberItem.value.rawValue)
@@ -99,7 +98,7 @@ final class ConverterImplementation: Converter {
                     readyToInsertNewNumber = false
                     firstStrResult.append(numberItem.value.rawValue)
                 }
-
+                
             default:
                 return
             }
@@ -123,7 +122,7 @@ final class ConverterImplementation: Converter {
     func removeLast() {
         
         if firstStrResult.count == 1 || (firstStrResult.count == 2 && firstNumericResult == 0) {
-            firstStrResult = Config.StringConsts.strResultDefault
+            clear()
             return
         }
         
@@ -138,7 +137,7 @@ final class ConverterImplementation: Converter {
         let firstValueInRubles: Decimal = (firstNumericResult * firstCurrency.value) / Decimal(firstCurrency.nominal)
         let secondValue: Decimal = (firstValueInRubles / secondCurrency.value) * Decimal(secondCurrency.nominal)
         
-        secondNumericResult = secondValue.rounded(Config.NumberPresentation.MaximumDigits.defaultFractionConv, .up)
+        secondNumericResult = secondValue.rounded(Config.NumberPresentation.MaximumDigits.defaultFractionConv, .plain)
         
         return
     }

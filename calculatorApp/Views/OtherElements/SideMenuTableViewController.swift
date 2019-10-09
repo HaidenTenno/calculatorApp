@@ -13,7 +13,7 @@ protocol SideMenuTableViewControllerDelegate: class {
 }
 
 class SideMenuTableViewController: UITableViewController {
-
+    
     var model: SideMenuTableViewModel? {
         didSet {
             tableView.reloadData()
@@ -24,30 +24,30 @@ class SideMenuTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Config.StringConsts.sideMenuTableViewID)
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let model = model else { return 0 }
         return model.items.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let model = model else { return UITableViewCell() }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: Config.StringConsts.sideMenuTableViewID, for: indexPath)
-
+        
         cell.textLabel?.font = UIFont(name: Config.StringConsts.fontName, size: 25)
         cell.textLabel?.textColor = Config.Design.Colors.label
         cell.textLabel?.text = model.items[indexPath.row].type.rawValue
-
+        
         cell.isUserInteractionEnabled = model.items[indexPath.row].active
         cell.textLabel?.isEnabled = model.items[indexPath.row].active
         cell.detailTextLabel?.isEnabled = model.items[indexPath.row].active
@@ -56,7 +56,7 @@ class SideMenuTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-                
+        
         dismiss(animated: true) { [weak self] in
             guard let strongSelf = self else { return }
             guard let strongModel = strongSelf.model else { return }
@@ -64,5 +64,5 @@ class SideMenuTableViewController: UITableViewController {
             strongSelf.delegate?.sideMenuTableViewController(strongSelf, didSelect: strongModel.items[indexPath.row].type)
         }
     }
-
+    
 }

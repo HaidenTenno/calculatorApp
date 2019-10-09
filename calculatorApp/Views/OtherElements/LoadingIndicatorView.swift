@@ -22,8 +22,8 @@ class LoadingIndicatorView {
                 .compactMap({$0})
                 .first?.windows
                 .filter({$0.isKeyWindow}).first else {
-            print("No main window.")
-            return
+                    print("No main window.")
+                    return
         }
         show(currentMainWindow)
     }
@@ -36,8 +36,8 @@ class LoadingIndicatorView {
                 .compactMap({$0})
                 .first?.windows
                 .filter({$0.isKeyWindow}).first else {
-            print("No main window.")
-            return
+                    print("No main window.")
+                    return
         }
         show(currentMainWindow, loadingText: loadingText)
     }

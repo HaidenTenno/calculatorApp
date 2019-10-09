@@ -21,7 +21,7 @@ enum Config {
             static let horisontalLines = "line.horizontal.3"
             static let arrowUpDown = "arrow.up.arrow.down"
         }
-
+        
     }
     
     enum Networking {

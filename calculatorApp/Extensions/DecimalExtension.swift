@@ -13,7 +13,7 @@ extension Decimal {
         var localCopy = self
         NSDecimalRound(&self, &localCopy, scale, roundingMode)
     }
-
+    
     func rounded(_ scale: Int, _ roundingMode: NSDecimalNumber.RoundingMode) -> Decimal {
         var result = Decimal()
         var localCopy = self

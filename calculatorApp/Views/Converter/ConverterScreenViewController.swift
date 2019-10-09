@@ -10,7 +10,7 @@ import UIKit
 import SideMenu
 
 class ConverterScreenViewController: UIViewController {
-
+    
     //UI
     private var globalStackView: UIStackView!
     private var swipableStackView: UIStackView!
@@ -23,9 +23,7 @@ class ConverterScreenViewController: UIViewController {
     
     //Model
     let model = ConverterModel()
-
-    private var apiAnswer: ConverterApiAnswer?
-
+    
     //Services
     private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
     var converterService: Converter = ConverterImplementation()
@@ -37,7 +35,8 @@ class ConverterScreenViewController: UIViewController {
         
         LoadingIndicatorView.show()
         dataFetcher.delegate = self
-        dataFetcher.fetchCurrencyInfo()
+        
+        dataFetcher.fetchCurrencyInfoXML()
     }
     
     override func viewWillLayoutSubviews() {
@@ -256,7 +255,7 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
         
         guard var viewControllers = navigationController?.viewControllers else { return }
         _ = viewControllers.popLast()
-                
+        
         switch mode {
         case .calculator:
             viewControllers.append(CalculatorScreenViewController())
@@ -270,12 +269,12 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
 
 extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: Currency) {
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency) {
         converterService.firstCurrency = model.firstSelectedCurrency
         fillData()
     }
     
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: Currency) {
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency) {
         converterService.secondCurrency = model.secondSelectedCurrency
         fillData()
     }
@@ -287,14 +286,14 @@ extension ConverterScreenViewController: ConverterResultStackViewDelegate {
 
 extension ConverterScreenViewController: NetworkDataFetcherDelegate {
     
-    func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, didFetch data: ConverterApiAnswer) {
+    func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, didFetch parsedXML: [XMLCurrency]) {
         
         LoadingIndicatorView.hide()
-        model.setValute(data.valute)
+        model.setValute(parsedXML)
         
         converterService.firstCurrency = model.firstSelectedCurrency
         converterService.secondCurrency = model.secondSelectedCurrency
-                
+        
         fillData()
     }
     

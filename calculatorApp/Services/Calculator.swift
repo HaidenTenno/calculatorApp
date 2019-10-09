@@ -31,7 +31,7 @@ protocol Calculator {
 }
 
 final class CalculatorImplementation: Calculator {
-        
+    
     private var currentOperation: CalculatorButtonOperationItem? = nil
     private var rememberedValue: Decimal? = nil
     private var afterExecute: Bool = false
@@ -77,7 +77,7 @@ final class CalculatorImplementation: Calculator {
     var mode: CalculatorButtonModeValue = .deg
     
     weak var delegate: CalculatorDelegate?
-        
+    
     //Обработка нажатия кнопки
     func handleAction(of item: CalculatorButtonItem) {
         
@@ -176,7 +176,7 @@ final class CalculatorImplementation: Calculator {
                 let newResult: Decimal
                 
                 do {
-                    newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
+                    newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .plain)
                     
                     let newStrResult = String(describing: newResult)
                     
@@ -202,9 +202,9 @@ final class CalculatorImplementation: Calculator {
                 
                 do {
                     if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
-                        newResult = try doAgain(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
+                        newResult = try doAgain(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .plain)
                     } else {
-                        newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
+                        newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .plain)
                         rememberedValue = currentValue
                         readyToInsertNewNumber = true
                     }
@@ -359,7 +359,7 @@ final class CalculatorImplementation: Calculator {
         
         //Если doubleResult = 1.8446744073709552e+19
         //То Decimal(floatLiteral: doubleResult) Error WTF?
-        if right.rounded(0, .up) == right { //Костыль
+        if right.rounded(0, .plain) == right { //Костыль
             let result = NSDecimalNumber(decimal: right)
             return pow(left, Int(truncating: result))
         }
@@ -434,7 +434,7 @@ final class CalculatorImplementation: Calculator {
         do {
             let sin = try sinus(value: value)
             let cos = try cosinus(value: value)
-
+            
             let result = try divide(left: sin, right: cos)
             
             return result
@@ -470,7 +470,7 @@ final class CalculatorImplementation: Calculator {
             
             return result.rounded(10, .plain)
         }
-        
+            
         catch {
             throw error
         }

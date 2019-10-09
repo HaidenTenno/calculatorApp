@@ -149,7 +149,7 @@ class CalculatorScreenViewController: UIViewController {
     }
     
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
-                
+        
         calculatorService.handleAction(of: item)
         resultLabel.text = calculatorService.strValue
         modeLabel.text = calculatorService.mode.rawValue
@@ -215,7 +215,7 @@ extension CalculatorScreenViewController: SideMenuTableViewControllerDelegate {
         
         guard var viewControllers = navigationController?.viewControllers else { return }
         _ = viewControllers.popLast()
-                
+        
         switch mode {
         case .calculator:
             viewControllers.append(CalculatorScreenViewController())
