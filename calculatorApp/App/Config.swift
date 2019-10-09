@@ -16,6 +16,10 @@ enum Config {
         static let sideMenuTableViewID = "tableViewID"
         static let fontName = "ALS SPb"
         static let strResultDefault = "0"
+        static let cancel = NSLocalizedString("Cancel", comment: "Cancel button in picker toolbar")
+        static let done = NSLocalizedString("Done", comment: "Done button in picker toolbar")
+        static let defaultFirstCurrency = NSLocalizedString("First curr", comment: "Default first selected currenty")
+        static let defaultSecondCurrency = NSLocalizedString("Second curr", comment: "Default second selected currenty")
         
         enum Images {
             static let horisontalLines = "line.horizontal.3"
@@ -25,10 +29,7 @@ enum Config {
     }
     
     enum Networking {
-        
-        static let russianJSON = "https://www.cbr-xml-daily.ru/daily_json.js"
-        static let russianXML = "https://www.cbr-xml-daily.ru/daily_utf8.xml"
-        static let englishXML = "https://www.cbr-xml-daily.ru/daily_eng_utf8.xml"
+        static let url = NSLocalizedString("https://www.cbr-xml-daily.ru/daily_eng_utf8.xml", comment: "URL to get data in XML format")
     }
     
     enum NumberPresentation {

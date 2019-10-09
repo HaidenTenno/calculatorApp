@@ -92,9 +92,9 @@ class ConverterResultStackView: UIStackView {
         
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         toolbar.barStyle = .default
-        let cancelButton = UIBarButtonItem(title: "Отмена", style: .plain, target: self, action: #selector(cancelPressed))
+        let cancelButton = UIBarButtonItem(title: Config.StringConsts.cancel, style: .plain, target: self, action: #selector(cancelPressed))
         let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(donePressed))
+        let doneButton = UIBarButtonItem(title: Config.StringConsts.done, style: .done, target: self, action: #selector(donePressed))
         
         let items = [cancelButton, spaceButton, doneButton]
         toolbar.items = items
@@ -111,7 +111,7 @@ class ConverterResultStackView: UIStackView {
             return
         }
         
-        let selectedCurrency = model.valute[pickerView.selectedRow(inComponent: 0)]//Array(model.valute)[pickerView.selectedRow(inComponent: 0)].value
+        let selectedCurrency = model.valute[pickerView.selectedRow(inComponent: 0)]
         
         if editable {
             model.firstSelectedCurrency = selectedCurrency

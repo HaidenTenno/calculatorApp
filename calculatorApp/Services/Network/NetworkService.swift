@@ -37,7 +37,7 @@ final class NetworkServiceImplementation: NetworkService {
             return
         }
         
-        guard let url = URL(string: Config.Networking.englishXML) else { return }
+        guard let url = URL(string: Config.Networking.url) else { return }
         
         request(url, method: .get).validate().responseData { response in
             

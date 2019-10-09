@@ -46,7 +46,7 @@ class SideMenuTableViewController: UITableViewController {
         
         cell.textLabel?.font = UIFont(name: Config.StringConsts.fontName, size: 25)
         cell.textLabel?.textColor = Config.Design.Colors.label
-        cell.textLabel?.text = model.items[indexPath.row].type.rawValue
+        cell.textLabel?.text = SideMenuTableViewModelItemType.getTitleFor(title: model.items[indexPath.row].type)
         
         cell.isUserInteractionEnabled = model.items[indexPath.row].active
         cell.textLabel?.isEnabled = model.items[indexPath.row].active

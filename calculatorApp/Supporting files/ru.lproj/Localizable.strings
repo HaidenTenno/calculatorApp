@@ -1,0 +1,31 @@
+/* 
+  Localizable.strings
+  calculatorApp
+
+  Created by Петр Тартынских on 09.10.2019.
+  Copyright © 2019 Петр Тартынских . All rights reserved.
+*/
+
+/* Cancel button in picker toolbar */
+"Cancel" = "Отмена";
+
+/* Done button in picker toolbar */
+"Done" = "Готово";
+
+/* URL to get data in XML format */
+"https://www.cbr-xml-daily.ru/daily_eng_utf8.xml" = "https://www.cbr-xml-daily.ru/daily_utf8.xml";
+
+/* RUB currency name */
+"Russian ruble" = "Российский рубль";
+
+/* Calculator */
+"Calculator" = "Калькулятор";
+
+/* Converter */
+"Converter" = "Конвертер";
+
+/* Default first selected currenty */
+"First curr" = "RUS";
+
+/* Default second selected currenty */
+"Second curr" = "USD";

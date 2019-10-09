@@ -35,12 +35,18 @@ final class ConverterModel {
         let ruble = XMLCurrency(numCode: "None",
                                 charCode: "RUB",
                                 nominal: 1,
-                                name: "Российский рубль",
+                                name: NSLocalizedString("Russian ruble", comment: "RUB currency name"),
                                 value: 1.0)
         self.valute.insert(ruble, at: 0)
         
-        let firstSelectedIndex = self.valute.firstIndex(where: { $0.charCode == "RUB"}) ?? 0
-        let secondSelectedIndex = self.valute.firstIndex(where: { $0.charCode == "USD"}) ?? 0
+        let currentRegionCode = Locale.current.currencyCode ?? Config.StringConsts.defaultFirstCurrency
+        
+        let firstSelectedIndex = self.valute.firstIndex(where: { $0.charCode ==
+            currentRegionCode
+        }) ?? 0
+        let secondSelectedIndex = self.valute.firstIndex(where: { $0.charCode ==
+            Config.StringConsts.defaultSecondCurrency
+        }) ?? 0
         
         firstSelectedCurrency = self.valute[firstSelectedIndex]
         secondSelectedCurrency = self.valute[secondSelectedIndex]

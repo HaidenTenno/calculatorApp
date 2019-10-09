@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  calculatorApp
+
+  Created by Петр Тартынских on 09.10.2019.
+  Copyright © 2019 Петр Тартынских . All rights reserved.
+*/
+
+"CFBundleDisplayName" = "MDC.Счетовод";

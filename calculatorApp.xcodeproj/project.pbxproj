@@ -25,6 +25,8 @@
 		354DFB55234109CD0087DE65 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB54234109CD0087DE65 /* Calculator.swift */; };
 		354DFB58234122A00087DE65 /* CalculatorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */; };
 		355A637A2343709D00CFB9E5 /* DecimalExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355A63792343709D00CFB9E5 /* DecimalExtension.swift */; };
+		3575301C234E519F002C9F42 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3575301E234E519F002C9F42 /* Localizable.strings */; };
+		35753024234E600A002C9F42 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 35753026234E600A002C9F42 /* InfoPlist.strings */; };
 		357B0CBA2344DEE90095B2C9 /* ConverterResultStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357B0CB92344DEE90095B2C9 /* ConverterResultStackView.swift */; };
 		358DAA5E2348DE9300386BD9 /* NoMenuTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358DAA5D2348DE9300386BD9 /* NoMenuTextField.swift */; };
 		359DCCE02344A63D00C4B241 /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 359DCCDF2344A63D00C4B241 /* SideMenu */; };
@@ -51,7 +53,7 @@
 		353C2AC7234951A4001FE82C /* Screenshot5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot5.png; sourceTree = "<group>"; };
 		353C2AC8234951A4001FE82C /* Screenshot3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot3.png; sourceTree = "<group>"; };
 		353C2AC9234951A4001FE82C /* Screenshot4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot4.png; sourceTree = "<group>"; };
-		354DFB2E234102D60087DE65 /* MDC calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MDC calculator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		354DFB2E234102D60087DE65 /* calculatorApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calculatorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		354DFB31234102D60087DE65 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		354DFB33234102D60087DE65 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		354DFB3A234102D60087DE65 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -63,6 +65,11 @@
 		354DFB54234109CD0087DE65 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
 		354DFB57234122A00087DE65 /* CalculatorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorCollectionViewCell.swift; sourceTree = "<group>"; };
 		355A63792343709D00CFB9E5 /* DecimalExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalExtension.swift; sourceTree = "<group>"; };
+		35753019234E5112002C9F42 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		3575301D234E519F002C9F42 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3575301F234E51A1002C9F42 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		35753025234E600A002C9F42 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		35753027234E6010002C9F42 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		357B0CB92344DEE90095B2C9 /* ConverterResultStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterResultStackView.swift; sourceTree = "<group>"; };
 		358DAA5D2348DE9300386BD9 /* NoMenuTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMenuTextField.swift; sourceTree = "<group>"; };
 		359DCCE72344C6EB00C4B241 /* ConverterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterModel.swift; sourceTree = "<group>"; };
@@ -136,7 +143,7 @@
 		354DFB2F234102D60087DE65 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				354DFB2E234102D60087DE65 /* MDC calculator.app */,
+				354DFB2E234102D60087DE65 /* calculatorApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,6 +168,8 @@
 			children = (
 				35CBF76B234209B80035CB23 /* Fonts */,
 				354DFB3F234102D60087DE65 /* Info.plist */,
+				35753026234E600A002C9F42 /* InfoPlist.strings */,
+				3575301E234E519F002C9F42 /* Localizable.strings */,
 			);
 			path = "Supporting files";
 			sourceTree = "<group>";
@@ -271,7 +280,7 @@
 				35B6A222234E2BA000E7B2F7 /* AEXML */,
 			);
 			productName = calculatorApp;
-			productReference = 354DFB2E234102D60087DE65 /* MDC calculator.app */;
+			productReference = 354DFB2E234102D60087DE65 /* calculatorApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -296,6 +305,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 354DFB25234102D60087DE65;
 			packageReferences = (
@@ -318,6 +328,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3575301C234E519F002C9F42 /* Localizable.strings in Resources */,
+				35753024234E600A002C9F42 /* InfoPlist.strings in Resources */,
 				354DFB3E234102D60087DE65 /* LaunchScreen.storyboard in Resources */,
 				354DFB4A234103480087DE65 /* .gitignore in Resources */,
 				35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */,
@@ -363,8 +375,27 @@
 			isa = PBXVariantGroup;
 			children = (
 				354DFB3D234102D60087DE65 /* Base */,
+				35753019234E5112002C9F42 /* ru */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		3575301E234E519F002C9F42 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3575301D234E519F002C9F42 /* en */,
+				3575301F234E51A1002C9F42 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		35753026234E600A002C9F42 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				35753025234E600A002C9F42 /* en */,
+				35753027234E6010002C9F42 /* ru */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -374,6 +405,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -434,6 +466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -496,7 +529,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = tartynskikh.calculatorApp;
-				PRODUCT_NAME = "MDC calculator";
+				PRODUCT_NAME = calculatorApp;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -514,7 +547,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = tartynskikh.calculatorApp;
-				PRODUCT_NAME = "MDC calculator";
+				PRODUCT_NAME = calculatorApp;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

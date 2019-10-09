@@ -13,6 +13,7 @@ Features:
     * Dark theme
     * Swipe left at the numbers area to remove the last inserted number
     * Swipe up at the top area to hide NavBar
+    * Russian and English localizations
 
 ## Screenshots:
 <img src="/etc/Screenshot1.png" width="40%" height="40%">
