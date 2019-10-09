@@ -111,6 +111,11 @@ class ConverterResultStackView: UIStackView {
             return
         }
         
+        guard model.valute.count > pickerView.selectedRow(inComponent: 0) else {
+            cancelPressed()
+            return
+        }
+        
         let selectedCurrency = model.valute[pickerView.selectedRow(inComponent: 0)]
         
         if editable {
@@ -192,6 +197,8 @@ extension ConverterResultStackView: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         guard let model = converterVC?.model else { return }
+        
+        guard model.valute.count > pickerView.selectedRow(inComponent: 0) else { return }
         
         let selectedCurrencyByPicker = model.valute[pickerView.selectedRow(inComponent: 0)]
         
