@@ -41,12 +41,12 @@ class CalculatorScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Colors.backgroud
+        view.backgroundColor = Config.Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let image = UIImage(systemName: "line.horizontal.3")?
-            .withTintColor(Config.Colors.buttonText)
+        let image = UIImage(systemName: Config.StringConsts.Images.horisontalLines)?
+            .withTintColor(Config.Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(image, for: .normal)
@@ -77,8 +77,8 @@ class CalculatorScreenViewController: UIViewController {
         //modeLabel
         modeLabel = UILabel()
         modeLabel.text = calculatorService.mode.rawValue
-        modeLabel.font = UIFont(name: Config.fontName, size: 20)
-        modeLabel.textColor = Config.Colors.label
+        modeLabel.font = UIFont(name: Config.StringConsts.fontName, size: 20)
+        modeLabel.textColor = Config.Design.Colors.label
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
         modeLabel.isUserInteractionEnabled = true
@@ -87,8 +87,8 @@ class CalculatorScreenViewController: UIViewController {
         //resultLabel
         resultLabel = UILabel()
         resultLabel.text = calculatorService.strValue
-        resultLabel.font = UIFont(name: Config.fontName, size: 100)
-        resultLabel.textColor = Config.Colors.label
+        resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 100)
+        resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
@@ -104,8 +104,8 @@ class CalculatorScreenViewController: UIViewController {
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.collectionViewID)
-        collectionView.backgroundColor = Config.Colors.backgroud
+        collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringConsts.collectionViewID)
+        collectionView.backgroundColor = Config.Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -149,7 +149,7 @@ class CalculatorScreenViewController: UIViewController {
     }
     
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
-                
+        
         calculatorService.handleAction(of: item)
         resultLabel.text = calculatorService.strValue
         modeLabel.text = calculatorService.mode.rawValue
@@ -188,7 +188,7 @@ class CalculatorScreenViewController: UIViewController {
 extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.CalculatorButtonSize.width, height: Config.CalculatorButtonSize.hight)
+        return CGSize(width: Config.Design.CalculatorButtonSize.width, height: Config.Design.CalculatorButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -196,7 +196,7 @@ extension CalculatorScreenViewController: UICollectionViewDelegate, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.StringConsts.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
         cell.item = model.items[indexPath.row]
         cell.calculatorButton = UIButton(type: .system)
         
@@ -215,7 +215,7 @@ extension CalculatorScreenViewController: SideMenuTableViewControllerDelegate {
         
         guard var viewControllers = navigationController?.viewControllers else { return }
         _ = viewControllers.popLast()
-                
+        
         switch mode {
         case .calculator:
             viewControllers.append(CalculatorScreenViewController())

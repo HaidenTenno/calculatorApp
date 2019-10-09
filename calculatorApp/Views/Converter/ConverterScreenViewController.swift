@@ -10,7 +10,7 @@ import UIKit
 import SideMenu
 
 class ConverterScreenViewController: UIViewController {
-
+    
     //UI
     private var globalStackView: UIStackView!
     private var swipableStackView: UIStackView!
@@ -23,12 +23,10 @@ class ConverterScreenViewController: UIViewController {
     
     //Model
     let model = ConverterModel()
-
-    private var apiAnswer: ConverterApiAnswer?
-
+    
     //Services
+    private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
     var converterService: Converter = ConverterImplementation()
-    private var networkService: NetworkService = NetworkServiceImplementation.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +34,9 @@ class ConverterScreenViewController: UIViewController {
         setupView()
         
         LoadingIndicatorView.show()
-        networkService.delegate = self
-        networkService.getApiAnwer()
+        dataFetcher.delegate = self
+        
+        dataFetcher.fetchCurrencyInfoXML()
     }
     
     override func viewWillLayoutSubviews() {
@@ -49,12 +48,12 @@ class ConverterScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Colors.backgroud
+        view.backgroundColor = Config.Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let navImage = UIImage(systemName: "line.horizontal.3")?
-            .withTintColor(Config.Colors.buttonText)
+        let navImage = UIImage(systemName: Config.StringConsts.Images.horisontalLines)?
+            .withTintColor(Config.Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(navImage, for: .normal)
@@ -98,8 +97,8 @@ class ConverterScreenViewController: UIViewController {
         
         //swapButton
         swapButton = UIButton(type: .system)
-        let swapImage = UIImage(systemName: "arrow.up.arrow.down")?
-            .withTintColor(Config.Colors.buttonText)
+        let swapImage = UIImage(systemName: Config.StringConsts.Images.arrowUpDown)?
+            .withTintColor(Config.Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         swapButton.setImage(swapImage, for: .normal)
         swapButton.contentHorizontalAlignment = .left
@@ -121,8 +120,8 @@ class ConverterScreenViewController: UIViewController {
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.collectionViewID)
-        collectionView.backgroundColor = Config.Colors.backgroud
+        collectionView.register(CalculatorCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringConsts.collectionViewID)
+        collectionView.backgroundColor = Config.Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -229,7 +228,7 @@ class ConverterScreenViewController: UIViewController {
 extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.CalculatorButtonSize.width, height: Config.CalculatorButtonSize.hight)
+        return CGSize(width: Config.Design.CalculatorButtonSize.width, height: Config.Design.CalculatorButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -237,7 +236,7 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.StringConsts.collectionViewID, for: indexPath) as! CalculatorCollectionViewCell
         cell.item = model.items[indexPath.row]
         cell.calculatorButton = UIButton(type: .system)
         
@@ -256,7 +255,7 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
         
         guard var viewControllers = navigationController?.viewControllers else { return }
         _ = viewControllers.popLast()
-                
+        
         switch mode {
         case .calculator:
             viewControllers.append(CalculatorScreenViewController())
@@ -270,12 +269,12 @@ extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
 
 extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: Currency) {
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency) {
         converterService.firstCurrency = model.firstSelectedCurrency
         fillData()
     }
     
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: Currency) {
+    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency) {
         converterService.secondCurrency = model.secondSelectedCurrency
         fillData()
     }
@@ -285,24 +284,24 @@ extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     }    
 }
 
-extension ConverterScreenViewController: NetworkServiceDelegate {
+extension ConverterScreenViewController: NetworkDataFetcherDelegate {
     
-    func networkService(_ networkService: NetworkService, didReceive answer: ConverterApiAnswer) {
+    func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, didFetch parsedXML: [XMLCurrency]) {
         
         LoadingIndicatorView.hide()
-        model.setValute(answer.valute)
+        model.setValute(parsedXML)
         
         converterService.firstCurrency = model.firstSelectedCurrency
         converterService.secondCurrency = model.secondSelectedCurrency
-                
+        
         fillData()
     }
     
-    func networkService(_ networkService: NetworkService, didReceive error: NetworkServiceError) {
+    func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, failedWith error: Error) {
         
         LoadingIndicatorView.hide()
         #if DEBUG
-        print("NETWORK ERROR: \(error)")
+        print("Fetching data error: \(error.localizedDescription)")
         #endif
     }
 }

@@ -9,8 +9,16 @@
 import Foundation
 
 enum SideMenuTableViewModelItemType: String, CaseIterable {
-    case calculator = "Калькулятор"
-    case converter = "Конвертер"
+    case calculator = "Calculator"
+    case converter = "Converter"
+    
+    func localizedString() -> String {
+        return NSLocalizedString(self.rawValue, comment: "")
+    }
+
+    static func getTitleFor(title: SideMenuTableViewModelItemType) -> String {
+        return title.localizedString()
+    }
 }
 
 class SideMenuTableViewModelItem {

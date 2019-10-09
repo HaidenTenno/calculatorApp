@@ -12,10 +12,10 @@ final class ConverterModel {
     
     var items: [CalculatorButtonItem] = []
     
-    var valute: [String:Currency] = [:]
+    var valute: [XMLCurrency] = []
     
-    var firstSelectedCurrency: Currency?
-    var secondSelectedCurrency: Currency?
+    var firstSelectedCurrency: XMLCurrency?
+    var secondSelectedCurrency: XMLCurrency?
     
     init() {
         
@@ -29,17 +29,27 @@ final class ConverterModel {
         items.append(clearItem)
     }
     
-    func setValute(_ valute: [String:Currency]) {
+    func setValute(_ valute: [XMLCurrency]) {
         self.valute = valute
-        self.valute["RUB"] = Currency(
-            id: "None",
-            numCode: "None",
-            charCode: "RUB",
-            nominal: 1,
-            name: "Российский рубль",
-            value: 1.0,
-            previous: 1.0)
-        firstSelectedCurrency = self.valute["RUB"]
-        secondSelectedCurrency = self.valute["USD"]
+        
+        let ruble = XMLCurrency(numCode: "None",
+                                charCode: "RUB",
+                                nominal: 1,
+                                name: NSLocalizedString("Russian ruble", comment: "RUB currency name"),
+                                value: 1.0)
+        self.valute.insert(ruble, at: 0)
+        
+        let currentRegionCode = Locale.current.currencyCode ?? Config.StringConsts.defaultFirstCurrency
+        
+        let firstSelectedIndex = self.valute.firstIndex(where: { $0.charCode ==
+            currentRegionCode
+        }) ?? 0
+        let secondSelectedIndex = self.valute.firstIndex(where: { $0.charCode ==
+            Config.StringConsts.defaultSecondCurrency
+        }) ?? 0
+        
+        firstSelectedCurrency = self.valute[firstSelectedIndex]
+        secondSelectedCurrency = self.valute[secondSelectedIndex]
+        
     }
 }
