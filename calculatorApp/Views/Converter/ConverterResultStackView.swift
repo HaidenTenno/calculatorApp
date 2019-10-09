@@ -44,8 +44,8 @@ class ConverterResultStackView: UIStackView {
         
         //selectedCurrencyTextField
         selectedCurrencyTextField = NoMenuTextField()
-        selectedCurrencyTextField.font = UIFont(name: Config.fontName, size: 20)
-        selectedCurrencyTextField.textColor = Config.Colors.label
+        selectedCurrencyTextField.font = UIFont(name: Config.StringConsts.fontName, size: 20)
+        selectedCurrencyTextField.textColor = Config.Design.Colors.label
         selectedCurrencyTextField.borderStyle = .none
         selectedCurrencyTextField.tintColor = .clear
         selectedCurrencyTextField.delegate = self
@@ -53,8 +53,8 @@ class ConverterResultStackView: UIStackView {
 
         //resultLabel
         resultLabel = UILabel()
-        resultLabel.font = UIFont(name: Config.fontName, size: 50)
-        resultLabel.textColor = Config.Colors.label
+        resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 50)
+        resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0

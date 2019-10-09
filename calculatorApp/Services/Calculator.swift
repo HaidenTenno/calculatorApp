@@ -46,7 +46,7 @@ final class CalculatorImplementation: Calculator {
                     delegate.calculatorSelectedNewOperation(self)
                 }
                 
-                currentValue = Decimal(string: Config.strResultDefault)!
+                currentValue = Decimal(string: Config.StringConsts.strResultDefault)!
                 rememberedValue = nil
                 currentOperation = nil
                 readyToInsertNewNumber = true
@@ -54,7 +54,7 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    var strValue: String = Config.strResultDefault {
+    var strValue: String = Config.StringConsts.strResultDefault {
         didSet {
             if calculatorError {
                 return
@@ -73,7 +73,7 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    var currentValue: Decimal = Decimal(string: Config.strResultDefault)!
+    var currentValue: Decimal = Decimal(string: Config.StringConsts.strResultDefault)!
     var mode: CalculatorButtonModeValue = .deg
     
     weak var delegate: CalculatorDelegate?
@@ -98,7 +98,7 @@ final class CalculatorImplementation: Calculator {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strValue = Config.strResultDefault
+                    strValue = Config.StringConsts.strResultDefault
                     readyToInsertNewNumber = false
                 }
                 
@@ -107,7 +107,7 @@ final class CalculatorImplementation: Calculator {
                         strValue = numberItem.value.rawValue
                         
                     } else { //Если начальное число не 0
-                        if strValue.count < Config.MaximumDigits.defaultInteger { //Если количество разрядов не превышено
+                        if strValue.count < Config.NumberPresentation.MaximumDigits.defaultInteger { //Если количество разрядов не превышено
                             strValue.append(numberItem.value.rawValue)
                         }
                     }
@@ -115,7 +115,7 @@ final class CalculatorImplementation: Calculator {
                 } else { // Если вводится дробная часть
                     guard let indexOfDot = strValue.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
                     let fractionPart = strValue.suffix(from: indexOfDot)
-                    if fractionPart.count - 1 < Config.MaximumDigits.defaultFraction { //Если количество дробных разрядов не превышено
+                    if fractionPart.count - 1 < Config.NumberPresentation.MaximumDigits.defaultFraction { //Если количество дробных разрядов не превышено
                         strValue.append(numberItem.value.rawValue)
                     }
                 }
@@ -128,7 +128,7 @@ final class CalculatorImplementation: Calculator {
                 }
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strValue = Config.strResultDefault
+                    strValue = Config.StringConsts.strResultDefault
                 }
                 
                 if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) {
@@ -176,7 +176,7 @@ final class CalculatorImplementation: Calculator {
                 let newResult: Decimal
                 
                 do {
-                    newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                    newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
                     
                     let newStrResult = String(describing: newResult)
                     
@@ -202,9 +202,9 @@ final class CalculatorImplementation: Calculator {
                 
                 do {
                     if readyToInsertNewNumber { //Если нажимать = сразу после вычисления, то повторить операцию для нового значения
-                        newResult = try doAgain(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                        newResult = try doAgain(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
                     } else {
-                        newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.MaximumDigits.showingFraction, .up)
+                        newResult = try executeCurrentOperation(operation: currentOperation).rounded(Config.NumberPresentation.MaximumDigits.showingFraction, .up)
                         rememberedValue = currentValue
                         readyToInsertNewNumber = true
                     }
@@ -222,7 +222,7 @@ final class CalculatorImplementation: Calculator {
                 
             case .changeSign:
                 
-                if strValue == Config.strResultDefault {
+                if strValue == Config.StringConsts.strResultDefault {
                     return
                 }
                 
@@ -307,7 +307,7 @@ final class CalculatorImplementation: Calculator {
         
         let result = left + right
         
-        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+        if result >= pow(10, Config.NumberPresentation.MaximumDigits.showingInteger) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -319,7 +319,7 @@ final class CalculatorImplementation: Calculator {
         
         let result = left - right
         
-        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+        if result >= pow(10, Config.NumberPresentation.MaximumDigits.showingInteger) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -331,7 +331,7 @@ final class CalculatorImplementation: Calculator {
         
         let result = left * right
         
-        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+        if result >= pow(10, Config.NumberPresentation.MaximumDigits.showingInteger) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -347,7 +347,7 @@ final class CalculatorImplementation: Calculator {
         
         let result = left / right
         
-        if result >= pow(10, Config.MaximumDigits.showingInteger) {
+        if result >= pow(10, Config.NumberPresentation.MaximumDigits.showingInteger) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -370,7 +370,7 @@ final class CalculatorImplementation: Calculator {
             throw CalculatorError.nanValue
         }
         
-        if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
+        if doubleResult >= pow(10.0, Double(Config.NumberPresentation.MaximumDigits.showingInteger)) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -399,7 +399,7 @@ final class CalculatorImplementation: Calculator {
             throw CalculatorError.nanValue
         }
         
-        if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
+        if doubleResult >= pow(10.0, Double(Config.NumberPresentation.MaximumDigits.showingInteger)) {
             throw CalculatorError.greaterThenMax
         }
         
@@ -462,7 +462,7 @@ final class CalculatorImplementation: Calculator {
                 throw CalculatorError.nanValue
             }
             
-            if doubleResult >= pow(10.0, Double(Config.MaximumDigits.showingInteger)) {
+            if doubleResult >= pow(10.0, Double(Config.NumberPresentation.MaximumDigits.showingInteger)) {
                 throw CalculatorError.greaterThenMax
             }
             
@@ -531,7 +531,7 @@ final class CalculatorImplementation: Calculator {
             delegate.calculatorSelectedNewOperation(self)
         }
         
-        strValue = Config.strResultDefault
+        strValue = Config.StringConsts.strResultDefault
         
         rememberedValue = nil
         currentOperation = nil
@@ -544,12 +544,12 @@ final class CalculatorImplementation: Calculator {
         
         if calculatorError {
             calculatorError = false
-            strValue = Config.strResultDefault
+            strValue = Config.StringConsts.strResultDefault
             return
         }
         
         if strValue.count == 1 || (strValue.count == 2 && currentValue == 0) {
-            strValue = Config.strResultDefault
+            strValue = Config.StringConsts.strResultDefault
             return
         }
         

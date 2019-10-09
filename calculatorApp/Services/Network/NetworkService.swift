@@ -65,10 +65,9 @@ final class NetworkServiceImplementation: NetworkService {
             return
         }
         
-        request(Config.apiURL, method: .get).validate().responseData { [weak self] response in
-            
+        request(Config.Networking.russianJSON, method: .get).validate().responseData { [weak self] response in
             guard let strongSelf = self else { return }
-            
+
             guard response.result.isSuccess else {
                 strongSelf.delegate?.networkService(strongSelf, didReceive: .receiveDataError)
                 return
@@ -90,30 +89,48 @@ final class NetworkServiceImplementation: NetworkService {
         }
     }
     
-//    func getApiAnwer() {
-//
-//        //TEST
-//        let parsedJson: ConverterApiAnswer
-//
-//        guard let filepath = Bundle.main.path(forResource: "dataToTest", ofType: "json")  else {
-//            fatalError("Invalid bundle file")
-//        }
-//
-//        do {
-//            let contents = try String(contentsOfFile: filepath)
-//
-//            guard let data = contents.data(using: .utf8) else {
-//                fatalError("Invalid bundle file")
-//            }
-//
-//            parsedJson = try JSONDecoder().decode(ConverterApiAnswer.self, from: data)
-//        } catch {
-//            fatalError("Invalid bundle file")
-//        }
-//
-//        delegate?.networkService(self, didReceive: parsedJson)
-//        //TEST
-//
-//    }
+    func getApiAnswer(with completionHandler: @escaping (Swift.Result<Data, Error>) -> Void) {
+        
+        guard isConnectedToInternet else {
+            delegate?.networkService(self, didReceive: .connectionError)
+            return
+        }
+        
+        guard let url = URL(string: Config.Networking.russianJSON) else { return }
     
+        request(url, method: .get).validate().responseData { response in
+            
+            DispatchQueue.main.async {
+                switch response.result {
+                case .success(let data):
+                    completionHandler(.success(data))
+                case .failure(let error):
+                    completionHandler(.failure(error))
+                }
+            }
+        }
+    }
+    
+    // TODO : REMOVE
+//    func getApiAnswerXML(with completionHandler: @escaping (Swift.Result<Data, Error>) -> Void) {
+//
+//        guard isConnectedToInternet else {
+//            delegate?.networkService(self, didReceive: .connectionError)
+//            return
+//        }
+//
+//        guard let url = URL(string: Config.Networking.russianXML) else { return }
+//
+//        request(url, method: .get).validate().responseData { response in
+//
+//            DispatchQueue.main.async {
+//                switch response.result {
+//                case .success(let data):
+//                    completionHandler(.success(data))
+//                case .failure(let error):
+//                    completionHandler(.failure(error))
+//                }
+//            }
+//        }
+//    }
 }

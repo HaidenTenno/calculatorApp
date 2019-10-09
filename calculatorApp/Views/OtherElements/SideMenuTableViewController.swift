@@ -25,7 +25,7 @@ class SideMenuTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Config.sideMenuTableViewID)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Config.StringConsts.sideMenuTableViewID)
     }
 
     // MARK: - Table view data source
@@ -42,10 +42,10 @@ class SideMenuTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let model = model else { return UITableViewCell() }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: Config.sideMenuTableViewID, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Config.StringConsts.sideMenuTableViewID, for: indexPath)
 
-        cell.textLabel?.font = UIFont(name: Config.fontName, size: 25)
-        cell.textLabel?.textColor = Config.Colors.label
+        cell.textLabel?.font = UIFont(name: Config.StringConsts.fontName, size: 25)
+        cell.textLabel?.textColor = Config.Design.Colors.label
         cell.textLabel?.text = model.items[indexPath.row].type.rawValue
 
         cell.isUserInteractionEnabled = model.items[indexPath.row].active
