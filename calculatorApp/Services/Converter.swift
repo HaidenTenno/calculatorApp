@@ -11,7 +11,7 @@ import Foundation
 protocol Converter {
     var firstCurrency: XMLCurrency? { get set }
     var secondCurrency: XMLCurrency? { get set }
-    var firstStrResult: String { get set }
+    var firstStrResult: String { get }
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
     var secondNumericResult: Decimal { get }

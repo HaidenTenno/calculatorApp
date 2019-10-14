@@ -192,16 +192,11 @@ class ConverterScreenViewController: UIViewController {
     }
     
     @objc private func swapButtonTapped() {
-        let rememberedCurrency = model.firstSelectedCurrency
-        let rememberedValue = converterService.firstStrResult
         
-        model.firstSelectedCurrency = model.secondSelectedCurrency
-        model.secondSelectedCurrency = rememberedCurrency
+        model.swapCurrency()
         
         converterService.firstCurrency = model.firstSelectedCurrency
         converterService.secondCurrency = model.secondSelectedCurrency
-        
-        converterService.firstStrResult = rememberedValue
         
         fillData()
     }
