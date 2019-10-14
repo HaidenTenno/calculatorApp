@@ -24,6 +24,13 @@ class CalculatorScreenViewController: UIViewController {
     
     //Services
     private var calculatorService: Calculator = CalculatorImplementation()
+    private var presenterService = NumberPresenterService(style: .calculator)
+    
+    private var textToShow: String! {
+        didSet {
+            resultLabel.text = presenterService.format(string: textToShow)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +93,10 @@ class CalculatorScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-        resultLabel.text = calculatorService.strValue
+//        resultLabel.text = calculatorService.strValue
+        //!!!
+        textToShow = calculatorService.strValue
+        //!!!
         resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 100)
         resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
@@ -151,7 +161,10 @@ class CalculatorScreenViewController: UIViewController {
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
         
         calculatorService.handleAction(of: item)
-        resultLabel.text = calculatorService.strValue
+//        resultLabel.text = calculatorService.strValue
+        //!!!
+        textToShow = calculatorService.strValue
+        //!!!
         modeLabel.text = calculatorService.mode.rawValue
         
         collectionView.reloadData()
@@ -160,7 +173,10 @@ class CalculatorScreenViewController: UIViewController {
     @objc private func resultSwipedToLeft() {
         
         calculatorService.removeLast()
-        resultLabel.text = calculatorService.strValue
+//        resultLabel.text = calculatorService.strValue
+        //!!!
+        textToShow = calculatorService.strValue
+        //!!!
     }
     
     @objc private func swipeDown() {

@@ -16,9 +16,19 @@ protocol ConverterResultStackViewDelegate: class {
 
 class ConverterResultStackView: UIStackView {
     
+    //UI
     private var resultLabel: UILabel!
     private var pickerView: UIPickerView!
     private var selectedCurrencyTextField: NoMenuTextField!
+    
+    //Services
+    private var presenterService = NumberPresenterService(style: .calculator)
+    
+    private var textToShow: String! {
+        didSet {
+            resultLabel.text = presenterService.format(string: textToShow)
+        }
+    }
     
     private var editable: Bool!
     
@@ -106,17 +116,19 @@ class ConverterResultStackView: UIStackView {
     
     @objc private func donePressed() {
         
+        let selectedRow = pickerView.selectedRow(inComponent: 0)
+        
         guard let model = converterVC?.model else {
             cancelPressed()
             return
         }
         
-        guard model.valute.count > pickerView.selectedRow(inComponent: 0) else {
+        guard model.valute.count > selectedRow else {
             cancelPressed()
             return
         }
         
-        let selectedCurrency = model.valute[pickerView.selectedRow(inComponent: 0)]
+        let selectedCurrency = model.valute[selectedRow]
         
         if editable {
             model.firstSelectedCurrency = selectedCurrency
@@ -147,9 +159,9 @@ class ConverterResultStackView: UIStackView {
         
         //resultLabel
         if editable {
-            resultLabel.text = converterVC?.converterService.firstStrResult ?? "none"
+            textToShow = converterVC?.converterService.firstStrResult ?? "none"
         } else {
-            resultLabel.text = converterVC?.converterService.secondStrResult ?? "none"
+            textToShow = converterVC?.converterService.secondStrResult ?? "none"
         }
         
         //pickerView

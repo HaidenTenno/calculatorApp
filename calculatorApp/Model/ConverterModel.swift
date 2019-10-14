@@ -21,8 +21,12 @@ final class ConverterModel {
         
         for numberItem in CalculatorButtonNumericValue.allCases {
             let item = CalculatorButtonNumberItem(value: numberItem)
-            if item.value == .pi { continue }
-            items.append(item)
+            switch item.value {
+            case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .dot:
+                items.append(item)
+            default:
+                continue
+            }
         }
         
         let clearItem = CalculatorButtonOperationItem(value: .clear)
@@ -51,5 +55,11 @@ final class ConverterModel {
         firstSelectedCurrency = self.valute[firstSelectedIndex]
         secondSelectedCurrency = self.valute[secondSelectedIndex]
         
+    }
+    
+    func swapCurrency() {
+        let rememberedCurrency = firstSelectedCurrency
+        firstSelectedCurrency = secondSelectedCurrency
+        secondSelectedCurrency = rememberedCurrency
     }
 }
