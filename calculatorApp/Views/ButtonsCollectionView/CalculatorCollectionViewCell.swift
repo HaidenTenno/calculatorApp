@@ -27,7 +27,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         case .number:
             guard let numberItem = item as? CalculatorButtonNumberItem else { return }
             calculatorButton.backgroundColor = Config.Design.Colors.numberButton
-            calculatorButton.setTitle(numberItem.value.rawValue, for: .normal)
+            calculatorButton.setTitle(numberItem.value.stringValue, for: .normal)
             
         case .operation:
             guard let operationItem = item as? CalculatorButtonOperationItem else { return }
@@ -36,7 +36,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
             } else {
                 calculatorButton.backgroundColor = Config.Design.Colors.functionButton
             }
-            calculatorButton.setTitle(operationItem.value.rawValue, for: .normal)
+            calculatorButton.setTitle(operationItem.value.stringValue, for: .normal)
             
         case .mode:
             guard let  modeItem = item as? CalculatorButtonModeItem else { return }
@@ -45,7 +45,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
             } else {
                 calculatorButton.backgroundColor = Config.Design.Colors.functionButton
             }
-            calculatorButton.setTitle(modeItem.value.rawValue, for: .normal)
+            calculatorButton.setTitle(modeItem.value.stringValue, for: .normal)
         }
         
         calculatorButton.layer.cornerRadius = CGFloat(Config.Design.CalculatorButtonSize.width/2)

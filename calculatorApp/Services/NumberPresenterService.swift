@@ -6,7 +6,7 @@
 //  Copyright © 2019 Петр Тартынских . All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum NumberPresenterServiceStyle {
     case calculator
@@ -16,54 +16,70 @@ enum NumberPresenterServiceStyle {
 final class NumberPresenterService {
     
     private let formatter: NumberFormatter
+    private let style: NumberPresenterServiceStyle
     
     init(style: NumberPresenterServiceStyle) {
         let formatter = NumberFormatter()
-        formatter.alwaysShowsDecimalSeparator = false
-        formatter.decimalSeparator = CalculatorButtonNumericValue.dot.rawValue
-        formatter.usesGroupingSeparator = true
-        formatter.groupingSeparator = " "
-        formatter.groupingSize = 3
-        formatter.numberStyle = .decimal
         
-        switch style {
-        case .calculator:
-            formatter.maximumIntegerDigits = Config.NumberPresentation.MaximumDigits.showingInteger
-            formatter.maximumFractionDigits = Config.NumberPresentation.MaximumDigits.showingFraction
-        case .converter:
-            formatter.maximumIntegerDigits = Config.NumberPresentation.MaximumDigits.defaultIntegerConv
-            formatter.maximumFractionDigits = Config.NumberPresentation.MaximumDigits.defaultFractionConv
-        }
         self.formatter = formatter
+        self.style = style
     }
     
+    //Фоматирование числа в соответствущем виде
     func format(string: String) -> String {
-                
-        var result = string
+        if !checkIfNumber(string: string) { return string }
         
-        result = formatDecimal(string: string)
+        //Посчитать количество разрядов до и после разделителя
+        let numberOfIntegerDigits = countIntegerDigits(of: string)
+        let numberOfFractionDigits = countFractionDigits(of: string)
         
-        return result
+        //Число разрядов, которое определяет когда будет менятся представление числа
+        let boundOfPresentationChange: Int
+        
+        //В зависимости от положения устройства "граница смены представления" меняется
+        let orientation = UIDevice.current.orientation
+        if orientation == .portrait {
+            boundOfPresentationChange = 10
+        } else {
+            boundOfPresentationChange = 15
+        }
+        
+        //Если граница превышена, то вернуть экспоненциальный вид числа
+        if (numberOfIntegerDigits) > boundOfPresentationChange || (numberOfFractionDigits > boundOfPresentationChange) {
+            return formatScientific(string: string)
+        } else {
+            return formatDecimal(string: string)
+        }
+        
     }
     
+    //Проверка, что строка является числом
+    private func checkIfNumber(string: String) -> Bool {
+        return Decimal(string: string) != nil
+    }
+    
+    //Форматирование числа в обычной записи
     private func formatDecimal(string: String) -> String {
+        setupFormatterForDecimal()
         
+        //Каст строки в NSNumber
         var result = string
         let decimalResult = Decimal(string: result)
-        
         guard let nsNumberResult = decimalResult as NSNumber? else { return result }
         
+        //Если последний символ в строке - разделитель, то добавить его в отформатированный вид
         if result.last == CalculatorButtonNumericValue.dot.rawValue.first {
-            formatter.alwaysShowsDecimalSeparator = false
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
-            result.append(CalculatorButtonNumericValue.dot.rawValue)
-            
+            result.append(formatter.decimalSeparator)
+        
+        //Если в числе есть дробная часть
         } else if result.contains(CalculatorButtonNumericValue.dot.rawValue) {
             formatter.alwaysShowsDecimalSeparator = true
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
             
+            //Если дробная часть оканичается незначащими нулями, до добавить их в отформатиованный вид
             if string.last == CalculatorButtonNumericValue.zero.rawValue.first {
                 let arrayOfStrings = Array(string)
                 for element in arrayOfStrings.reversed() {
@@ -74,13 +90,74 @@ final class NumberPresenterService {
                     }
                 }
             }
-            
+        //Если в числе нет дообной части
         } else {
-            formatter.alwaysShowsDecimalSeparator = false
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
         }
         
         return result
+    }
+    
+    //Форматирование числа в экспоненциальной записи
+    private func formatScientific(string: String) -> String {
+        setupFormatterForScientific()
+        
+        var result = string
+
+        let decimalResult = Decimal(string: result)
+        guard let nsNumberResult = decimalResult as NSNumber? else { return result }
+        guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
+        result = formattedResult
+
+        return result
+    }
+    
+    //Настойка formatter для представления чисел в обычной записи
+    private func setupFormatterForDecimal() {
+        formatter.numberStyle = .decimal
+        formatter.alwaysShowsDecimalSeparator = false
+        formatter.decimalSeparator = Locale.current.decimalSeparator
+        formatter.usesGroupingSeparator = true
+        formatter.groupingSeparator = Locale.current.groupingSeparator
+        formatter.groupingSize = Config.NumberPresentation.groupingSize
+        formatter.maximumSignificantDigits = -1
+        
+        switch style {
+        case .calculator:
+            formatter.maximumIntegerDigits = Config.NumberPresentation.MaximumDigits.showingInteger
+            formatter.maximumFractionDigits = Config.NumberPresentation.MaximumDigits.showingFraction
+        case .converter:
+            formatter.maximumIntegerDigits = Config.NumberPresentation.MaximumDigits.defaultIntegerConv
+            formatter.maximumFractionDigits = Config.NumberPresentation.MaximumDigits.defaultFractionConv
+        }
+    }
+    
+    //Настройка formatter для представления чисел в экспоненциальной записи
+    private func setupFormatterForScientific() {
+        formatter.numberStyle = .scientific
+        formatter.exponentSymbol = Config.NumberPresentation.exponentialSymbol
+        formatter.maximumSignificantDigits = 6
+        formatter.maximumFractionDigits = 0
+    }
+    
+    //Подсчет разрядов до разделителя
+    private func countIntegerDigits(of string: String) -> Int {
+        if !string.contains(CalculatorButtonNumericValue.dot.rawValue) { return string.count }
+        
+        let indexOfSeparator = string.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!)!
+        let decimalPart = string.prefix(upTo: indexOfSeparator)
+        return decimalPart.count
+    }
+    
+    //Подсчет разрядов после разделителя
+    private func countFractionDigits(of string: String) -> Int {
+        if !string.contains(CalculatorButtonNumericValue.dot.rawValue) { return 0 }
+        
+        let reversedString = String(string.reversed())
+        
+        let indexOfSeparator = reversedString.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!)!
+        let decimalPart = string.prefix(upTo: indexOfSeparator)
+        return decimalPart.count
     }
 }

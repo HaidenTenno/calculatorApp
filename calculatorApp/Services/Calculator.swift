@@ -542,6 +542,10 @@ final class CalculatorImplementation: Calculator {
     //Назад
     func removeLast() {
         
+        if afterExecute {
+            return
+        }
+        
         if calculatorError {
             calculatorError = false
             strValue = Config.StringConsts.strResultDefault

@@ -93,16 +93,13 @@ class CalculatorScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-//        resultLabel.text = calculatorService.strValue
-        //!!!
         textToShow = calculatorService.strValue
-        //!!!
-        resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 100)
+        resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 70)
         resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
-        resultLabel.numberOfLines = 0
+        resultLabel.numberOfLines = 1
         resultLabel.isUserInteractionEnabled = true
         //Remove last gesture
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
@@ -161,10 +158,7 @@ class CalculatorScreenViewController: UIViewController {
     private func calculatorButtonTapped(item: CalculatorButtonItem) {
         
         calculatorService.handleAction(of: item)
-//        resultLabel.text = calculatorService.strValue
-        //!!!
         textToShow = calculatorService.strValue
-        //!!!
         modeLabel.text = calculatorService.mode.rawValue
         
         collectionView.reloadData()
@@ -173,10 +167,7 @@ class CalculatorScreenViewController: UIViewController {
     @objc private func resultSwipedToLeft() {
         
         calculatorService.removeLast()
-//        resultLabel.text = calculatorService.strValue
-        //!!!
         textToShow = calculatorService.strValue
-        //!!!
     }
     
     @objc private func swipeDown() {

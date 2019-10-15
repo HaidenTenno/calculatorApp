@@ -22,7 +22,7 @@ class ConverterResultStackView: UIStackView {
     private var selectedCurrencyTextField: NoMenuTextField!
     
     //Services
-    private var presenterService = NumberPresenterService(style: .calculator)
+    private var presenterService = NumberPresenterService(style: .converter)
     
     private var textToShow: String! {
         didSet {
@@ -68,7 +68,7 @@ class ConverterResultStackView: UIStackView {
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
-        resultLabel.numberOfLines = 0
+        resultLabel.numberOfLines = 1
         resultLabel.isUserInteractionEnabled = editable
         //Remove last gesture
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(resultSwipedToLeft))
