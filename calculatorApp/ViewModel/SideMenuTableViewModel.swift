@@ -8,6 +8,12 @@
 
 import Foundation
 
+/**
+ Типы элементов бокового меню
+ 
+ - important
+ Отсюда следует начинать добавлять новые экраны, выбираемые через боковое меню
+ */
 enum SideMenuTableViewModelItemType: String, CaseIterable {
     case calculator = "Calculator"
     case converter = "Converter"
@@ -21,6 +27,7 @@ enum SideMenuTableViewModelItemType: String, CaseIterable {
     }
 }
 
+/// Элемент бокового меню
 class SideMenuTableViewModelItem {
     
     var type: SideMenuTableViewModelItemType
@@ -31,6 +38,7 @@ class SideMenuTableViewModelItem {
     }
 }
 
+/// Модель отображения бокового меню
 final class SideMenuTableViewModel {
     
     var items: [SideMenuTableViewModelItem] = []
@@ -39,6 +47,7 @@ final class SideMenuTableViewModel {
         
         for item in SideMenuTableViewModelItemType.allCases {
             let item = SideMenuTableViewModelItem(type: item)
+            // Сделать невозможным выбор контроллера такого же типа
             item.active = item.type == activeType ? false : true
             items.append(item)
         }        

@@ -1,5 +1,5 @@
 //
-//  CalculatorCollectionViewCell.swift
+//  ButtonsCollectionViewCell.swift
 //  calculatorApp
 //
 //  Created by Петр Тартынских  on 29/09/2019.
@@ -9,10 +9,10 @@
 import UIKit
 import AudioToolbox
 
-class CalculatorCollectionViewCell: UICollectionViewCell {
+class ButtonsCollectionViewCell: UICollectionViewCell {
     
-    var item: CalculatorButtonItem!
-    var tapButtonAction: ((CalculatorButtonItem)->())!
+    var item: RoundButtonItem!
+    var tapButtonAction: ((RoundButtonItem)->())!
     
     var calculatorButton: UIButton! {
         didSet {
@@ -25,12 +25,12 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
         
         switch item.type {
         case .number:
-            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
+            guard let numberItem = item as? RoundButtonNumberItem else { return }
             calculatorButton.backgroundColor = Config.Design.Colors.numberButton
             calculatorButton.setTitle(numberItem.value.stringValue, for: .normal)
             
         case .operation:
-            guard let operationItem = item as? CalculatorButtonOperationItem else { return }
+            guard let operationItem = item as? RoundButtonOperationItem else { return }
             if operationItem.selected {
                 calculatorButton.backgroundColor = Config.Design.Colors.functionButtonSelected
             } else {
@@ -39,7 +39,7 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
             calculatorButton.setTitle(operationItem.value.stringValue, for: .normal)
             
         case .mode:
-            guard let  modeItem = item as? CalculatorButtonModeItem else { return }
+            guard let  modeItem = item as? RoundButtonModeItem else { return }
             if modeItem.selected {
                 calculatorButton.backgroundColor = Config.Design.Colors.functionButtonSelected
             } else {
@@ -48,23 +48,23 @@ class CalculatorCollectionViewCell: UICollectionViewCell {
             calculatorButton.setTitle(modeItem.value.stringValue, for: .normal)
         }
         
-        calculatorButton.layer.cornerRadius = CGFloat(Config.Design.CalculatorButtonSize.width/2)
-        calculatorButton.titleLabel?.font = UIFont(name: Config.StringConsts.fontName, size: 30)
+        calculatorButton.layer.cornerRadius = CGFloat(Config.Design.RoundButtonSize.width/2)
+        calculatorButton.titleLabel?.font = UIFont(name: Config.Design.fontName, size: 30)
         calculatorButton.setTitleColor(Config.Design.Colors.buttonText, for: .normal)
         
         calculatorButton.snp.makeConstraints { make in
-            make.height.equalTo(Config.Design.CalculatorButtonSize.hight)
-            make.width.equalTo(Config.Design.CalculatorButtonSize.width)
+            make.height.equalTo(Config.Design.RoundButtonSize.hight)
+            make.width.equalTo(Config.Design.RoundButtonSize.width)
             make.left.equalTo(contentView)
             make.right.equalTo(contentView)
             make.top.equalTo(contentView)
             make.bottom.equalTo(contentView)
         }
         
-        calculatorButton.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
+        calculatorButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    @objc private func buttonTapped(sender: UIButton) {
+    @objc private func buttonTapped() {
         AudioServicesPlaySystemSound(0x450)
         tapButtonAction(item)
     }

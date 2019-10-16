@@ -23,6 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         let coordinator = ViewsCoordinator(navigationController: navigationController)
+        
+        // MARK: Начало работы координатора (презентация первого контроллера)
         coordinator.start()
     }
     

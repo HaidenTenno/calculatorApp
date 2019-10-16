@@ -8,11 +8,13 @@
 
 import UIKit
 
+/// Варианты представления чисел для разных экранов
 enum NumberPresenterServiceStyle {
     case calculator
     case converter
 }
 
+/// Сервис для форматирования чисел
 final class NumberPresenterService {
     
     private let formatter: NumberFormatter
@@ -25,21 +27,21 @@ final class NumberPresenterService {
         self.style = style
     }
     
-    //Фоматирование числа в соответствущем виде
+    /// Форматирование числа в соответствущем виде
     func format(string: String) -> String {
         if !checkIfNumber(string: string) { return string }
         
-        //Для конвертера представление чисел обычное
+        // Для конвертера представление чисел обычное
         if style == .converter { return formatDecimal(string: string) }
         
-        //Посчитать количество разрядов до и после разделителя
+        // Посчитать количество разрядов до и после разделителя
         let numberOfIntegerDigits = countIntegerDigits(of: string)
         let numberOfFractionDigits = countFractionDigits(of: string)
         
-        //Число разрядов, которое определяет когда будет менятся представление числа
+        // Число разрядов, которое определяет когда будет менятся представление числа
         let boundOfPresentationChange: Int
         
-        //В зависимости от положения устройства "граница смены представления" меняется
+        // В зависимости от положения устройства "граница смены представления" меняется
         let orientation = UIDevice.current.orientation
         if orientation == .portrait {
             boundOfPresentationChange = 10
@@ -47,7 +49,7 @@ final class NumberPresenterService {
             boundOfPresentationChange = 15
         }
         
-        //Если граница превышена, то вернуть экспоненциальный вид числа
+        // Если граница превышена, то вернуть экспоненциальный вид числа
         if (numberOfIntegerDigits) > boundOfPresentationChange || (numberOfFractionDigits > boundOfPresentationChange) {
             return formatScientific(string: string)
         } else {
@@ -56,44 +58,44 @@ final class NumberPresenterService {
         
     }
     
-    //Проверка, что строка является числом
+    /// Проверка, что строка является числом
     private func checkIfNumber(string: String) -> Bool {
         return Decimal(string: string) != nil
     }
     
-    //Форматирование числа в обычной записи
+    /// Форматирование числа в обычной записи
     private func formatDecimal(string: String) -> String {
         setupFormatterForDecimal()
         
-        //Каст строки в NSNumber
+        // Каст строки в NSNumber
         var result = string
         let decimalResult = Decimal(string: result)
         guard let nsNumberResult = decimalResult as NSNumber? else { return result }
         
-        //Если последний символ в строке - разделитель, то добавить его в отформатированный вид
-        if result.last == CalculatorButtonNumericValue.dot.rawValue.first {
+        // Если последний символ в строке - разделитель, то добавить его в отформатированный вид
+        if result.last == RoundButtonNumericValue.dot.rawValue.first {
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
             result.append(formatter.decimalSeparator)
         
-        //Если в числе есть дробная часть
-        } else if result.contains(CalculatorButtonNumericValue.dot.rawValue) {
+        // Если в числе есть дробная часть
+        } else if result.contains(RoundButtonNumericValue.dot.rawValue) {
             formatter.alwaysShowsDecimalSeparator = true
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
             
-            //Если дробная часть оканичается незначащими нулями, до добавить их в отформатиованный вид
-            if string.last == CalculatorButtonNumericValue.zero.rawValue.first {
+            // Если дробная часть оканичается незначащими нулями, до добавить их в отформатиованный вид
+            if string.last == RoundButtonNumericValue.zero.rawValue.first {
                 let arrayOfStrings = Array(string)
                 for element in arrayOfStrings.reversed() {
-                    if element == CalculatorButtonNumericValue.zero.rawValue.first {
-                        result.append(CalculatorButtonNumericValue.zero.rawValue)
+                    if element == RoundButtonNumericValue.zero.rawValue.first {
+                        result.append(RoundButtonNumericValue.zero.rawValue)
                     } else {
                         break
                     }
                 }
             }
-        //Если в числе нет дообной части
+        // Если в числе нет дообной части
         } else {
             guard let formattedResult = formatter.string(from: nsNumberResult) else { return result }
             result = formattedResult
@@ -102,7 +104,7 @@ final class NumberPresenterService {
         return result
     }
     
-    //Форматирование числа в экспоненциальной записи
+    /// Форматирование числа в экспоненциальной записи
     private func formatScientific(string: String) -> String {
         setupFormatterForScientific()
         
@@ -116,7 +118,7 @@ final class NumberPresenterService {
         return result
     }
     
-    //Настойка formatter для представления чисел в обычной записи
+    /// Настойка formatter для представления чисел в обычной записи
     private func setupFormatterForDecimal() {
         formatter.numberStyle = .decimal
         formatter.alwaysShowsDecimalSeparator = false
@@ -136,7 +138,7 @@ final class NumberPresenterService {
         }
     }
     
-    //Настройка formatter для представления чисел в экспоненциальной записи
+    /// Настройка formatter для представления чисел в экспоненциальной записи
     private func setupFormatterForScientific() {
         formatter.numberStyle = .scientific
         formatter.alwaysShowsDecimalSeparator = false
@@ -145,22 +147,22 @@ final class NumberPresenterService {
         formatter.maximumFractionDigits = 0
     }
     
-    //Подсчет разрядов до разделителя
+    /// Подсчет разрядов до разделителя
     private func countIntegerDigits(of string: String) -> Int {
-        if !string.contains(CalculatorButtonNumericValue.dot.rawValue) { return string.count }
+        if !string.contains(RoundButtonNumericValue.dot.rawValue) { return string.count }
         
-        let indexOfSeparator = string.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!)!
+        let indexOfSeparator = string.firstIndex(of: RoundButtonNumericValue.dot.rawValue.first!)!
         let decimalPart = string.prefix(upTo: indexOfSeparator)
         return decimalPart.count
     }
     
-    //Подсчет разрядов после разделителя
+    /// Подсчет разрядов после разделителя
     private func countFractionDigits(of string: String) -> Int {
-        if !string.contains(CalculatorButtonNumericValue.dot.rawValue) { return 0 }
+        if !string.contains(RoundButtonNumericValue.dot.rawValue) { return 0 }
         
         let reversedString = String(string.reversed())
         
-        let indexOfSeparator = reversedString.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!)!
+        let indexOfSeparator = reversedString.firstIndex(of: RoundButtonNumericValue.dot.rawValue.first!)!
         let decimalPart = string.prefix(upTo: indexOfSeparator)
         return decimalPart.count
     }

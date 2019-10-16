@@ -9,15 +9,30 @@
 import Foundation
 import Alamofire
 
+/**
+ Ошибки сетевого сервиса
+ 
+ *Values*
+ 
+ `connectionError` - ошибка подключения к сети
+ 
+ `receiveDataError` - ошибка получения данных
+ */
 enum NetworkServiceError: Error {
     case connectionError
     case receiveDataError(_ error: Error)
 }
 
+/**
+ Сетевой сервис
+ 
+ `getApiAnswerXML` - попытка получения ответа от сервера ЦБ (При успехе возвращает Data)
+ */
 protocol NetworkService {
     func getApiAnswerXML(with completionHandler: @escaping (Swift.Result<Data, Error>) -> Void)
 }
 
+/// Реализация протокола  `NetworkService`
 final class NetworkServiceImplementation: NetworkService {
     
     static let shared = NetworkServiceImplementation()
@@ -29,6 +44,8 @@ final class NetworkServiceImplementation: NetworkService {
     }
     
     private init() {}
+    
+    // MARK: NetworkService
     
     func getApiAnswerXML(with completionHandler: @escaping (Swift.Result<Data, Error>) -> Void) {
         

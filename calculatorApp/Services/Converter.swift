@@ -16,7 +16,7 @@ protocol Converter {
     var firstNumericResult: Decimal { get }
     var secondNumericResult: Decimal { get }
     
-    func handleAction(of item: CalculatorButtonItem)
+    func handleAction(of item: RoundButtonItem)
     func removeLast()
 }
 
@@ -36,42 +36,42 @@ final class ConverterImplementation: Converter {
         }
     }
     
-    var firstStrResult: String = Config.StringConsts.strResultDefault {
+    var firstStrResult: String = Config.NumberPresentation.strResultDefault {
         didSet {
             guard let newResult = Decimal(string: firstStrResult) else { return }
             firstNumericResult = newResult
         }
     }
     
-    var firstNumericResult: Decimal = Decimal(string: Config.StringConsts.strResultDefault)! {
+    var firstNumericResult: Decimal = Decimal(string: Config.NumberPresentation.strResultDefault)! {
         didSet {
             calculateSecondNumericResult()
         }
     }
     
-    var secondNumericResult: Decimal = Decimal(string: Config.StringConsts.strResultDefault)! {
+    var secondNumericResult: Decimal = Decimal(string: Config.NumberPresentation.strResultDefault)! {
         didSet {
             secondStrResult = String(describing: secondNumericResult)
         }
     }
     
-    var secondStrResult: String = Config.StringConsts.strResultDefault
+    var secondStrResult: String = Config.NumberPresentation.strResultDefault
     
-    func handleAction(of item: CalculatorButtonItem) {
+    func handleAction(of item: RoundButtonItem) {
         
         switch item.type {
         case .number:
-            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
+            guard let numberItem = item as? RoundButtonNumberItem else { return }
             
             switch numberItem.value {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    firstStrResult = Config.StringConsts.strResultDefault
+                    firstStrResult = Config.NumberPresentation.strResultDefault
                     readyToInsertNewNumber = false
                 }
                 
-                if !firstStrResult.contains(CalculatorButtonNumericValue.dot.rawValue) {
+                if !firstStrResult.contains(RoundButtonNumericValue.dot.rawValue) {
                     if firstNumericResult == 0.0 {
                         firstStrResult = numberItem.value.rawValue
                         
@@ -81,7 +81,7 @@ final class ConverterImplementation: Converter {
                         }
                     }
                 } else {
-                    guard let indexOfDot = firstStrResult.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
+                    guard let indexOfDot = firstStrResult.firstIndex(of: RoundButtonNumericValue.dot.rawValue.first!) else { return }
                     let fractionPart = firstStrResult.suffix(from: indexOfDot)
                     if fractionPart.count - 1 < Config.NumberPresentation.MaximumDigits.defaultFractionConv {
                         firstStrResult.append(numberItem.value.rawValue)
@@ -91,10 +91,10 @@ final class ConverterImplementation: Converter {
             case .dot:
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    firstStrResult = Config.StringConsts.strResultDefault
+                    firstStrResult = Config.NumberPresentation.strResultDefault
                 }
                 
-                if !firstStrResult.contains(CalculatorButtonNumericValue.dot.rawValue) {
+                if !firstStrResult.contains(RoundButtonNumericValue.dot.rawValue) {
                     readyToInsertNewNumber = false
                     firstStrResult.append(numberItem.value.rawValue)
                 }
@@ -104,7 +104,7 @@ final class ConverterImplementation: Converter {
             }
             
         case .operation:
-            guard let operationItem = item as? CalculatorButtonOperationItem else { return }
+            guard let operationItem = item as? RoundButtonOperationItem else { return }
             guard  operationItem.value == .clear else { return }
             clear()
             
@@ -116,7 +116,7 @@ final class ConverterImplementation: Converter {
     private func clear() {
         
         readyToInsertNewNumber = true
-        firstStrResult = Config.StringConsts.strResultDefault
+        firstStrResult = Config.NumberPresentation.strResultDefault
     }
     
     func removeLast() {

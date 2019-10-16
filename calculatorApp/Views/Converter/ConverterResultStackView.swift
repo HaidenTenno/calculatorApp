@@ -55,7 +55,7 @@ class ConverterResultStackView: UIStackView {
         
         //selectedCurrencyTextField
         selectedCurrencyTextField = NoMenuTextField()
-        selectedCurrencyTextField.font = UIFont(name: Config.StringConsts.fontName, size: 20)
+        selectedCurrencyTextField.font = UIFont(name: Config.Design.fontName, size: 20)
         selectedCurrencyTextField.textColor = Config.Design.Colors.label
         selectedCurrencyTextField.borderStyle = .none
         selectedCurrencyTextField.tintColor = .clear
@@ -64,7 +64,7 @@ class ConverterResultStackView: UIStackView {
         
         //resultLabel
         resultLabel = UILabel()
-        resultLabel.font = UIFont(name: Config.StringConsts.fontName, size: 50)
+        resultLabel.font = UIFont(name: Config.Design.fontName, size: 50)
         resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
@@ -103,9 +103,9 @@ class ConverterResultStackView: UIStackView {
         
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         toolbar.barStyle = .default
-        let cancelButton = UIBarButtonItem(title: Config.StringConsts.cancel, style: .plain, target: self, action: #selector(cancelPressed))
+        let cancelButton = UIBarButtonItem(title: Config.Localization.cancel, style: .plain, target: self, action: #selector(cancelPressed))
         let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(title: Config.StringConsts.done, style: .done, target: self, action: #selector(donePressed))
+        let doneButton = UIBarButtonItem(title: Config.Localization.done, style: .done, target: self, action: #selector(donePressed))
         
         let items = [cancelButton, spaceButton, doneButton]
         toolbar.items = items

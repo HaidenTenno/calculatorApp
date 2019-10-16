@@ -10,21 +10,16 @@ import UIKit
 
 enum Config {
     
-    enum StringConsts {
-        static let collectionViewID = "collectionViewID"
-        static let sideMenuTableViewID = "tableViewID"
-        static let fontName = "ALS SPb"
-        static let strResultDefault = "0"
+    enum Localization {
         static let cancel = NSLocalizedString("Cancel", comment: "Cancel button in picker toolbar")
         static let done = NSLocalizedString("Done", comment: "Done button in picker toolbar")
         static let defaultFirstCurrency = NSLocalizedString("First curr", comment: "Default first selected currenty")
         static let defaultSecondCurrency = NSLocalizedString("Second curr", comment: "Default second selected currenty")
-        
-        enum Images {
-            static let horisontalLines = "line.horizontal.3"
-            static let arrowUpDown = "arrow.up.arrow.down"
-        }
-        
+    }
+    
+    enum StringID {
+        static let collectionViewID = "collectionViewID"
+        static let sideMenuTableViewID = "tableViewID"
     }
     
     enum Networking {
@@ -32,25 +27,34 @@ enum Config {
     }
     
     enum NumberPresentation {
+        static let strResultDefault = "0"
         static let groupingSize = 3
         static let exponentialSymbol = "e"
         
+        /**
+         Максимальное число разрядов вводимых и вычисляемых чисел
+         
+         - important
+         Префикс `default` определяет число разрядов, вводимых пользователем
+         
+         Префикс `showing` определяет число разрядов, которое будет высчитываться и отображаться после вычисления
+         */
         enum MaximumDigits {
-            //Calculator
+            // Для калькулятора
             static let defaultInteger = 10
             static let defaultFraction = 10
             static let showingInteger = 100
             static let showingFraction = 20
-            //Converter
+            // Для ковертера
             static let defaultIntegerConv = 10
             static let defaultFractionConv = 4
-            //ScientificPresentation
-            static let scientificFraction = 3
         }
     }
     
     enum Design {
-        enum CalculatorButtonSize {
+        static let fontName = "ALS SPb"
+        
+        enum RoundButtonSize {
             static let width = 70
             static let hight = 70
         }
@@ -62,6 +66,11 @@ enum Config {
             static let functionButton = UIColor(red: 3.0/255.0, green: 172.0/255.0, blue: 205.0/255.0, alpha: 1.0)
             static let functionButtonSelected = UIColor(red: 3.0/255.0, green: 140.0/255.0, blue: 160.0/255.0, alpha: 1.0)
             static let buttonText = UIColor.label
+        }
+        
+        enum Images {
+            static let horisontalLines = "line.horizontal.3"
+            static let arrowUpDown = "arrow.up.arrow.down"
         }
     }
     

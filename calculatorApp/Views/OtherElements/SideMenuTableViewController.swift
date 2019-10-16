@@ -25,7 +25,7 @@ class SideMenuTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Config.StringConsts.sideMenuTableViewID)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Config.StringID.sideMenuTableViewID)
     }
     
     // MARK: - Table view data source
@@ -42,9 +42,9 @@ class SideMenuTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let model = model else { return UITableViewCell() }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: Config.StringConsts.sideMenuTableViewID, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Config.StringID.sideMenuTableViewID, for: indexPath)
         
-        cell.textLabel?.font = UIFont(name: Config.StringConsts.fontName, size: 25)
+        cell.textLabel?.font = UIFont(name: Config.Design.fontName, size: 25)
         cell.textLabel?.textColor = Config.Design.Colors.label
         cell.textLabel?.text = SideMenuTableViewModelItemType.getTitleFor(title: model.items[indexPath.row].type)
         

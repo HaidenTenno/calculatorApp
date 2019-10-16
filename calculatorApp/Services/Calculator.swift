@@ -8,6 +8,14 @@
 
 import Foundation
 
+/**
+ Ошибки калькулятора
+ 
+ *Values*
+ `greaterThenMax` - Превышение максмального числа
+ `divideByZero` - Деление на ноль
+ `nanValue` - Нечисловой результат
+ */
 enum CalculatorError: Error {
     case greaterThenMax
     case divideByZero
@@ -23,16 +31,16 @@ protocol Calculator {
     
     var strValue: String { get }
     var currentValue: Decimal { get }
-    var mode: CalculatorButtonModeValue { get }
+    var mode: RoundButtonModeValue { get }
     var delegate: CalculatorDelegate? { get set }
     
-    func handleAction(of item: CalculatorButtonItem)
+    func handleAction(of item: RoundButtonItem)
     func removeLast()
 }
 
 final class CalculatorImplementation: Calculator {
     
-    private var currentOperation: CalculatorButtonOperationItem? = nil
+    private var currentOperation: RoundButtonOperationItem? = nil
     private var rememberedValue: Decimal? = nil
     private var afterExecute: Bool = false
     private var readyToInsertNewNumber: Bool = true
@@ -46,7 +54,7 @@ final class CalculatorImplementation: Calculator {
                     delegate.calculatorSelectedNewOperation(self)
                 }
                 
-                currentValue = Decimal(string: Config.StringConsts.strResultDefault)!
+                currentValue = Decimal(string: Config.NumberPresentation.strResultDefault)!
                 rememberedValue = nil
                 currentOperation = nil
                 readyToInsertNewNumber = true
@@ -54,7 +62,7 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    var strValue: String = Config.StringConsts.strResultDefault {
+    var strValue: String = Config.NumberPresentation.strResultDefault {
         didSet {
             if calculatorError {
                 return
@@ -73,13 +81,13 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    var currentValue: Decimal = Decimal(string: Config.StringConsts.strResultDefault)!
-    var mode: CalculatorButtonModeValue = .deg
+    var currentValue: Decimal = Decimal(string: Config.NumberPresentation.strResultDefault)!
+    var mode: RoundButtonModeValue = .deg
     
     weak var delegate: CalculatorDelegate?
     
     //Обработка нажатия кнопки
-    func handleAction(of item: CalculatorButtonItem) {
+    func handleAction(of item: RoundButtonItem) {
         
         if calculatorError {
             clear()
@@ -87,7 +95,7 @@ final class CalculatorImplementation: Calculator {
         
         switch item.type {
         case .number:
-            guard let numberItem = item as? CalculatorButtonNumberItem else { return }
+            guard let numberItem = item as? RoundButtonNumberItem else { return }
             
             if afterExecute { //Если начинаем вводить новое число после =, то очистить выбранную операцию
                 currentOperation = nil
@@ -98,11 +106,11 @@ final class CalculatorImplementation: Calculator {
             case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strValue = Config.StringConsts.strResultDefault
+                    strValue = Config.NumberPresentation.strResultDefault
                     readyToInsertNewNumber = false
                 }
                 
-                if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) { //Если вводится целая часть
+                if !strValue.contains(RoundButtonNumericValue.dot.rawValue) { //Если вводится целая часть
                     if currentValue == 0.0 { //Если начальное число 0, то использовать новое число как первое
                         strValue = numberItem.value.rawValue
                         
@@ -113,7 +121,7 @@ final class CalculatorImplementation: Calculator {
                     }
                     
                 } else { // Если вводится дробная часть
-                    guard let indexOfDot = strValue.firstIndex(of: CalculatorButtonNumericValue.dot.rawValue.first!) else { return }
+                    guard let indexOfDot = strValue.firstIndex(of: RoundButtonNumericValue.dot.rawValue.first!) else { return }
                     let fractionPart = strValue.suffix(from: indexOfDot)
                     if fractionPart.count - 1 < Config.NumberPresentation.MaximumDigits.defaultFraction { //Если количество дробных разрядов не превышено
                         strValue.append(numberItem.value.rawValue)
@@ -128,10 +136,10 @@ final class CalculatorImplementation: Calculator {
                 }
                 
                 if readyToInsertNewNumber { //Если начинаем вводить новое число, то обнулить текущее значение
-                    strValue = Config.StringConsts.strResultDefault
+                    strValue = Config.NumberPresentation.strResultDefault
                 }
                 
-                if !strValue.contains(CalculatorButtonNumericValue.dot.rawValue) {
+                if !strValue.contains(RoundButtonNumericValue.dot.rawValue) {
                     readyToInsertNewNumber = false
                     strValue.append(numberItem.value.rawValue)
                 }
@@ -143,7 +151,7 @@ final class CalculatorImplementation: Calculator {
             }
             
         case .operation:
-            guard let operationItem = item as? CalculatorButtonOperationItem else { return }
+            guard let operationItem = item as? RoundButtonOperationItem else { return }
             
             switch operationItem.value {
             //Операции, требующие два операнда
@@ -222,7 +230,7 @@ final class CalculatorImplementation: Calculator {
                 
             case .changeSign:
                 
-                if strValue == Config.StringConsts.strResultDefault {
+                if strValue == Config.NumberPresentation.strResultDefault {
                     return
                 }
                 
@@ -237,7 +245,7 @@ final class CalculatorImplementation: Calculator {
             }
             
         case .mode:
-            guard let modeItem = item as? CalculatorButtonModeItem else { return }
+            guard let modeItem = item as? RoundButtonModeItem else { return }
             
             if let delegate = delegate { //Для сброса выбранного режима
                 delegate.calculatorSelectedNewMode(self)
@@ -255,7 +263,7 @@ final class CalculatorImplementation: Calculator {
     }
     
     //Выполнить выбранную операцию
-    private func executeCurrentOperation(operation: CalculatorButtonOperationItem) throws -> Decimal {
+    private func executeCurrentOperation(operation: RoundButtonOperationItem) throws -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Decimal = 0.0
@@ -477,7 +485,7 @@ final class CalculatorImplementation: Calculator {
     }
     
     //Повтор предыдущей операции
-    private func doAgain(operation: CalculatorButtonOperationItem) throws -> Decimal {
+    private func doAgain(operation: RoundButtonOperationItem) throws -> Decimal {
         
         guard let rememberedValue = rememberedValue else { return 0.0 }
         var result: Decimal = 0.0
@@ -531,7 +539,7 @@ final class CalculatorImplementation: Calculator {
             delegate.calculatorSelectedNewOperation(self)
         }
         
-        strValue = Config.StringConsts.strResultDefault
+        strValue = Config.NumberPresentation.strResultDefault
         
         rememberedValue = nil
         currentOperation = nil
@@ -548,12 +556,12 @@ final class CalculatorImplementation: Calculator {
         
         if calculatorError {
             calculatorError = false
-            strValue = Config.StringConsts.strResultDefault
+            strValue = Config.NumberPresentation.strResultDefault
             return
         }
         
         if strValue.count == 1 || (strValue.count == 2 && currentValue == 0) {
-            strValue = Config.StringConsts.strResultDefault
+            strValue = Config.NumberPresentation.strResultDefault
             return
         }
         
