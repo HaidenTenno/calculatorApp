@@ -29,6 +29,8 @@
 		35753024234E600A002C9F42 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 35753026234E600A002C9F42 /* InfoPlist.strings */; };
 		357B0CBA2344DEE90095B2C9 /* ConverterResultStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357B0CB92344DEE90095B2C9 /* ConverterResultStackView.swift */; };
 		358DAA5E2348DE9300386BD9 /* NoMenuTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358DAA5D2348DE9300386BD9 /* NoMenuTextField.swift */; };
+		3591EF442357381200655681 /* ViewsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3591EF432357381200655681 /* ViewsCoordinator.swift */; };
+		3591EF462357486600655681 /* UpdatableOnRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3591EF452357486600655681 /* UpdatableOnRotation.swift */; };
 		359DCCE02344A63D00C4B241 /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 359DCCDF2344A63D00C4B241 /* SideMenu */; };
 		359DCCE82344C6EB00C4B241 /* ConverterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359DCCE72344C6EB00C4B241 /* ConverterModel.swift */; };
 		359DCCEA2344C8BE00C4B241 /* SideMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359DCCE92344C8BE00C4B241 /* SideMenuTableViewController.swift */; };
@@ -72,6 +74,8 @@
 		35753027234E6010002C9F42 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		357B0CB92344DEE90095B2C9 /* ConverterResultStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterResultStackView.swift; sourceTree = "<group>"; };
 		358DAA5D2348DE9300386BD9 /* NoMenuTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMenuTextField.swift; sourceTree = "<group>"; };
+		3591EF432357381200655681 /* ViewsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewsCoordinator.swift; sourceTree = "<group>"; };
+		3591EF452357486600655681 /* UpdatableOnRotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatableOnRotation.swift; sourceTree = "<group>"; };
 		359DCCE72344C6EB00C4B241 /* ConverterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterModel.swift; sourceTree = "<group>"; };
 		359DCCE92344C8BE00C4B241 /* SideMenuTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuTableViewController.swift; sourceTree = "<group>"; };
 		359DCCEB2344CBD500C4B241 /* ConverterScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterScreenViewController.swift; sourceTree = "<group>"; };
@@ -99,6 +103,7 @@
 		350309E6234689E300D1077D /* OtherElements */ = {
 			isa = PBXGroup;
 			children = (
+				3591EF452357486600655681 /* UpdatableOnRotation.swift */,
 				350309E723468A0600D1077D /* LoadingIndicatorView.swift */,
 				359DCCE92344C8BE00C4B241 /* SideMenuTableViewController.swift */,
 				358DAA5D2348DE9300386BD9 /* NoMenuTextField.swift */,
@@ -177,6 +182,7 @@
 		354DFB46234102EE0087DE65 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3591EF432357381200655681 /* ViewsCoordinator.swift */,
 				357B0CB82344DE9D0095B2C9 /* Converter */,
 				357B0CB72344DE960095B2C9 /* Calculator */,
 				354DFB56234122610087DE65 /* ButtonsCollectionView */,
@@ -346,10 +352,12 @@
 			files = (
 				350247BD23455B2200D3B047 /* SideMenuTableViewModel.swift in Sources */,
 				354DFB4C234103500087DE65 /* CalculatorScreenViewController.swift in Sources */,
+				3591EF462357486600655681 /* UpdatableOnRotation.swift in Sources */,
 				35B6A225234E344E00E7B2F7 /* XMLParserHelper.swift in Sources */,
 				357B0CBA2344DEE90095B2C9 /* ConverterResultStackView.swift in Sources */,
 				35C61AFC234D34D000154D63 /* NumberPresenterService.swift in Sources */,
 				35B6A220234E0F8B00E7B2F7 /* NetworkDataFetcher.swift in Sources */,
+				3591EF442357381200655681 /* ViewsCoordinator.swift in Sources */,
 				359DCCEC2344CBD500C4B241 /* ConverterScreenViewController.swift in Sources */,
 				350E5C9A2342929500264112 /* CalculatorModel.swift in Sources */,
 				358DAA5E2348DE9300386BD9 /* NoMenuTextField.swift in Sources */,

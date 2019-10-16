@@ -63,6 +63,15 @@ enum CalculatorButtonNumericValue: String, CaseIterable {
     case zero = "0"
     case dot = "."
     case pi = "𝛑"
+    
+    var stringValue: String {
+        switch self {
+        case .dot:
+            return Locale.current.decimalSeparator ?? self.rawValue
+        default:
+            return self.rawValue
+        }
+    }
 }
 
 enum CalculatorButtonOperationValue: String, CaseIterable {
@@ -79,11 +88,19 @@ enum CalculatorButtonOperationValue: String, CaseIterable {
     case cos = "cos"
     case tan = "tan"
     case execute = "="
+    
+    var stringValue: String {
+        return self.rawValue
+    }
 }
 
 enum CalculatorButtonModeValue: String, CaseIterable {
     case deg = "Deg"
     case rad = "Rad"
+    
+    var stringValue: String {
+        return self.rawValue
+    }
 }
 
 final class CalculatorModel {

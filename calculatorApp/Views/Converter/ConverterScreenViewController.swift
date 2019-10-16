@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SideMenu
 
 class ConverterScreenViewController: UIViewController {
     
@@ -27,6 +26,8 @@ class ConverterScreenViewController: UIViewController {
     //Services
     private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
     var converterService: Converter = ConverterImplementation()
+    
+    var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -202,16 +203,7 @@ class ConverterScreenViewController: UIViewController {
     }
     
     @objc private func showMenuButtonTapped() {
-        
-        let sideMenuTableViewController = SideMenuTableViewController()
-        sideMenuTableViewController.delegate = self
-        sideMenuTableViewController.model = SideMenuTableViewModel(activeType: .converter)
-        
-        let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
-        menu.statusBarEndAlpha = 0
-        menu.presentationStyle = .viewSlideOut
-        
-        present(menu, animated: true, completion: nil)
+        onShowMenuTapped?(.converter)
     }
     
     @objc private func resultSwipedToLeft() {
@@ -241,24 +233,6 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
             strongSelf.converterButtonTapped(item: item)
         }
         return cell
-    }
-}
-
-extension ConverterScreenViewController: SideMenuTableViewControllerDelegate {
-    
-    func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {
-        
-        guard var viewControllers = navigationController?.viewControllers else { return }
-        _ = viewControllers.popLast()
-        
-        switch mode {
-        case .calculator:
-            viewControllers.append(CalculatorScreenViewController())
-        case .converter:
-            viewControllers.append(ConverterScreenViewController())
-        }
-        
-        navigationController?.setViewControllers(viewControllers, animated: true)
     }
 }
 

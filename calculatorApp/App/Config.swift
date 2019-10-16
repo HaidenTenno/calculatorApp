@@ -11,7 +11,6 @@ import UIKit
 enum Config {
     
     enum StringConsts {
-        
         static let collectionViewID = "collectionViewID"
         static let sideMenuTableViewID = "tableViewID"
         static let fontName = "ALS SPb"
@@ -33,20 +32,24 @@ enum Config {
     }
     
     enum NumberPresentation {
+        static let groupingSize = 3
+        static let exponentialSymbol = "e"
         
         enum MaximumDigits {
+            //Calculator
             static let defaultInteger = 10
             static let defaultFraction = 10
             static let showingInteger = 100
             static let showingFraction = 20
-            
+            //Converter
             static let defaultIntegerConv = 10
             static let defaultFractionConv = 4
+            //ScientificPresentation
+            static let scientificFraction = 3
         }
     }
     
     enum Design {
-        
         enum CalculatorButtonSize {
             static let width = 70
             static let hight = 70
