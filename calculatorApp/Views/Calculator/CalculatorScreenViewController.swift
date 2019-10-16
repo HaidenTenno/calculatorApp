@@ -8,7 +8,6 @@
 
 import UIKit
 import SnapKit
-import SideMenu
 
 class CalculatorScreenViewController: UIViewController {
     
@@ -26,11 +25,14 @@ class CalculatorScreenViewController: UIViewController {
     private var calculatorService: Calculator = CalculatorImplementation()
     private var presenterService = NumberPresenterService(style: .calculator)
     
-    private var textToShow: String! {
+    private var textToShow: String? {
         didSet {
+            guard let textToShow = textToShow else { return }
             resultLabel.text = presenterService.format(string: textToShow)
         }
     }
+    
+    var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -179,16 +181,15 @@ class CalculatorScreenViewController: UIViewController {
     }
     
     @objc private func showMenuButtonTapped() {
-        
-        let sideMenuTableViewController = SideMenuTableViewController()
-        sideMenuTableViewController.delegate = self
-        sideMenuTableViewController.model = SideMenuTableViewModel(activeType: .calculator)
-        
-        let menu = SideMenuNavigationController(rootViewController: sideMenuTableViewController)
-        menu.statusBarEndAlpha = 0
-        menu.presentationStyle = .viewSlideOut
-        
-        present(menu, animated: true, completion: nil)
+        onShowMenuTapped?(.calculator)
+    }
+}
+
+extension CalculatorScreenViewController: UpdatableOnRotation {
+    
+    func updateView() {
+        guard let textToShow = textToShow else { return }
+        resultLabel.text = presenterService.format(string: textToShow)
     }
 }
 
@@ -213,23 +214,5 @@ extension CalculatorScreenViewController: UICollectionViewDelegate, UICollection
             strongSelf.calculatorButtonTapped(item: item)
         }
         return cell
-    }
-}
-
-extension CalculatorScreenViewController: SideMenuTableViewControllerDelegate {
-    
-    func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {
-        
-        guard var viewControllers = navigationController?.viewControllers else { return }
-        _ = viewControllers.popLast()
-        
-        switch mode {
-        case .calculator:
-            viewControllers.append(CalculatorScreenViewController())
-        case .converter:
-            viewControllers.append(ConverterScreenViewController())
-        }
-        
-        navigationController?.setViewControllers(viewControllers, animated: true)
     }
 }

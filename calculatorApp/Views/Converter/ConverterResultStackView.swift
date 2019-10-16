@@ -24,8 +24,9 @@ class ConverterResultStackView: UIStackView {
     //Services
     private var presenterService = NumberPresenterService(style: .converter)
     
-    private var textToShow: String! {
+    private var textToShow: String? {
         didSet {
+            guard let textToShow = textToShow else { return }
             resultLabel.text = presenterService.format(string: textToShow)
         }
     }

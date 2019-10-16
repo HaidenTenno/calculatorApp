@@ -29,6 +29,9 @@ final class NumberPresenterService {
     func format(string: String) -> String {
         if !checkIfNumber(string: string) { return string }
         
+        //Для конвертера представление чисел обычное
+        if style == .converter { return formatDecimal(string: string) }
+        
         //Посчитать количество разрядов до и после разделителя
         let numberOfIntegerDigits = countIntegerDigits(of: string)
         let numberOfFractionDigits = countFractionDigits(of: string)
@@ -136,6 +139,7 @@ final class NumberPresenterService {
     //Настройка formatter для представления чисел в экспоненциальной записи
     private func setupFormatterForScientific() {
         formatter.numberStyle = .scientific
+        formatter.alwaysShowsDecimalSeparator = false
         formatter.exponentSymbol = Config.NumberPresentation.exponentialSymbol
         formatter.maximumSignificantDigits = 6
         formatter.maximumFractionDigits = 0
