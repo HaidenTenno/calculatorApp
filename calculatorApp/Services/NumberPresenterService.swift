@@ -29,7 +29,7 @@ final class NumberPresenterService {
     
     /// Форматирование числа в соответствущем виде
     func format(string: String) -> String {
-        if !checkIfNumber(string: string) { return string }
+        if !checkIfNumber(string: string) { return Config.Localization.error }
         
         // Для конвертера представление чисел обычное
         if style == .converter { return formatDecimal(string: string) }
@@ -42,7 +42,7 @@ final class NumberPresenterService {
         let boundOfPresentationChange: Int
         
         // В зависимости от положения устройства "граница смены представления" меняется
-        let orientation = UIDevice.current.orientation
+        let orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
         if orientation == .portrait {
             boundOfPresentationChange = 10
         } else {
@@ -60,7 +60,9 @@ final class NumberPresenterService {
     
     /// Проверка, что строка является числом
     private func checkIfNumber(string: String) -> Bool {
-        return Decimal(string: string) != nil
+        let scanner = Scanner(string: string)
+//        scanner.locale = NSLocale.current
+        return (scanner.scanDecimal() != nil) && scanner.isAtEnd //scanner.scanDecimal(nil) && scanner.isAtEnd
     }
     
     /// Форматирование числа в обычной записи

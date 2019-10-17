@@ -13,6 +13,7 @@ enum Config {
     enum Localization {
         static let cancel = NSLocalizedString("Cancel", comment: "Cancel button in picker toolbar")
         static let done = NSLocalizedString("Done", comment: "Done button in picker toolbar")
+        static let error = NSLocalizedString("Error", comment: "Error message")
         static let defaultFirstCurrency = NSLocalizedString("First curr", comment: "Default first selected currenty")
         static let defaultSecondCurrency = NSLocalizedString("Second curr", comment: "Default second selected currenty")
     }

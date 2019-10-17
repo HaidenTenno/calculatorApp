@@ -157,7 +157,7 @@ class CalculatorScreenViewController: UIViewController {
         }
     }
     
-    private func calculatorButtonTapped(item: RoundButtonItem) {
+    private func roundButtonTapped(item: RoundButtonItem) {
         
         calculatorService.handleAction(of: item)
         textToShow = calculatorService.strValue
@@ -206,12 +206,12 @@ extension CalculatorScreenViewController: UICollectionViewDelegate, UICollection
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.StringID.collectionViewID, for: indexPath) as! ButtonsCollectionViewCell
         cell.item = model.items[indexPath.row]
-        cell.calculatorButton = UIButton(type: .system)
+        cell.roundButton = UIButton(type: .system)
         
         //Действие по нажатию кнопки
         cell.tapButtonAction = { [weak self] item in
             guard let strongSelf = self else { return }
-            strongSelf.calculatorButtonTapped(item: item)
+            strongSelf.roundButtonTapped(item: item)
         }
         return cell
     }

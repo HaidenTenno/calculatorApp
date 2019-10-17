@@ -41,6 +41,7 @@
 		35B6A225234E344E00E7B2F7 /* XMLParserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B6A224234E344E00E7B2F7 /* XMLParserHelper.swift */; };
 		35C61AFC234D34D000154D63 /* NumberPresenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C61AFB234D34D000154D63 /* NumberPresenterService.swift */; };
 		35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35CBF76C23420A530035CB23 /* ALS_SPb.otf */; };
+		35D1881B2358D04900FB89A5 /* CalculatorMathematicalOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,7 @@
 		35B6A224234E344E00E7B2F7 /* XMLParserHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLParserHelper.swift; sourceTree = "<group>"; };
 		35C61AFB234D34D000154D63 /* NumberPresenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberPresenterService.swift; sourceTree = "<group>"; };
 		35CBF76C23420A530035CB23 /* ALS_SPb.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ALS_SPb.otf; sourceTree = "<group>"; };
+		35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorMathematicalOperations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,7 +198,7 @@
 			children = (
 				35C61AFD234D90F000154D63 /* Network */,
 				35C61AFB234D34D000154D63 /* NumberPresenterService.swift */,
-				354DFB54234109CD0087DE65 /* Calculator.swift */,
+				35D188192358CFF900FB89A5 /* Calculator */,
 				35289209234413AA00B0F31D /* Converter.swift */,
 			);
 			path = Services;
@@ -272,6 +274,15 @@
 				35CBF76C23420A530035CB23 /* ALS_SPb.otf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		35D188192358CFF900FB89A5 /* Calculator */ = {
+			isa = PBXGroup;
+			children = (
+				354DFB54234109CD0087DE65 /* Calculator.swift */,
+				35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */,
+			);
+			path = Calculator;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -369,6 +380,7 @@
 				357B0CBA2344DEE90095B2C9 /* ConverterResultStackView.swift in Sources */,
 				35C61AFC234D34D000154D63 /* NumberPresenterService.swift in Sources */,
 				35B6A220234E0F8B00E7B2F7 /* NetworkDataFetcher.swift in Sources */,
+				35D1881B2358D04900FB89A5 /* CalculatorMathematicalOperations.swift in Sources */,
 				3591EF442357381200655681 /* ViewsCoordinator.swift in Sources */,
 				359DCCEC2344CBD500C4B241 /* ConverterScreenViewController.swift in Sources */,
 				350E5C9A2342929500264112 /* CalculatorViewModel.swift in Sources */,
