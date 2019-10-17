@@ -233,7 +233,6 @@ final class CalculatorImplementation: Calculator {
                     didGotError()
                     return
                 }
-                
             // Нажата кнопка смены знака
             case .changeSign:
                 if currentValue == 0.0 { return }
@@ -243,7 +242,6 @@ final class CalculatorImplementation: Calculator {
                 } else {
                     strValue = "-" + strValue
                 }
-            
             // Нажата кнопка "AC"
             case .clear:
                 clear()

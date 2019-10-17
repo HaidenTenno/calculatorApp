@@ -61,7 +61,6 @@ final class NumberPresenterService {
     /// Проверка, что строка является числом
     private func checkIfNumber(string: String) -> Bool {
         let scanner = Scanner(string: string)
-//        scanner.locale = NSLocale.current
         return (scanner.scanDecimal() != nil) && scanner.isAtEnd //scanner.scanDecimal(nil) && scanner.isAtEnd
     }
     

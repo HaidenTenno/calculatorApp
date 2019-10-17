@@ -151,18 +151,18 @@ class ConverterResultStackView: UIStackView {
         //selectedCurrencyTextField
         let valueForTextField: String?
         if editable {
-            valueForTextField = converterVC?.model.firstSelectedCurrency?.charCode ?? "ER1"
+            valueForTextField = converterVC?.model.firstSelectedCurrency?.charCode ?? ""
         } else {
-            valueForTextField = converterVC?.model.secondSelectedCurrency?.charCode ?? "ER2"
+            valueForTextField = converterVC?.model.secondSelectedCurrency?.charCode ?? ""
         }
         
         selectedCurrencyTextField.text = valueForTextField
         
         //resultLabel
         if editable {
-            textToShow = converterVC?.converterService.firstStrResult ?? "none"
+            textToShow = converterVC?.converterService.firstStrResult ?? ""
         } else {
-            textToShow = converterVC?.converterService.secondStrResult ?? "none"
+            textToShow = converterVC?.converterService.secondStrResult ?? ""
         }
         
         //pickerView
