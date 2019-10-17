@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Модель для получения списка валют из сети
 struct XMLCurrency {
     let numCode: String
     let charCode: String

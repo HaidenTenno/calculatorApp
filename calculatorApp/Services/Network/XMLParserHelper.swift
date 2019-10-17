@@ -9,15 +9,26 @@
 import Foundation
 import AEXML
 
+/**
+ Ошибки парсинга
+ 
+ *Values*
+ 
+ `moduleError` - Ошибка модуля
+ 
+ `parsingError` - Ошибка парсинга (проблема с полями)
+ */
 enum XMLParserHelperError: Error {
     case moduleError(_ error: Error)
     case parsingError
 }
 
+/// Парсер Data в структуру XMLCurrency
 final class XMLParserHelper {
     
     static let shared = XMLParserHelper()
     
+    // numberFormatter необходим, чтобы перевести получаемое из сети число в Decimal (Из сети приходит с запятой)
     private var numberFormatter: NumberFormatter {
         let numberFormatter = NumberFormatter()
         numberFormatter.decimalSeparator = ","

@@ -8,17 +8,24 @@
 
 import Foundation
 
+/**
+ Делегат NetworkDataFetcher
+ 
+ `networkDataFetcherDidFetch` - передача успешного распашненного XML
+ `networkDataFetcherFailedWith` - передача ошибки
+ */
 protocol NetworkDataFetcherDelegate: class {
     func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, didFetch parsedXML: [XMLCurrency])
     func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, failedWith error: Error)
 }
 
+/// Обертка, вызывающая парсер XML
 protocol NetworkDataFetcher {
     var delegate: NetworkDataFetcherDelegate? { get set }
-    
     func fetchCurrencyInfoXML()
 }
 
+/// Реализация протокола NetworkDataFetcher
 final class NetworkDataFetcherImplementation: NSObject, NetworkDataFetcher {
     
     static let shared = NetworkDataFetcherImplementation()
@@ -26,6 +33,8 @@ final class NetworkDataFetcherImplementation: NSObject, NetworkDataFetcher {
     private let networkService: NetworkService = NetworkServiceImplementation.shared
     
     private override init() {}
+    
+    // MARK: NetworkDataFetcher
     
     weak var delegate: NetworkDataFetcherDelegate?
     
