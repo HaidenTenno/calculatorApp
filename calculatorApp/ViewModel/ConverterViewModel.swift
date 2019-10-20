@@ -46,6 +46,10 @@ final class ConverterViewModel {
     var firstSelectedCurrency: XMLCurrency?
     var secondSelectedCurrency: XMLCurrency?
     
+    // Текстовые значения результатов
+    var firstStrResult: String = Config.NumberPresentation.strResultDefault
+    var secondStrResult: String = Config.NumberPresentation.strResultDefault
+    
     // На экране конвертера используются только кнопки цифр, разделителя и сброса
     init() {
         for numberItem in RoundButtonNumericValue.allCases {

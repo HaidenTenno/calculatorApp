@@ -10,33 +10,41 @@ import UIKit
 
 class ConverterScreenViewController: UIViewController {
     
-    //UI
+    // UI элементы
     private var globalStackView: UIStackView!
     private var swipableStackView: UIStackView!
     private var editableStackView: ConverterResultStackView!
     private var swapButtonStackView: UIStackView!
     private var swapButton: UIButton!
-    private var blankView: UIView!
     private var notEditableStackView: ConverterResultStackView!
     private var collectionView: UICollectionView!
     
-    //Model
-    let model = ConverterViewModel()
+    // Модель
+    private let model = ConverterViewModel()
     
-    //Services
+    // Сервисы
     private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
-    var converterService: Converter = ConverterImplementation()
+    private var converterService: Converter = ConverterImplementation()
     
-    var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)?
+    // Колбек для обработки нажатия кнопки меню
+    private var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)
+    
+    init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
+        self.onShowMenuTapped = onShowMenuTapped
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         
         LoadingIndicatorView.show()
-        dataFetcher.delegate = self
         
+        dataFetcher.delegate = self
         dataFetcher.fetchCurrencyInfoXML()
     }
     
@@ -46,6 +54,7 @@ class ConverterScreenViewController: UIViewController {
         makeConstraints()
     }
     
+    // MARK: - UI
     private func setupView() {
         
         //view
@@ -83,11 +92,8 @@ class ConverterScreenViewController: UIViewController {
         globalStackView.addArrangedSubview(swipableStackView)
         
         //editableStackView
-        editableStackView = ConverterResultStackView()
+        editableStackView = ConverterResultStackView(model: model, editable: true, delegate: self)
         swipableStackView.addArrangedSubview(editableStackView)
-        editableStackView.delegate = self
-        editableStackView.converterVC = self
-        editableStackView.configure(editable: true)
         
         //swapButtonStackView
         swapButtonStackView = UIStackView()
@@ -107,15 +113,12 @@ class ConverterScreenViewController: UIViewController {
         swapButtonStackView.addArrangedSubview(swapButton)
         
         //blankView
-        blankView = UIView()
+        let blankView = UIView()
         swapButtonStackView.addArrangedSubview(blankView)
         
         //notEditableStackView
-        notEditableStackView = ConverterResultStackView()
+        notEditableStackView = ConverterResultStackView(model: model, editable: false, delegate: self)
         swipableStackView.addArrangedSubview(notEditableStackView)
-        notEditableStackView.delegate = self
-        notEditableStackView.converterVC = self
-        notEditableStackView.configure(editable: false)
         
         //collectionView
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -151,7 +154,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        editableStackView.makeConstraints()
+        editableStackView.spacing = 10
         
         //swapButtonStackView
         swapButtonStackView.snp.makeConstraints { make in
@@ -165,7 +168,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        notEditableStackView.makeConstraints()
+        notEditableStackView.spacing = 10
         
         //collectionView
         collectionView.snp.makeConstraints { make in
@@ -174,14 +177,26 @@ class ConverterScreenViewController: UIViewController {
         }
     }
     
+}
+
+// MARK: - Данные
+extension ConverterScreenViewController {
+    
+    private func fillData() {
+        model.firstStrResult = converterService.firstStrResult
+        model.secondStrResult = converterService.secondStrResult
+        
+        editableStackView.reloadData()
+        notEditableStackView.reloadData()
+    }
+}
+
+// MARK: - Обработчики жестов и нажатий
+extension ConverterScreenViewController {
+    
     private func roundButtonTapped(item: RoundButtonItem) {
         converterService.handleAction(of: item)
         fillData()
-    }
-    
-    private func fillData() {
-        editableStackView.reloadData()
-        notEditableStackView.reloadData()
     }
     
     @objc private func swipeDown() {
@@ -203,7 +218,7 @@ class ConverterScreenViewController: UIViewController {
     }
     
     @objc private func showMenuButtonTapped() {
-        onShowMenuTapped?(.converter)
+        onShowMenuTapped(.converter)
     }
     
     @objc private func resultSwipedToLeft() {
@@ -212,6 +227,7 @@ class ConverterScreenViewController: UIViewController {
     }
 }
 
+// MARK: - CollectionView
 extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -224,18 +240,16 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.StringID.collectionViewID, for: indexPath) as! ButtonsCollectionViewCell
-        cell.item = model.items[indexPath.row]
-        cell.roundButton = UIButton(type: .system)
-        
-        //Действие по нажатию кнопки
-        cell.tapButtonAction = { [weak self] item in
+        cell.configure(item: model.items[indexPath.row], roundButton: UIButton(type: .system)) { [weak self] item in
             guard let strongSelf = self else { return }
             strongSelf.roundButtonTapped(item: item)
         }
+        
         return cell
     }
 }
 
+// MARK: - ConverterResultStackViewDelegate
 extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     
     func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency) {
@@ -253,12 +267,12 @@ extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     }    
 }
 
+// MARK: - Data Fetcher
 extension ConverterScreenViewController: NetworkDataFetcherDelegate {
     
     func networkDataFetcher(_ networkDataFecher: NetworkDataFetcher, didFetch parsedXML: [XMLCurrency]) {
         
         LoadingIndicatorView.hide()
-        //model.setValute(parsedXML)
         model.valute = parsedXML
         
         converterService.firstCurrency = model.firstSelectedCurrency

@@ -37,14 +37,12 @@ final class ViewsCoordinator {
     }
     
     private func createCalculatorScreen() -> CalculatorScreenViewController {
-        let calculatorVC = CalculatorScreenViewController()
-        calculatorVC.onShowMenuTapped = showMenuButtonTapped(activeType:)
+        let calculatorVC = CalculatorScreenViewController(onShowMenuTapped: showMenuButtonTapped(activeType:))
         return calculatorVC
     }
     
     private func createConverterScreen() -> ConverterScreenViewController {
-        let converterVC = ConverterScreenViewController()
-        converterVC.onShowMenuTapped = showMenuButtonTapped(activeType:)
+        let converterVC = ConverterScreenViewController(onShowMenuTapped: showMenuButtonTapped(activeType:))
         return converterVC
     }
     

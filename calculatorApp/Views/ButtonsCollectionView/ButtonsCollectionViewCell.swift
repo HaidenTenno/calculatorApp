@@ -11,14 +11,20 @@ import AudioToolbox
 
 class ButtonsCollectionViewCell: UICollectionViewCell {
     
-    var item: RoundButtonItem!
-    var tapButtonAction: ((RoundButtonItem)->())!
+    private var item: RoundButtonItem!
+    private var tapButtonAction: ((RoundButtonItem)->())!
     
-    var roundButton: UIButton! {
+    private var roundButton: UIButton! {
         didSet {
             addSubview(roundButton)
             configureButton()
         }
+    }
+    
+    func configure(item: RoundButtonItem, roundButton: UIButton, action: @escaping (RoundButtonItem)->()) {
+        self.item = item
+        self.roundButton = roundButton
+        self.tapButtonAction = action
     }
     
     private func configureButton() {

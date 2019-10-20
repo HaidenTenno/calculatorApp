@@ -11,20 +11,21 @@ import SnapKit
 
 class CalculatorScreenViewController: UIViewController {
     
-    //UI
+    // UI Элементы
     private var globalStackView: UIStackView!
     private var swipableStackView: UIStackView!
     private var resultLabel: UILabel!
     private var modeLabel: UILabel!
     private var collectionView: UICollectionView!
     
-    //Model
+    // Модель
     private let model = CalculatorViewModel()
     
-    //Services
+    // Сервисы
     private var calculatorService: Calculator = CalculatorImplementation()
     private var presenterService = NumberPresenterService(style: .calculator)
     
+    // Текст для отображения
     private var textToShow: String? {
         didSet {
             guard let textToShow = textToShow else { return }
@@ -32,7 +33,17 @@ class CalculatorScreenViewController: UIViewController {
         }
     }
     
-    var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)?
+    // Колбек для обработки нажатия кнопки меню
+    private var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)
+    
+    init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
+        self.onShowMenuTapped = onShowMenuTapped
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +58,7 @@ class CalculatorScreenViewController: UIViewController {
         makeConstraints()
     }
     
+    // MARK: - UI
     private func setupView() {
         
         //view
@@ -156,6 +168,9 @@ class CalculatorScreenViewController: UIViewController {
             make.right.equalTo(globalStackView)
         }
     }
+}
+// MARK: - Обработчики жестов и нажатий
+extension CalculatorScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
         
@@ -181,10 +196,11 @@ class CalculatorScreenViewController: UIViewController {
     }
     
     @objc private func showMenuButtonTapped() {
-        onShowMenuTapped?(.calculator)
+        onShowMenuTapped(.calculator)
     }
 }
 
+// MARK: - UpdatableOnRotation
 extension CalculatorScreenViewController: UpdatableOnRotation {
     
     func updateView() {
@@ -193,6 +209,8 @@ extension CalculatorScreenViewController: UpdatableOnRotation {
     }
 }
 
+
+// MARK: - CollectionView
 extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -205,14 +223,11 @@ extension CalculatorScreenViewController: UICollectionViewDelegate, UICollection
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Config.StringID.collectionViewID, for: indexPath) as! ButtonsCollectionViewCell
-        cell.item = model.items[indexPath.row]
-        cell.roundButton = UIButton(type: .system)
-        
-        //Действие по нажатию кнопки
-        cell.tapButtonAction = { [weak self] item in
+        cell.configure(item: model.items[indexPath.row], roundButton: UIButton(type: .system)) { [weak self] item in
             guard let strongSelf = self else { return }
             strongSelf.roundButtonTapped(item: item)
         }
+        
         return cell
     }
 }
