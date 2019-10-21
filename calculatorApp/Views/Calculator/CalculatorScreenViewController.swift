@@ -22,7 +22,7 @@ class CalculatorScreenViewController: UIViewController {
     private let model = CalculatorViewModel()
     
     // Сервисы
-    private var calculatorService: Calculator = CalculatorImplementation()
+    private var calculatorService: Calculator = CalculatorDQWrapper()
     private var presenterService = NumberPresenterService(style: .calculator)
     
     // Текст для отображения
@@ -38,7 +38,9 @@ class CalculatorScreenViewController: UIViewController {
     
     init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
         self.onShowMenuTapped = onShowMenuTapped
+        calculatorService.delegate = model
         super.init(nibName: nil, bundle: nil)
+        model.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -47,14 +49,11 @@ class CalculatorScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
-        calculatorService.delegate = model
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
         makeConstraints()
     }
     
@@ -97,7 +96,7 @@ class CalculatorScreenViewController: UIViewController {
         
         //modeLabel
         modeLabel = UILabel()
-        modeLabel.text = calculatorService.mode.rawValue
+        modeLabel.text = model.mode.stringValue
         modeLabel.font = UIFont(name: Config.Design.fontName, size: 20)
         modeLabel.textColor = Config.Design.Colors.label
         modeLabel.textAlignment = .left
@@ -107,7 +106,7 @@ class CalculatorScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-        textToShow = calculatorService.strValue
+        textToShow = model.strValue
         resultLabel.font = UIFont(name: Config.Design.fontName, size: 70)
         resultLabel.textColor = Config.Design.Colors.label
         resultLabel.textAlignment = .right
@@ -173,18 +172,13 @@ class CalculatorScreenViewController: UIViewController {
 extension CalculatorScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
-        
         calculatorService.handleAction(of: item)
-        textToShow = calculatorService.strValue
-        modeLabel.text = calculatorService.mode.rawValue
-        
+        // FIXME: - remove reloadData
         collectionView.reloadData()
     }
     
     @objc private func resultSwipedToLeft() {
-        
         calculatorService.removeLast()
-        textToShow = calculatorService.strValue
     }
     
     @objc private func swipeDown() {
@@ -197,6 +191,18 @@ extension CalculatorScreenViewController {
     
     @objc private func showMenuButtonTapped() {
         onShowMenuTapped(.calculator)
+    }
+}
+
+// MARK: - CalculatorViewModelDelegate
+extension CalculatorScreenViewController: CalculatorViewModelDelegate {
+    
+    func calculatorViewModelDidUpdateValue(_ viewModel: CalculatorViewModel) {
+        textToShow = viewModel.strValue
+    }
+    
+    func calculatorViewModelDidUpdateMode(_ viewModel: CalculatorViewModel) {
+        modeLabel.text = viewModel.mode.stringValue
     }
 }
 

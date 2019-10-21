@@ -24,14 +24,17 @@ class ConverterScreenViewController: UIViewController {
     
     // Сервисы
     private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
-    private var converterService: Converter = ConverterImplementation()
+    private var converterService: Converter = ConverterDQWrapper()
     
     // Колбек для обработки нажатия кнопки меню
     private var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)
     
     init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
         self.onShowMenuTapped = onShowMenuTapped
+        converterService.delegate = model
         super.init(nibName: nil, bundle: nil)
+        model.delegate = self
+        dataFetcher.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -41,16 +44,24 @@ class ConverterScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
-        LoadingIndicatorView.show()
-        
-        dataFetcher.delegate = self
-        dataFetcher.fetchCurrencyInfoXML()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // TODO: - Implement better data fetching handling
+        LoadingIndicatorView.show()
+        // Imitating long data fetching
+        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
+            self.dataFetcher.fetchCurrencyInfoXML()
+        }
+//        LoadingIndicatorView.show()
+//        dataFetcher.fetchCurrencyInfoXML()
+    }
+    
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
         makeConstraints()
     }
     
@@ -154,7 +165,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        editableStackView.spacing = 10
+        editableStackView.makeConstraints()
         
         //swapButtonStackView
         swapButtonStackView.snp.makeConstraints { make in
@@ -168,7 +179,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        notEditableStackView.spacing = 10
+        notEditableStackView.makeConstraints()
         
         //collectionView
         collectionView.snp.makeConstraints { make in
@@ -183,9 +194,6 @@ class ConverterScreenViewController: UIViewController {
 extension ConverterScreenViewController {
     
     private func fillData() {
-        model.firstStrResult = converterService.firstStrResult
-        model.secondStrResult = converterService.secondStrResult
-        
         editableStackView.reloadData()
         notEditableStackView.reloadData()
     }
@@ -196,7 +204,6 @@ extension ConverterScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
         converterService.handleAction(of: item)
-        fillData()
     }
     
     @objc private func swipeDown() {
@@ -207,14 +214,11 @@ extension ConverterScreenViewController {
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
+    // TODO: - Manupulate service but not model
     @objc private func swapButtonTapped() {
-        
         model.swapCurrency()
-        
         converterService.firstCurrency = model.firstSelectedCurrency
         converterService.secondCurrency = model.secondSelectedCurrency
-        
-        fillData()
     }
     
     @objc private func showMenuButtonTapped() {
@@ -223,6 +227,13 @@ extension ConverterScreenViewController {
     
     @objc private func resultSwipedToLeft() {
         converterService.removeLast()
+    }
+}
+
+// MARK: - ConverterViewModelDelegate
+extension ConverterScreenViewController: ConverterViewModelDelegate {
+    
+    func converterViewModelDidUpdateValue(_ viewModel: ConverterViewModel) {
         fillData()
     }
 }
@@ -249,6 +260,7 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
     }
 }
 
+// TODO: - Change to callbacks
 // MARK: - ConverterResultStackViewDelegate
 extension ConverterScreenViewController: ConverterResultStackViewDelegate {
     

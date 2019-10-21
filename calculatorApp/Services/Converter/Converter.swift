@@ -9,6 +9,15 @@
 import Foundation
 
 /**
+ Делегат Converter
+ 
+ `converterDidUpdateStrValue` - действие обработано
+ */
+protocol ConverterDelegate: class {
+    func converter(_ converter: Converter, didUpdate firsStrResult: String, _ secondStrResult: String)
+}
+
+/**
  Сервис конвертера
  
  *Variables*
@@ -38,6 +47,7 @@ protocol Converter {
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
     var secondNumericResult: Decimal { get }
+    var delegate: ConverterDelegate? { get set }
     
     func handleAction(of item: RoundButtonItem)
     func removeLast()
@@ -74,7 +84,11 @@ final class ConverterImplementation: Converter {
     }
     // 4
     /// Второе строковое значение
-    var secondStrResult: String = Config.NumberPresentation.strResultDefault
+    var secondStrResult: String = Config.NumberPresentation.strResultDefault {
+        didSet {
+            delegate?.converter(self, didUpdate: firstStrResult, secondStrResult)
+        }
+    }
     
     // 2
     /// Первое числовое значение
@@ -90,6 +104,8 @@ final class ConverterImplementation: Converter {
             secondStrResult = String(describing: secondNumericResult)
         }
     }
+    
+    weak var delegate: ConverterDelegate?
     
     /// Обработка нажатия круглой кнопки
     func handleAction(of item: RoundButtonItem) {

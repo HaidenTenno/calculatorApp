@@ -21,10 +21,15 @@ enum Config {
     enum StringID {
         static let collectionViewID = "collectionViewID"
         static let sideMenuTableViewID = "tableViewID"
+        static let countingQueue = "ComputingQueue"
     }
     
     enum Networking {
         static let url = NSLocalizedString("https://www.cbr-xml-daily.ru/daily_eng_utf8.xml", comment: "URL to get data in XML format")
+    }
+    
+    enum Calculator {
+        static let defaultMode: RoundButtonModeValue = .deg
     }
     
     enum NumberPresentation {
