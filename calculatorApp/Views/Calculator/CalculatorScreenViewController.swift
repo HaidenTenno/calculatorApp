@@ -172,9 +172,11 @@ class CalculatorScreenViewController: UIViewController {
 extension CalculatorScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
-        calculatorService.handleAction(of: item)
-        // FIXME: - remove reloadData
-        collectionView.reloadData()
+        // Обновить collectionView после обработки нажатия (чтобы подсветить кнопку с операцией и режимом)
+        calculatorService.handleAction(of: item) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+        }
     }
     
     @objc private func resultSwipedToLeft() {

@@ -8,12 +8,6 @@
 
 import UIKit
 
-protocol ConverterResultStackViewDelegate: class {
-    func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView)
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency)
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency)
-}
-
 class ConverterResultStackView: UIStackView {
     
     // UI элементы
@@ -35,17 +29,24 @@ class ConverterResultStackView: UIStackView {
         }
     }
     
-    // Делегат
-    private weak var delegate: ConverterResultStackViewDelegate?
+    // Действие при выборе валюты
+    private var onSelectCurrency: (XMLCurrency) -> Void
+    // Действие при смахивании результата влево
+    private var onSwipeLeft: (() -> Void)?
     
     // Возможность взаимодействия
     private let editable: Bool
     
-    init(model: ConverterViewModel, editable: Bool, delegate: ConverterResultStackViewDelegate) {
+    init(model: ConverterViewModel, editable: Bool,
+         onSelectCurrency: @escaping ((XMLCurrency) -> Void),
+         onSwipeLeft: (() -> Void)? = nil) {
         self.model = model
-        self.delegate = delegate
         self.editable = editable
+        self.onSelectCurrency = onSelectCurrency
+        self.onSwipeLeft = onSwipeLeft
+        
         super.init(frame: .zero)
+        
         configure(editable: editable)
     }
     
@@ -165,7 +166,7 @@ extension ConverterResultStackView {
 extension ConverterResultStackView {
     
     @objc private func resultSwipedToLeft() {
-        delegate?.converterResultStackViewSwipedLeft(self)
+        onSwipeLeft?()
     }
     
     @objc private func donePressed() {
@@ -178,14 +179,7 @@ extension ConverterResultStackView {
         }
         
         let selectedCurrency = model.valute[selectedRow]
-        
-        if editable {
-            model.firstSelectedCurrency = selectedCurrency
-            delegate?.converterResultStackView(self, didSelectNewFirstCurrency: selectedCurrency)
-        } else {
-            model.secondSelectedCurrency = selectedCurrency
-            delegate?.converterResultStackView(self, didSelectNewSecondCurrency: selectedCurrency)
-        }
+        onSelectCurrency(selectedCurrency)
         
         selectedCurrencyTextField.resignFirstResponder()
     }

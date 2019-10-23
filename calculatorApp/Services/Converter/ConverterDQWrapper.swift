@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Обертка над Conerter для работы не в главном потоке
+/// Обертка над Converter для работы не в главном потоке
 final class ConverterDQWrapper: Converter {
     
     private let queue: DispatchQueue
@@ -77,6 +77,13 @@ final class ConverterDQWrapper: Converter {
         queue.sync { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.converter.handleAction(of: item)
+        }
+    }
+    
+    func swapCurrency() {
+        queue.sync { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.converter.swapCurrency()
         }
     }
     

@@ -38,6 +38,8 @@ protocol ConverterDelegate: class {
  
  `handleAction` - Обработка нажатия круглой кнопки
  
+ `swapCurrency` - Поменять валюты местами
+ 
  `removeLast` - Обработка удаления последнего символа
  */
 protocol Converter {
@@ -50,6 +52,7 @@ protocol Converter {
     var delegate: ConverterDelegate? { get set }
     
     func handleAction(of item: RoundButtonItem)
+    func swapCurrency()
     func removeLast()
 }
 
@@ -157,6 +160,13 @@ final class ConverterImplementation: Converter {
         default:
             return
         }
+    }
+    
+    /// Поменять валюты местами
+    func swapCurrency() {
+        let rememberedCurrency = firstCurrency
+        firstCurrency = secondCurrency
+        secondCurrency = rememberedCurrency
     }
     
     /// Обработка удаления последнего символа

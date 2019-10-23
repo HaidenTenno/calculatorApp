@@ -62,7 +62,7 @@ protocol Calculator {
     var mode: RoundButtonModeValue { get }
     var delegate: CalculatorDelegate? { get set }
     
-    func handleAction(of item: RoundButtonItem)
+    func handleAction(of item: RoundButtonItem, completion: (() -> Void)?)
     func removeLast()
 }
 
@@ -127,7 +127,10 @@ final class CalculatorImplementation: Calculator {
     weak var delegate: CalculatorDelegate?
     
     /// Обработка нажатия круглой кнопки
-    func handleAction(of item: RoundButtonItem) {
+    func handleAction(of item: RoundButtonItem, completion: (()->Void)? = nil) {
+        defer {
+            completion?()
+        }
         switch item.type {
         // Нажата числовая кнопка
         case .number:

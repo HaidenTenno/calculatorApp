@@ -50,13 +50,13 @@ class ConverterScreenViewController: UIViewController {
         super.viewDidAppear(animated)
         
         // TODO: - Implement better data fetching handling
-        LoadingIndicatorView.show()
-        // Imitating long data fetching
-        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
-            self.dataFetcher.fetchCurrencyInfoXML()
-        }
 //        LoadingIndicatorView.show()
-//        dataFetcher.fetchCurrencyInfoXML()
+        // Imitating long data fetching
+//        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
+//            self.dataFetcher.fetchCurrencyInfoXML()
+//        }
+        LoadingIndicatorView.show()
+        dataFetcher.fetchCurrencyInfoXML()
     }
     
     
@@ -103,7 +103,19 @@ class ConverterScreenViewController: UIViewController {
         globalStackView.addArrangedSubview(swipableStackView)
         
         //editableStackView
-        editableStackView = ConverterResultStackView(model: model, editable: true, delegate: self)
+        editableStackView = ConverterResultStackView(model: model, editable: true,
+                                                     onSelectCurrency: { [weak self] firstCurrency in
+                                                        guard let strongSelf = self else { return }
+                                                        // TODO: - Remove?
+                                                        strongSelf.model.firstSelectedCurrency = firstCurrency
+                                                        //
+                                                        strongSelf.converterService.firstCurrency = firstCurrency
+                                                        strongSelf.fillData()
+            },
+                                                     onSwipeLeft: { [weak self] in
+                                                        guard let strongSelf = self else { return }
+                                                        strongSelf.resultSwipedToLeft()
+        })
         swipableStackView.addArrangedSubview(editableStackView)
         
         //swapButtonStackView
@@ -128,7 +140,13 @@ class ConverterScreenViewController: UIViewController {
         swapButtonStackView.addArrangedSubview(blankView)
         
         //notEditableStackView
-        notEditableStackView = ConverterResultStackView(model: model, editable: false, delegate: self)
+        notEditableStackView = ConverterResultStackView(model: model, editable: false,
+                                                        onSelectCurrency: { [weak self] secondCurrendy in
+                                                            guard let strongSelf = self else { return }
+                                                            strongSelf.model.firstSelectedCurrency = secondCurrendy
+                                                            strongSelf.converterService.secondCurrency = secondCurrendy
+                                                            strongSelf.fillData()
+        })
         swipableStackView.addArrangedSubview(notEditableStackView)
         
         //collectionView
@@ -214,11 +232,11 @@ extension ConverterScreenViewController {
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    // TODO: - Manupulate service but not model
     @objc private func swapButtonTapped() {
+        // TODO: - Remove?
         model.swapCurrency()
-        converterService.firstCurrency = model.firstSelectedCurrency
-        converterService.secondCurrency = model.secondSelectedCurrency
+        //
+        converterService.swapCurrency()
     }
     
     @objc private func showMenuButtonTapped() {
@@ -258,25 +276,6 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
         
         return cell
     }
-}
-
-// TODO: - Change to callbacks
-// MARK: - ConverterResultStackViewDelegate
-extension ConverterScreenViewController: ConverterResultStackViewDelegate {
-    
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency) {
-        converterService.firstCurrency = model.firstSelectedCurrency
-        fillData()
-    }
-    
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency) {
-        converterService.secondCurrency = model.secondSelectedCurrency
-        fillData()
-    }
-    
-    func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView) {
-        resultSwipedToLeft()
-    }    
 }
 
 // MARK: - Data Fetcher

@@ -293,8 +293,8 @@
 		35E2EDCB235D95A20080CD98 /* Converter */ = {
 			isa = PBXGroup;
 			children = (
-				35289209234413AA00B0F31D /* Converter.swift */,
 				357C0920235D9C9A00B6EF16 /* ConverterDQWrapper.swift */,
+				35289209234413AA00B0F31D /* Converter.swift */,
 			);
 			path = Converter;
 			sourceTree = "<group>";

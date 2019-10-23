@@ -49,10 +49,15 @@ final class CalculatorDQWrapper: Calculator {
         }
     }
     
-    func handleAction(of item: RoundButtonItem) {
+    func handleAction(of item: RoundButtonItem, completion: (() -> Void)?) {
         queue.sync { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.calculator.handleAction(of: item)
+            strongSelf.calculator.handleAction(of: item) {
+                // Выполнить обновление UI в главном потоке
+                DispatchQueue.main.async {
+                    completion?()
+                }
+            }
         }
     }
     
