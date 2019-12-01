@@ -42,6 +42,8 @@
 		35C61AFC234D34D000154D63 /* NumberPresenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C61AFB234D34D000154D63 /* NumberPresenterService.swift */; };
 		35CBF76D23420A530035CB23 /* ALS_SPb.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35CBF76C23420A530035CB23 /* ALS_SPb.otf */; };
 		35D1881B2358D04900FB89A5 /* CalculatorMathematicalOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */; };
+		35E2EDCD235D95B90080CD98 /* CalculatorDQWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E2EDCC235D95B90080CD98 /* CalculatorDQWrapper.swift */; };
+		35F3F0AD237CCE5A00A29B4B /* Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F3F0AC237CCE5A00A29B4B /* Design.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +89,8 @@
 		35C61AFB234D34D000154D63 /* NumberPresenterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberPresenterService.swift; sourceTree = "<group>"; };
 		35CBF76C23420A530035CB23 /* ALS_SPb.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ALS_SPb.otf; sourceTree = "<group>"; };
 		35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorMathematicalOperations.swift; sourceTree = "<group>"; };
+		35E2EDCC235D95B90080CD98 /* CalculatorDQWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorDQWrapper.swift; sourceTree = "<group>"; };
+		35F3F0AC237CCE5A00A29B4B /* Design.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Design.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,7 +203,7 @@
 				35C61AFD234D90F000154D63 /* Network */,
 				35C61AFB234D34D000154D63 /* NumberPresenterService.swift */,
 				35D188192358CFF900FB89A5 /* Calculator */,
-				35289209234413AA00B0F31D /* Converter.swift */,
+				35E2EDCB235D95A20080CD98 /* Converter */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -210,6 +214,7 @@
 				354DFB31234102D60087DE65 /* AppDelegate.swift */,
 				354DFB33234102D60087DE65 /* SceneDelegate.swift */,
 				354DFB502341059B0087DE65 /* Config.swift */,
+				35F3F0AC237CCE5A00A29B4B /* Design.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -279,10 +284,19 @@
 		35D188192358CFF900FB89A5 /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
+				35E2EDCC235D95B90080CD98 /* CalculatorDQWrapper.swift */,
 				354DFB54234109CD0087DE65 /* Calculator.swift */,
 				35D1881A2358D04900FB89A5 /* CalculatorMathematicalOperations.swift */,
 			);
 			path = Calculator;
+			sourceTree = "<group>";
+		};
+		35E2EDCB235D95A20080CD98 /* Converter */ = {
+			isa = PBXGroup;
+			children = (
+				35289209234413AA00B0F31D /* Converter.swift */,
+			);
+			path = Converter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -373,8 +387,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				350247BD23455B2200D3B047 /* SideMenuTableViewModel.swift in Sources */,
+				35F3F0AD237CCE5A00A29B4B /* Design.swift in Sources */,
 				354DFB4C234103500087DE65 /* CalculatorScreenViewController.swift in Sources */,
 				3591EF462357486600655681 /* UpdatableOnRotation.swift in Sources */,
+				35E2EDCD235D95B90080CD98 /* CalculatorDQWrapper.swift in Sources */,
 				35947FFD2357BB3B004BFD65 /* RoundButtonItem.swift in Sources */,
 				35B6A225234E344E00E7B2F7 /* XMLParserHelper.swift in Sources */,
 				357B0CBA2344DEE90095B2C9 /* ConverterResultStackView.swift in Sources */,

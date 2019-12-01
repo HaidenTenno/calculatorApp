@@ -22,7 +22,7 @@ protocol NetworkDataFetcherDelegate: class {
 /// Обертка, вызывающая парсер XML
 protocol NetworkDataFetcher {
     var delegate: NetworkDataFetcherDelegate? { get set }
-    func fetchCurrencyInfoXML()
+    func fetchCurrencyInfoXML(queue: DispatchQueue)
 }
 
 /// Реализация протокола NetworkDataFetcher
@@ -38,7 +38,7 @@ final class NetworkDataFetcherImplementation: NSObject, NetworkDataFetcher {
     
     weak var delegate: NetworkDataFetcherDelegate?
     
-    func fetchCurrencyInfoXML() {
+    func fetchCurrencyInfoXML(queue: DispatchQueue) {
         networkService.getApiAnswerXML { [weak self] result in
             guard let strongSelf = self else { return }
             
@@ -46,15 +46,20 @@ final class NetworkDataFetcherImplementation: NSObject, NetworkDataFetcher {
             case .success(let data):
                 do {
                     let parsedXML = try XMLParserHelper.shared.parseXMLIntoCurrency(xml: data)
-                    strongSelf.delegate?.networkDataFetcher(strongSelf, didFetch: parsedXML)
+                    queue.async {
+                        strongSelf.delegate?.networkDataFetcher(strongSelf, didFetch: parsedXML)                        
+                    }
                     
                 } catch {
-                    strongSelf.delegate?.networkDataFetcher(strongSelf, failedWith: error)
-                    return
+                    queue.async {
+                        strongSelf.delegate?.networkDataFetcher(strongSelf, failedWith: error)
+                    }
                 }
                 
             case .failure(let error):
-                strongSelf.delegate?.networkDataFetcher(strongSelf, failedWith: error)
+                queue.async {
+                    strongSelf.delegate?.networkDataFetcher(strongSelf, failedWith: error)
+                }
             }
         }
     }

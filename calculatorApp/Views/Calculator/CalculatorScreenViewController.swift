@@ -22,14 +22,18 @@ class CalculatorScreenViewController: UIViewController {
     private let model = CalculatorViewModel()
     
     // Сервисы
-    private var calculatorService: Calculator = CalculatorImplementation()
+    private var calculatorService: Calculator = CalculatorDQWrapper()
     private var presenterService = NumberPresenterService(style: .calculator)
     
     // Текст для отображения
     private var textToShow: String? {
         didSet {
             guard let textToShow = textToShow else { return }
-            resultLabel.text = presenterService.format(string: textToShow)
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.resultLabel.text = strongSelf.presenterService.format(string: textToShow)
+            }
         }
     }
     
@@ -38,7 +42,9 @@ class CalculatorScreenViewController: UIViewController {
     
     init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
         self.onShowMenuTapped = onShowMenuTapped
+        calculatorService.delegate = model
         super.init(nibName: nil, bundle: nil)
+        model.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -47,14 +53,11 @@ class CalculatorScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
-        calculatorService.delegate = model
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
         makeConstraints()
     }
     
@@ -62,12 +65,12 @@ class CalculatorScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Design.Colors.backgroud
+        view.backgroundColor = Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let image = UIImage(systemName: Config.Design.Images.horisontalLines)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let image = UIImage(systemName: Design.Images.horisontalLines)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(image, for: .normal)
@@ -97,9 +100,9 @@ class CalculatorScreenViewController: UIViewController {
         
         //modeLabel
         modeLabel = UILabel()
-        modeLabel.text = calculatorService.mode.rawValue
-        modeLabel.font = UIFont(name: Config.Design.fontName, size: 20)
-        modeLabel.textColor = Config.Design.Colors.label
+        modeLabel.text = model.mode.stringValue
+        modeLabel.font = UIFont(name: Design.fontName, size: 20)
+        modeLabel.textColor = Design.Colors.label
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
         modeLabel.isUserInteractionEnabled = true
@@ -107,9 +110,9 @@ class CalculatorScreenViewController: UIViewController {
         
         //resultLabel
         resultLabel = UILabel()
-        textToShow = calculatorService.strValue
-        resultLabel.font = UIFont(name: Config.Design.fontName, size: 70)
-        resultLabel.textColor = Config.Design.Colors.label
+        textToShow = model.strValue
+        resultLabel.font = UIFont(name: Design.fontName, size: 70)
+        resultLabel.textColor = Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
@@ -126,7 +129,7 @@ class CalculatorScreenViewController: UIViewController {
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(ButtonsCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringID.collectionViewID)
-        collectionView.backgroundColor = Config.Design.Colors.backgroud
+        collectionView.backgroundColor = Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -173,18 +176,15 @@ class CalculatorScreenViewController: UIViewController {
 extension CalculatorScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
-        
-        calculatorService.handleAction(of: item)
-        textToShow = calculatorService.strValue
-        modeLabel.text = calculatorService.mode.rawValue
-        
-        collectionView.reloadData()
+        // Обновить collectionView после обработки нажатия (чтобы подсветить кнопку с операцией и режимом)
+        calculatorService.handleAction(of: item) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+        }
     }
     
     @objc private func resultSwipedToLeft() {
-        
         calculatorService.removeLast()
-        textToShow = calculatorService.strValue
     }
     
     @objc private func swipeDown() {
@@ -197,6 +197,18 @@ extension CalculatorScreenViewController {
     
     @objc private func showMenuButtonTapped() {
         onShowMenuTapped(.calculator)
+    }
+}
+
+// MARK: - CalculatorViewModelDelegate
+extension CalculatorScreenViewController: CalculatorViewModelDelegate {
+    
+    func calculatorViewModelDidUpdateValue(_ viewModel: CalculatorViewModel) {
+        textToShow = viewModel.strValue
+    }
+    
+    func calculatorViewModelDidUpdateMode(_ viewModel: CalculatorViewModel) {
+        modeLabel.text = viewModel.mode.stringValue
     }
 }
 
@@ -214,7 +226,7 @@ extension CalculatorScreenViewController: UpdatableOnRotation {
 extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.Design.RoundButtonSize.width, height: Config.Design.RoundButtonSize.hight)
+        return CGSize(width: Design.RoundButtonSize.width, height: Design.RoundButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

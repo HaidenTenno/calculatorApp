@@ -8,8 +8,19 @@
 
 import Foundation
 
+/**
+ Делегат ConverterViewModel
+ 
+ `converterViewModelDidUpdateValue` - Изменение значений для отображения
+ */
+protocol ConverterViewModelDelegate: class {
+    func converterViewModelDidUpdateValue(_ viewModel: ConverterViewModel)
+}
+
 /// Модель отображения конвертера
 final class ConverterViewModel {
+    
+    weak var delegate: ConverterViewModelDelegate?
     
     var items: [RoundButtonItem] = []
     
@@ -47,8 +58,16 @@ final class ConverterViewModel {
     var secondSelectedCurrency: XMLCurrency?
     
     // Текстовые значения результатов
-    var firstStrResult: String = Config.NumberPresentation.strResultDefault
-    var secondStrResult: String = Config.NumberPresentation.strResultDefault
+    var firstStrResult: String = Config.NumberPresentation.strResultDefault {
+        didSet {
+            delegate?.converterViewModelDidUpdateValue(self)
+        }
+    }
+    var secondStrResult: String = Config.NumberPresentation.strResultDefault {
+        didSet {
+            delegate?.converterViewModelDidUpdateValue(self)
+        }
+    }
     
     // На экране конвертера используются только кнопки цифр, разделителя и сброса
     init() {
@@ -65,11 +84,30 @@ final class ConverterViewModel {
         let clearItem = RoundButtonOperationItem(value: .clear)
         items.append(clearItem)
     }
-    
+        
     // Поменять выбранные валюты местами
-    func swapCurrency() {
+    private func swapCurrency() {
         let rememberedCurrency = firstSelectedCurrency
         firstSelectedCurrency = secondSelectedCurrency
         secondSelectedCurrency = rememberedCurrency
+    }
+}
+
+// MARK: - ConverterDelegate
+extension ConverterViewModel: ConverterDelegate {
+    
+    func converter(_ converter: Converter, didUpdate firsStrResult: String, _ secondStrResult: String) {
+        self.firstStrResult = firsStrResult
+        self.secondStrResult = secondStrResult
+    }
+    
+    func converter(_ converter: Converter, didSelect firstCurrency: XMLCurrency?, secondCurrency: XMLCurrency?) {
+        if let firstCurrency = firstCurrency {
+            firstSelectedCurrency = firstCurrency
+        }
+        
+        if let secondCurrency = secondCurrency {
+            secondSelectedCurrency = secondCurrency
+        }
     }
 }

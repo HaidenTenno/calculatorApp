@@ -58,13 +58,11 @@ final class NetworkServiceImplementation: NetworkService {
         
         request(url, method: .get).validate().responseData { response in
             
-            DispatchQueue.main.async {
-                switch response.result {
-                case .success(let data):
-                    completionHandler(.success(data))
-                case .failure(let error):
-                    completionHandler(.failure(NetworkServiceError.receiveDataError(error)))
-                }
+            switch response.result {
+            case .success(let data):
+                completionHandler(.success(data))
+            case .failure(let error):
+                completionHandler(.failure(NetworkServiceError.receiveDataError(error)))
             }
         }
     }

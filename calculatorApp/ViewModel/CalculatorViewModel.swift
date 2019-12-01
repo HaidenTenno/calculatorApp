@@ -8,8 +8,33 @@
 
 import Foundation
 
+/**
+ Делегат CalculatorViewModel
+ 
+ `calculatorViewModelDidUpdateValue` - Изменение значения для отображения
+ `calculatorViewModelDidUpdateMode` - Изменение режима
+ */
+protocol CalculatorViewModelDelegate: class {
+    func calculatorViewModelDidUpdateValue(_ viewModel: CalculatorViewModel)
+    func calculatorViewModelDidUpdateMode(_ viewModel: CalculatorViewModel)
+}
+
 /// Модель отображения калькулятра
 final class CalculatorViewModel {
+    
+    weak var delegate: CalculatorViewModelDelegate?
+    
+    var strValue: String = Config.NumberPresentation.strResultDefault {
+        didSet {
+            delegate?.calculatorViewModelDidUpdateValue(self)
+        }
+    }
+    
+    var mode: RoundButtonModeValue = Config.Calculator.defaultMode {
+        didSet {
+            delegate?.calculatorViewModelDidUpdateMode(self)
+        }
+    }
     
     var items: [RoundButtonItem] = []
     
@@ -49,14 +74,20 @@ final class CalculatorViewModel {
     }
 }
 
-// Если выбирается новая операция (режим), то убать выбор с предыдущих операций (режимов)
+// MARK: - CalculatorDelegate
 extension CalculatorViewModel: CalculatorDelegate {
     
-    func calculatorSelectedNewOperation(_ calculator: Calculator) {
-        deselectAllOperations()
+    func calculator(_ calculator: Calculator, didUpdate strValue: String) {
+        self.strValue = strValue
     }
     
-    func calculatorSelectedNewMode(_ calculator: Calculator) {
+    func calculator(_ calculator: Calculator, didSelect newMode: RoundButtonModeValue) {
         deselectAllModes()
+        self.mode = newMode
+    }
+    
+    func calculator(_ calculator: Calculator, didSelect operation: RoundButtonOperationItem?) {
+        deselectAllOperations()
+        operation?.selected = true
     }
 }

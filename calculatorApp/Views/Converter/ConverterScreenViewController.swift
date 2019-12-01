@@ -31,7 +31,10 @@ class ConverterScreenViewController: UIViewController {
     
     init(onShowMenuTapped: @escaping (SideMenuTableViewModelItemType) -> Void) {
         self.onShowMenuTapped = onShowMenuTapped
+        converterService.delegate = model
         super.init(nibName: nil, bundle: nil)
+        model.delegate = self
+        dataFetcher.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -41,16 +44,18 @@ class ConverterScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         LoadingIndicatorView.show()
-        
-        dataFetcher.delegate = self
-        dataFetcher.fetchCurrencyInfoXML()
+        dataFetcher.fetchCurrencyInfoXML(queue: DispatchQueue.main)
     }
+    
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
         makeConstraints()
     }
     
@@ -58,12 +63,12 @@ class ConverterScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Design.Colors.backgroud
+        view.backgroundColor = Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let navImage = UIImage(systemName: Config.Design.Images.horisontalLines)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let navImage = UIImage(systemName: Design.Images.horisontalLines)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(navImage, for: .normal)
@@ -92,7 +97,16 @@ class ConverterScreenViewController: UIViewController {
         globalStackView.addArrangedSubview(swipableStackView)
         
         //editableStackView
-        editableStackView = ConverterResultStackView(model: model, editable: true, delegate: self)
+        editableStackView = ConverterResultStackView(model: model, editable: true,
+                                                     onSelectCurrency: { [weak self] firstCurrency in
+                                                        guard let strongSelf = self else { return }
+                                                        strongSelf.converterService.firstCurrency = firstCurrency
+                                                        strongSelf.fillData()
+            },
+                                                     onSwipeLeft: { [weak self] in
+                                                        guard let strongSelf = self else { return }
+                                                        strongSelf.resultSwipedToLeft()
+        })
         swipableStackView.addArrangedSubview(editableStackView)
         
         //swapButtonStackView
@@ -104,8 +118,8 @@ class ConverterScreenViewController: UIViewController {
         
         //swapButton
         swapButton = UIButton(type: .system)
-        let swapImage = UIImage(systemName: Config.Design.Images.arrowUpDown)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let swapImage = UIImage(systemName: Design.Images.arrowUpDown)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         swapButton.setImage(swapImage, for: .normal)
         swapButton.contentHorizontalAlignment = .left
@@ -117,7 +131,12 @@ class ConverterScreenViewController: UIViewController {
         swapButtonStackView.addArrangedSubview(blankView)
         
         //notEditableStackView
-        notEditableStackView = ConverterResultStackView(model: model, editable: false, delegate: self)
+        notEditableStackView = ConverterResultStackView(model: model, editable: false,
+                                                        onSelectCurrency: { [weak self] secondCurrency in
+                                                            guard let strongSelf = self else { return }
+                                                            strongSelf.converterService.secondCurrency = secondCurrency
+                                                            strongSelf.fillData()
+        })
         swipableStackView.addArrangedSubview(notEditableStackView)
         
         //collectionView
@@ -125,7 +144,7 @@ class ConverterScreenViewController: UIViewController {
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(ButtonsCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringID.collectionViewID)
-        collectionView.backgroundColor = Config.Design.Colors.backgroud
+        collectionView.backgroundColor = Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -154,7 +173,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        editableStackView.spacing = 10
+        editableStackView.makeConstraints()
         
         //swapButtonStackView
         swapButtonStackView.snp.makeConstraints { make in
@@ -168,7 +187,7 @@ class ConverterScreenViewController: UIViewController {
             make.right.equalTo(swipableStackView)
             make.height.equalTo(70)
         }
-        notEditableStackView.spacing = 10
+        notEditableStackView.makeConstraints()
         
         //collectionView
         collectionView.snp.makeConstraints { make in
@@ -183,9 +202,6 @@ class ConverterScreenViewController: UIViewController {
 extension ConverterScreenViewController {
     
     private func fillData() {
-        model.firstStrResult = converterService.firstStrResult
-        model.secondStrResult = converterService.secondStrResult
-        
         editableStackView.reloadData()
         notEditableStackView.reloadData()
     }
@@ -196,7 +212,6 @@ extension ConverterScreenViewController {
     
     private func roundButtonTapped(item: RoundButtonItem) {
         converterService.handleAction(of: item)
-        fillData()
     }
     
     @objc private func swipeDown() {
@@ -208,13 +223,7 @@ extension ConverterScreenViewController {
     }
     
     @objc private func swapButtonTapped() {
-        
-        model.swapCurrency()
-        
-        converterService.firstCurrency = model.firstSelectedCurrency
-        converterService.secondCurrency = model.secondSelectedCurrency
-        
-        fillData()
+        converterService.swapCurrency()
     }
     
     @objc private func showMenuButtonTapped() {
@@ -223,6 +232,13 @@ extension ConverterScreenViewController {
     
     @objc private func resultSwipedToLeft() {
         converterService.removeLast()
+    }
+}
+
+// MARK: - ConverterViewModelDelegate
+extension ConverterScreenViewController: ConverterViewModelDelegate {
+    
+    func converterViewModelDidUpdateValue(_ viewModel: ConverterViewModel) {
         fillData()
     }
 }
@@ -231,7 +247,7 @@ extension ConverterScreenViewController {
 extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.Design.RoundButtonSize.width, height: Config.Design.RoundButtonSize.hight)
+        return CGSize(width: Design.RoundButtonSize.width, height: Design.RoundButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -247,24 +263,6 @@ extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionV
         
         return cell
     }
-}
-
-// MARK: - ConverterResultStackViewDelegate
-extension ConverterScreenViewController: ConverterResultStackViewDelegate {
-    
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewFirstCurrency: XMLCurrency) {
-        converterService.firstCurrency = model.firstSelectedCurrency
-        fillData()
-    }
-    
-    func converterResultStackView(_ converterResultStackView: ConverterResultStackView, didSelectNewSecondCurrency: XMLCurrency) {
-        converterService.secondCurrency = model.secondSelectedCurrency
-        fillData()
-    }
-    
-    func converterResultStackViewSwipedLeft(_ converterResultStackView: ConverterResultStackView) {
-        resultSwipedToLeft()
-    }    
 }
 
 // MARK: - Data Fetcher

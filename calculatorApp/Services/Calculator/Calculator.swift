@@ -27,12 +27,14 @@ enum CalculatorError: Error {
 /**
  Делегат Calculator
  
- `calculatorSelectedNewOperation` - выбор новой операции
- `calculatorSelectedNewMode` - выбор нового режима
+ `calculatorDidUpdateStrValue` - действие обработано
+ `calculatorDidSelectNewMode` - выбор нового режима
+ `calculatorDidSelectNewOperation` - выбор новой операции
  */
 protocol CalculatorDelegate: class {
-    func calculatorSelectedNewOperation(_ calculator: Calculator)
-    func calculatorSelectedNewMode(_ calculator: Calculator)
+    func calculator(_ calculator: Calculator, didUpdate strValue: String)
+    func calculator(_ calculator: Calculator, didSelect newMode: RoundButtonModeValue)
+    func calculator(_ calculator: Calculator, didSelect operation: RoundButtonOperationItem?)
 }
 
 /**
@@ -60,7 +62,7 @@ protocol Calculator {
     var mode: RoundButtonModeValue { get }
     var delegate: CalculatorDelegate? { get set }
     
-    func handleAction(of item: RoundButtonItem)
+    func handleAction(of item: RoundButtonItem, completion: (() -> Void)?)
     func removeLast()
 }
 
@@ -68,12 +70,21 @@ protocol Calculator {
 final class CalculatorImplementation: Calculator {
     
     /// Текущая выбранная операция
-    private var currentOperation: RoundButtonOperationItem? = nil
+    private var currentOperation: RoundButtonOperationItem? = nil {
+        didSet {
+            delegate?.calculator(self, didSelect: currentOperation)
+        }
+    }
     /// Запомненное значение
     private var rememberedValue: Decimal? = nil
     
     /// Флаг для отслеживания действий после выполнения операции
-    private var afterExecute: Bool = false
+    private var afterExecute: Bool = false {
+        didSet {
+            guard afterExecute else { return }
+            readyToInsertNewNumber = true
+        }
+    }
     /// Флаг, определяющий начало ввода нового числа
     private var readyToInsertNewNumber: Bool = true
     
@@ -95,7 +106,7 @@ final class CalculatorImplementation: Calculator {
     /// Текущее строковое значение
     var strValue: String = Config.NumberPresentation.strResultDefault {
         didSet {
-            logValuesIntoConsole()
+            delegate?.calculator(self, didUpdate: strValue)
         }
     }
     
@@ -106,12 +117,20 @@ final class CalculatorImplementation: Calculator {
         }
     }
     
-    var mode: RoundButtonModeValue = .deg
+    /// Текущий режим
+    var mode: RoundButtonModeValue = Config.Calculator.defaultMode {
+        didSet {
+            delegate?.calculator(self, didSelect: mode)
+        }
+    }
     
     weak var delegate: CalculatorDelegate?
     
     /// Обработка нажатия круглой кнопки
-    func handleAction(of item: RoundButtonItem) {
+    func handleAction(of item: RoundButtonItem, completion: (()->Void)? = nil) {
+        defer {
+            completion?()
+        }
         switch item.type {
         // Нажата числовая кнопка
         case .number:
@@ -173,8 +192,6 @@ final class CalculatorImplementation: Calculator {
             switch operationItem.value {
             // Операции, требующие два операнда
             case .plus, .minus, .multiplication, .division, .power:
-                delegate?.calculatorSelectedNewOperation(self)
-                
                 afterExecute = false
                 readyToInsertNewNumber = true
                 
@@ -186,8 +203,6 @@ final class CalculatorImplementation: Calculator {
                 
             // Операции, требующие один операнд
             case .sqrt, .sin, .cos, .tan, .log:
-                delegate?.calculatorSelectedNewOperation(self)
-                
                 afterExecute = true
                 readyToInsertNewNumber = true
                 
@@ -207,8 +222,6 @@ final class CalculatorImplementation: Calculator {
                 }
             // Нажата кнопка "равно"
             case .execute:
-                delegate?.calculatorSelectedNewOperation(self)
-                
                 guard let currentOperation = currentOperation else { return }
                                 
                 do {
@@ -250,9 +263,6 @@ final class CalculatorImplementation: Calculator {
         // Нажата кнопка режима
         case .mode:
             guard let modeItem = item as? RoundButtonModeItem else { return }
-            
-            delegate?.calculatorSelectedNewMode(self)
-            
             mode = modeItem.value
             modeItem.selected = true
         }
@@ -389,7 +399,6 @@ extension CalculatorImplementation {
     
     /// Сброс калькулятора (значения и операции)
     private func clear() {
-        delegate?.calculatorSelectedNewOperation(self)
         strValue = Config.NumberPresentation.strResultDefault
         resetVars()
     }

@@ -9,6 +9,21 @@
 import Foundation
 
 /**
+ Делегат Converter
+ 
+ `converterDidUpdateStrValue` - действие обработано
+ 
+ `converterDidSwapedCurrency` - валюты поменялись местами
+ 
+ `converterDidSelectCurrency` - установка валют
+ */
+protocol ConverterDelegate: class {
+    func converter(_ converter: Converter, didUpdate firsStrResult: String, _ secondStrResult: String)
+//    func converterDidSwapedCurrency(_ converter: Converter)
+    func converter(_ converter: Converter, didSelect firstCurrency: XMLCurrency?, secondCurrency: XMLCurrency?)
+}
+
+/**
  Сервис конвертера
  
  *Variables*
@@ -29,6 +44,8 @@ import Foundation
  
  `handleAction` - Обработка нажатия круглой кнопки
  
+ `swapCurrency` - Поменять валюты местами
+ 
  `removeLast` - Обработка удаления последнего символа
  */
 protocol Converter {
@@ -38,8 +55,10 @@ protocol Converter {
     var secondStrResult: String { get }
     var firstNumericResult: Decimal { get }
     var secondNumericResult: Decimal { get }
+    var delegate: ConverterDelegate? { get set }
     
     func handleAction(of item: RoundButtonItem)
+    func swapCurrency()
     func removeLast()
 }
 
@@ -54,12 +73,14 @@ final class ConverterImplementation: Converter {
     /// Первая выбранная валюта
     var firstCurrency: XMLCurrency? {
         didSet {
+            delegate?.converter(self, didSelect: firstCurrency, secondCurrency: nil)
             secondNumericResult = calculateSecondNumericResult()
         }
     }
     /// Вторая выбранная валюта
     var secondCurrency: XMLCurrency? {
         didSet {
+            delegate?.converter(self, didSelect: nil, secondCurrency: secondCurrency)
             secondNumericResult = calculateSecondNumericResult()
         }
     }
@@ -74,7 +95,11 @@ final class ConverterImplementation: Converter {
     }
     // 4
     /// Второе строковое значение
-    var secondStrResult: String = Config.NumberPresentation.strResultDefault
+    var secondStrResult: String = Config.NumberPresentation.strResultDefault {
+        didSet {
+            delegate?.converter(self, didUpdate: firstStrResult, secondStrResult)
+        }
+    }
     
     // 2
     /// Первое числовое значение
@@ -90,6 +115,8 @@ final class ConverterImplementation: Converter {
             secondStrResult = String(describing: secondNumericResult)
         }
     }
+    
+    weak var delegate: ConverterDelegate?
     
     /// Обработка нажатия круглой кнопки
     func handleAction(of item: RoundButtonItem) {
@@ -141,6 +168,15 @@ final class ConverterImplementation: Converter {
         default:
             return
         }
+    }
+    
+    /// Поменять валюты местами
+    func swapCurrency() {
+        let rememberedCurrency = firstCurrency
+        firstCurrency = secondCurrency
+        secondCurrency = rememberedCurrency
+        
+//        delegate?.converterDidSwapedCurrency(self)
     }
     
     /// Обработка удаления последнего символа
