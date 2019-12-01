@@ -12,9 +12,15 @@ import Foundation
  Делегат Converter
  
  `converterDidUpdateStrValue` - действие обработано
+ 
+ `converterDidSwapedCurrency` - валюты поменялись местами
+ 
+ `converterDidSelectCurrency` - установка валют
  */
 protocol ConverterDelegate: class {
     func converter(_ converter: Converter, didUpdate firsStrResult: String, _ secondStrResult: String)
+//    func converterDidSwapedCurrency(_ converter: Converter)
+    func converter(_ converter: Converter, didSelect firstCurrency: XMLCurrency?, secondCurrency: XMLCurrency?)
 }
 
 /**
@@ -67,12 +73,14 @@ final class ConverterImplementation: Converter {
     /// Первая выбранная валюта
     var firstCurrency: XMLCurrency? {
         didSet {
+            delegate?.converter(self, didSelect: firstCurrency, secondCurrency: nil)
             secondNumericResult = calculateSecondNumericResult()
         }
     }
     /// Вторая выбранная валюта
     var secondCurrency: XMLCurrency? {
         didSet {
+            delegate?.converter(self, didSelect: nil, secondCurrency: secondCurrency)
             secondNumericResult = calculateSecondNumericResult()
         }
     }
@@ -167,6 +175,8 @@ final class ConverterImplementation: Converter {
         let rememberedCurrency = firstCurrency
         firstCurrency = secondCurrency
         secondCurrency = rememberedCurrency
+        
+//        delegate?.converterDidSwapedCurrency(self)
     }
     
     /// Обработка удаления последнего символа

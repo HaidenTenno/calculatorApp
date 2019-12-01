@@ -16,7 +16,7 @@ final class CalculatorDQWrapper: Calculator {
     private var calculator: Calculator
     
     init(calculator: Calculator = CalculatorImplementation(),
-         queue: DispatchQueue = DispatchQueue(label: Config.StringID.countingQueue, qos: .default, attributes: .concurrent)) {
+         queue: DispatchQueue = DispatchQueue(label: Config.StringID.countingQueue, qos: .userInitiated, attributes: .concurrent)) {
         self.calculator = calculator
         self.queue = queue
     }
@@ -50,10 +50,9 @@ final class CalculatorDQWrapper: Calculator {
     }
     
     func handleAction(of item: RoundButtonItem, completion: (() -> Void)?) {
-        queue.sync { [weak self] in
+        queue.async { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.calculator.handleAction(of: item) {
-                // Выполнить обновление UI в главном потоке
                 DispatchQueue.main.async {
                     completion?()
                 }
@@ -62,10 +61,7 @@ final class CalculatorDQWrapper: Calculator {
     }
     
     func removeLast() {
-        queue.sync { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.calculator.removeLast()
-        }
+        calculator.removeLast()
     }
     
     

@@ -84,9 +84,9 @@ final class ConverterViewModel {
         let clearItem = RoundButtonOperationItem(value: .clear)
         items.append(clearItem)
     }
-    
+        
     // Поменять выбранные валюты местами
-    func swapCurrency() {
+    private func swapCurrency() {
         let rememberedCurrency = firstSelectedCurrency
         firstSelectedCurrency = secondSelectedCurrency
         secondSelectedCurrency = rememberedCurrency
@@ -101,4 +101,13 @@ extension ConverterViewModel: ConverterDelegate {
         self.secondStrResult = secondStrResult
     }
     
+    func converter(_ converter: Converter, didSelect firstCurrency: XMLCurrency?, secondCurrency: XMLCurrency?) {
+        if let firstCurrency = firstCurrency {
+            firstSelectedCurrency = firstCurrency
+        }
+        
+        if let secondCurrency = secondCurrency {
+            secondSelectedCurrency = secondCurrency
+        }
+    }
 }

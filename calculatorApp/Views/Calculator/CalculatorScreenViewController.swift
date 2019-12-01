@@ -29,7 +29,11 @@ class CalculatorScreenViewController: UIViewController {
     private var textToShow: String? {
         didSet {
             guard let textToShow = textToShow else { return }
-            resultLabel.text = presenterService.format(string: textToShow)
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.resultLabel.text = strongSelf.presenterService.format(string: textToShow)
+            }
         }
     }
     
@@ -61,12 +65,12 @@ class CalculatorScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Design.Colors.backgroud
+        view.backgroundColor = Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let image = UIImage(systemName: Config.Design.Images.horisontalLines)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let image = UIImage(systemName: Design.Images.horisontalLines)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(image, for: .normal)
@@ -97,8 +101,8 @@ class CalculatorScreenViewController: UIViewController {
         //modeLabel
         modeLabel = UILabel()
         modeLabel.text = model.mode.stringValue
-        modeLabel.font = UIFont(name: Config.Design.fontName, size: 20)
-        modeLabel.textColor = Config.Design.Colors.label
+        modeLabel.font = UIFont(name: Design.fontName, size: 20)
+        modeLabel.textColor = Design.Colors.label
         modeLabel.textAlignment = .left
         modeLabel.numberOfLines = 0
         modeLabel.isUserInteractionEnabled = true
@@ -107,8 +111,8 @@ class CalculatorScreenViewController: UIViewController {
         //resultLabel
         resultLabel = UILabel()
         textToShow = model.strValue
-        resultLabel.font = UIFont(name: Config.Design.fontName, size: 70)
-        resultLabel.textColor = Config.Design.Colors.label
+        resultLabel.font = UIFont(name: Design.fontName, size: 70)
+        resultLabel.textColor = Design.Colors.label
         resultLabel.textAlignment = .right
         resultLabel.adjustsFontSizeToFitWidth = true
         resultLabel.minimumScaleFactor = 0
@@ -125,7 +129,7 @@ class CalculatorScreenViewController: UIViewController {
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(ButtonsCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringID.collectionViewID)
-        collectionView.backgroundColor = Config.Design.Colors.backgroud
+        collectionView.backgroundColor = Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -222,7 +226,7 @@ extension CalculatorScreenViewController: UpdatableOnRotation {
 extension CalculatorScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.Design.RoundButtonSize.width, height: Config.Design.RoundButtonSize.hight)
+        return CGSize(width: Design.RoundButtonSize.width, height: Design.RoundButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

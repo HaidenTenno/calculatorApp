@@ -35,14 +35,22 @@ final class ViewsCoordinator {
         let destinationVC = createConverterScreen()
         navigationController.pushViewController(destinationVC, animated: false)
     }
+}
+
+// MARK: - Private
+private extension ViewsCoordinator {
     
     private func createCalculatorScreen() -> CalculatorScreenViewController {
-        let calculatorVC = CalculatorScreenViewController(onShowMenuTapped: showMenuButtonTapped(activeType:))
+        let calculatorVC = CalculatorScreenViewController { [unowned self] activeType in
+            self.showMenuButtonTapped(activeType: activeType)
+        }
         return calculatorVC
     }
     
     private func createConverterScreen() -> ConverterScreenViewController {
-        let converterVC = ConverterScreenViewController(onShowMenuTapped: showMenuButtonTapped(activeType:))
+        let converterVC = ConverterScreenViewController { [unowned self] activeType in
+            self.showMenuButtonTapped(activeType: activeType)
+        }
         return converterVC
     }
     
@@ -66,6 +74,7 @@ final class ViewsCoordinator {
     }
 }
 
+// MARK: - SideMenuTableViewControllerDelegate
 extension ViewsCoordinator: SideMenuTableViewControllerDelegate {
     
     func sideMenuTableViewController(_ sideMenuTableViewController: SideMenuTableViewController, didSelect mode: SideMenuTableViewModelItemType) {

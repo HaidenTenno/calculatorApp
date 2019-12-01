@@ -24,7 +24,7 @@ class ConverterScreenViewController: UIViewController {
     
     // Сервисы
     private var dataFetcher: NetworkDataFetcher = NetworkDataFetcherImplementation.shared
-    private var converterService: Converter = ConverterDQWrapper()
+    private var converterService: Converter = ConverterImplementation()
     
     // Колбек для обработки нажатия кнопки меню
     private var onShowMenuTapped: ((SideMenuTableViewModelItemType) -> Void)
@@ -49,14 +49,8 @@ class ConverterScreenViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        // TODO: - Implement better data fetching handling
-//        LoadingIndicatorView.show()
-        // Imitating long data fetching
-//        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
-//            self.dataFetcher.fetchCurrencyInfoXML()
-//        }
         LoadingIndicatorView.show()
-        dataFetcher.fetchCurrencyInfoXML()
+        dataFetcher.fetchCurrencyInfoXML(queue: DispatchQueue.main)
     }
     
     
@@ -69,12 +63,12 @@ class ConverterScreenViewController: UIViewController {
     private func setupView() {
         
         //view
-        view.backgroundColor = Config.Design.Colors.backgroud
+        view.backgroundColor = Design.Colors.backgroud
         
         //navigationController
         navigationItem.rightBarButtonItems = []
-        let navImage = UIImage(systemName: Config.Design.Images.horisontalLines)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let navImage = UIImage(systemName: Design.Images.horisontalLines)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         let showMenuButton = UIButton(type: .system)
         showMenuButton.setImage(navImage, for: .normal)
@@ -106,9 +100,6 @@ class ConverterScreenViewController: UIViewController {
         editableStackView = ConverterResultStackView(model: model, editable: true,
                                                      onSelectCurrency: { [weak self] firstCurrency in
                                                         guard let strongSelf = self else { return }
-                                                        // TODO: - Remove?
-                                                        strongSelf.model.firstSelectedCurrency = firstCurrency
-                                                        //
                                                         strongSelf.converterService.firstCurrency = firstCurrency
                                                         strongSelf.fillData()
             },
@@ -127,8 +118,8 @@ class ConverterScreenViewController: UIViewController {
         
         //swapButton
         swapButton = UIButton(type: .system)
-        let swapImage = UIImage(systemName: Config.Design.Images.arrowUpDown)?
-            .withTintColor(Config.Design.Colors.buttonText)
+        let swapImage = UIImage(systemName: Design.Images.arrowUpDown)?
+            .withTintColor(Design.Colors.buttonText)
             .withRenderingMode(.alwaysOriginal)
         swapButton.setImage(swapImage, for: .normal)
         swapButton.contentHorizontalAlignment = .left
@@ -141,10 +132,9 @@ class ConverterScreenViewController: UIViewController {
         
         //notEditableStackView
         notEditableStackView = ConverterResultStackView(model: model, editable: false,
-                                                        onSelectCurrency: { [weak self] secondCurrendy in
+                                                        onSelectCurrency: { [weak self] secondCurrency in
                                                             guard let strongSelf = self else { return }
-                                                            strongSelf.model.firstSelectedCurrency = secondCurrendy
-                                                            strongSelf.converterService.secondCurrency = secondCurrendy
+                                                            strongSelf.converterService.secondCurrency = secondCurrency
                                                             strongSelf.fillData()
         })
         swipableStackView.addArrangedSubview(notEditableStackView)
@@ -154,7 +144,7 @@ class ConverterScreenViewController: UIViewController {
         collectionViewLayout.scrollDirection = .vertical
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(ButtonsCollectionViewCell.self, forCellWithReuseIdentifier: Config.StringID.collectionViewID)
-        collectionView.backgroundColor = Config.Design.Colors.backgroud
+        collectionView.backgroundColor = Design.Colors.backgroud
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
@@ -233,9 +223,6 @@ extension ConverterScreenViewController {
     }
     
     @objc private func swapButtonTapped() {
-        // TODO: - Remove?
-        model.swapCurrency()
-        //
         converterService.swapCurrency()
     }
     
@@ -260,7 +247,7 @@ extension ConverterScreenViewController: ConverterViewModelDelegate {
 extension ConverterScreenViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: Config.Design.RoundButtonSize.width, height: Config.Design.RoundButtonSize.hight)
+        return CGSize(width: Design.RoundButtonSize.width, height: Design.RoundButtonSize.hight)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

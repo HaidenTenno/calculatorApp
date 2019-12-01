@@ -12,6 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
+    var coordinator: ViewsCoordinator?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -22,10 +23,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
-        let coordinator = ViewsCoordinator(navigationController: navigationController)
         
+        coordinator = ViewsCoordinator(navigationController: navigationController)
         // MARK: Начало работы координатора (презентация первого контроллера)
-        coordinator.start()
+        coordinator?.start()
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

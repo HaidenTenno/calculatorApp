@@ -44,8 +44,8 @@ class SideMenuTableViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: Config.StringID.sideMenuTableViewID, for: indexPath)
         
-        cell.textLabel?.font = UIFont(name: Config.Design.fontName, size: 25)
-        cell.textLabel?.textColor = Config.Design.Colors.label
+        cell.textLabel?.font = UIFont(name: Design.fontName, size: 25)
+        cell.textLabel?.textColor = Design.Colors.label
         cell.textLabel?.text = SideMenuTableViewModelItemType.getTitleFor(title: model.items[indexPath.row].type)
         
         cell.isUserInteractionEnabled = model.items[indexPath.row].active
